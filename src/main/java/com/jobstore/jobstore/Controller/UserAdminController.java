@@ -1,4 +1,4 @@
-package com.jobstore.jobstore.config.Controller;
+package com.jobstore.jobstore.Controller;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
