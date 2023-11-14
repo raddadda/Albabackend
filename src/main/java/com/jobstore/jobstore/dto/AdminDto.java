@@ -17,4 +17,6 @@ public class AdminDto {
     private String role;
     private String companynumber;
     private String ceo;
+
+
 }

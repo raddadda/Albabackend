@@ -1,5 +1,6 @@
 package com.jobstore.jobstore.Controller;
 
+import com.jobstore.jobstore.dto.UserDto;
 import com.jobstore.jobstore.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,17 +16,17 @@ public class UserController {
     //구직자 회원가입
     @GetMapping("/user/join")
     public String joinUser(Model model){
-        model.addAttribute("userDto",new userDto());
+        model.addAttribute("userDto",new UserDto());
         return "userJoin";
     }
-    @PostMapping("/admin/join")
+    @PostMapping("/user/join")
     public String createUser(UserDto userDto){
         //userService.join(userDto);
         return "redirect:/";
     }
 
     //로그인
-    @GetMapping("/admin/login")
+    @GetMapping("/user/login")
     public String loginUser(Model model){
         //model.addAttribute("loginDto",new loginDto());
         return "userJoin";

@@ -1,5 +1,6 @@
 package com.jobstore.jobstore.Controller;
 
+import com.jobstore.jobstore.dto.AdminDto;
 import com.jobstore.jobstore.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,13 +15,13 @@ public class AdminController {
     //회원가입
     @GetMapping("/admin/join")
     public String joinAdmin(Model model){
-        model.addAttribute("adminDto",new adminDto());
+        model.addAttribute("adminDto",new AdminDto());
         return "adminJoin";
     }
     @PostMapping("/admin/join")
     public String createAdmin(AdminDto adminDto){
         //adminService.join(adminDto);
-        return "redirect:/";
+        return "adminJoin";
     }
 
     //로그인
