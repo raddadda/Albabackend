@@ -1,9 +1,11 @@
 //package com.jobstore.jobstore.config;
 //
+//import com.jobstore.jobstore.entity.Admin;
+//import com.jobstore.jobstore.entity.User;
 //import lombok.Getter;
 //import lombok.Setter;
 //import org.springframework.security.core.GrantedAuthority;
-//import org.springframework.security.core.userdetails.UserDetails;
+//
 //
 //import java.util.ArrayList;
 //import java.util.Collection;
@@ -13,8 +15,9 @@
 //public class PrincipalDetails implements UserDetails {
 //    private static final long serialVersionUID = 1L;
 //
+////    private Admin admin;
+////    private User user;
 //    private Member member;
-//
 //    public PrincipalDetails(Member member) {
 //        this.member = member;
 //    }
