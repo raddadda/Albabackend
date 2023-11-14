@@ -25,10 +25,10 @@ public class AdminController {
     }
 
     //로그인
-    @GetMapping("/admin/login")
+    @GetMapping("/login")
     public String loginAdmin(Model model){
        // model.addAttribute("loginDto",new loginDto());
-        return "adminJoin";
+        return "login";
     }
 
 }
