@@ -1,11 +1,11 @@
 package com.jobstore.jobstore.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "user")
@@ -23,4 +23,12 @@ public class User {
     private String name;
     @Column(length = 255,nullable = false)
     private String role;
+    @ManyToOne
+    @JoinColumns({
+            @JoinColumn(name="adminid",referencedColumnName = "adminid"),
+            @JoinColumn(name="storeid",referencedColumnName = "storeid"),
+    })
+    private Admin admin;
+
+
 }
