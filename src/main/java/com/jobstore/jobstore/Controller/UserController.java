@@ -28,9 +28,9 @@ public class UserController {
     }
 
     //로그인
-    @GetMapping("/user/login")
+    @GetMapping("/login")
     public String loginUser(Model model){
         //model.addAttribute("loginDto",new loginDto());
-        return "userJoin";
+        return "login";
     }
 }
