@@ -12,7 +12,6 @@ public class UserAdminController {
 //    @Autowired
 //    private UserAdminService userAdminService;
 
-
     //home화면
     @GetMapping("/")
     public String home(Model model){
