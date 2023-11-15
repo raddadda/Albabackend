@@ -1,6 +1,6 @@
 package com.jobstore.jobstore.Controller;
 
-import com.jobstore.jobstore.dto.AdminDto;
+import com.jobstore.jobstore.dto.MemberDto;
 import com.jobstore.jobstore.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

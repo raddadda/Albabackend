@@ -1,12 +1,8 @@
 package com.jobstore.jobstore.service;
 
-<<<<<<< HEAD:src/main/java/com/jobstore/jobstore/service/AdminService.java
 
-=======
-import com.jobstore.jobstore.entity.Admin;
 import com.jobstore.jobstore.entity.Member;
 import com.jobstore.jobstore.repository.MemberRepository;
->>>>>>> chan2:src/main/java/com/jobstore/jobstore/service/MemberService.java
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
