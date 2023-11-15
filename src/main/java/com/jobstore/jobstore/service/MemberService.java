@@ -1,15 +1,13 @@
 package com.jobstore.jobstore.service;
 
-
-import com.jobstore.jobstore.entity.User;
+import com.jobstore.jobstore.entity.Admin;
+import com.jobstore.jobstore.entity.Member;
+import com.jobstore.jobstore.repository.MemberRepository;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import com.jobstore.jobstore.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -19,12 +17,14 @@ import java.util.Collection;
 
 @Getter
 @Setter
-public class UserService implements UserDetails {
+public class MemberService implements UserDetails {
+
     @Autowired
-    private UserRepository userRepository;
-    private User user;
-    public UserService(User user) {
-        this.user = user;
+    private MemberRepository memberRepository;
+
+    private Member member;
+    public MemberService(Member member) {
+        this.member = member;
     }
 
     //해당 유저의 권한 목록
@@ -32,7 +32,7 @@ public class UserService implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
         Collection<GrantedAuthority> collector = new ArrayList<>();
-        collector.add(() -> { return user.getRole();}); // 람다식
+        collector.add(() -> { return member.getRole();}); // 람다식
 
         return collector;
     }
@@ -40,12 +40,12 @@ public class UserService implements UserDetails {
     //비밀번호
     @Override
     public String getPassword() {
-        return user.getPassword();
+        return member.getPassword();
     }
     //아이디
     @Override
     public String getUsername() {
-        return user.getUserid();
+        return member.getMemberid();
     }
     //계정 만료 여부 true: 만료 안됨, false : 만료
     @Override
