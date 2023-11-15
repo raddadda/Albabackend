@@ -1,10 +1,14 @@
 package com.jobstore.jobstore.entity;
 
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.*;
+
+
+import java.util.List;
 
 @Entity
 @Table(name = "member")
@@ -27,4 +31,19 @@ public class Member {
     private String role;
     @Column(length = 255, nullable = true)
     private String memberimg;
+
+    @ManyToOne
+    @JoinColumns({
+            @JoinColumn(name = "storeid",referencedColumnName = "storeid")
+    })
+    private Store store;
+
+    @OneToMany(mappedBy = "member")
+    List<Payment> payments;
+
+    @OneToMany(mappedBy = "member")
+    List<Work> works;
+
+    @OneToMany(mappedBy = "member")
+    List<Attendance> attendances;
 }

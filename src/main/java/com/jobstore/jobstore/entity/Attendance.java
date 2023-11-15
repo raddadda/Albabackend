@@ -18,4 +18,10 @@ public class Attendance {
     @Column(length = 255,nullable = false)
     private String registertime;
 
+    @ManyToOne
+    @JoinColumns({
+            @JoinColumn(name = "memberid",referencedColumnName = "memberid"),
+    })
+    private Member member;
+
 }
