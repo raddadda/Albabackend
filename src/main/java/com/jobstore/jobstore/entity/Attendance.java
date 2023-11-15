@@ -20,8 +20,8 @@ public class Attendance {
 
     @ManyToOne
     @JoinColumns({
-            @JoinColumn(name = "adminid",referencedColumnName = "adminid"),
-            @JoinColumn(name = "storeid",referencedColumnName = "storeid"),
+            @JoinColumn(name = "memberid",referencedColumnName = "memberid"),
     })
-    private Admin admin;
+    private Member member;
+
 }

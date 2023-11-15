@@ -13,13 +13,11 @@ public class Payment {
     private long payid;
     @Column(nullable = false)
     private long pay;
-    @Column(length = 255,nullable = false)
-    private String userid;
 
     @ManyToOne
     @JoinColumns({
-            @JoinColumn(name="adminid",referencedColumnName = "adminid"),
-            @JoinColumn(name="storeid",referencedColumnName = "storeid"),
+            @JoinColumn(name = "memberid",referencedColumnName = "memberid"),
+            @JoinColumn(name = "storeid",referencedColumnName = "storeid")
     })
-    private Admin admin;
+    private Member member;
 }
