@@ -16,10 +16,4 @@ public class Payment {
     @Column(length = 255,nullable = false)
     private String userid;
 
-    @ManyToOne
-    @JoinColumns({
-            @JoinColumn(name="adminid",referencedColumnName = "adminid"),
-            @JoinColumn(name="storeid",referencedColumnName = "storeid"),
-    })
-    private Admin admin;
 }

@@ -1,6 +1,5 @@
 package com.jobstore.jobstore.Controller;
 
-import com.jobstore.jobstore.dto.AdminDto;
 import com.jobstore.jobstore.service.AdminService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
