@@ -1,5 +1,6 @@
 package com.jobstore.jobstore.entity;
 
+<<<<<<< HEAD
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -25,4 +26,7 @@ public class Member {
     private String role;
     @Column(length = 255,nullable = true)
     private String memberimg;
+=======
+public class Member {
+>>>>>>> chan2
 }
