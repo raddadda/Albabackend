@@ -1,6 +1,5 @@
 package com.jobstore.jobstore.Controller;
 
-import com.jobstore.jobstore.dto.UserDto;
 import com.jobstore.jobstore.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;

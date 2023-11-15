@@ -13,12 +13,4 @@ public class Work {
     private long workid;
     @Column(length = 255,nullable = false)
     private String worktodo;
-
-    @ManyToOne
-    @JoinColumns({
-            @JoinColumn(name = "adminid",referencedColumnName = "adminid"),
-            @JoinColumn(name = "storeid",referencedColumnName = "storeid"),
-    })
-
-    private Admin admin;
 }

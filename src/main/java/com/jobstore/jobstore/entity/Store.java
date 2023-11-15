@@ -15,7 +15,11 @@ public class Store {
     private long storeid;
     @Column(length = 255,nullable = false)
     private String companyname;
+    @Column(length = 255,nullable = false)
+    private String ceo;
+    @Column(length = 255,nullable = false)
+    private String companynumber;
+    @Column(length = 255,nullable = true)
+    private String companyimg;
 
-    @OneToOne(mappedBy = "store")
-    private Admin admin;
 }

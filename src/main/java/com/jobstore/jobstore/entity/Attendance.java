@@ -18,10 +18,4 @@ public class Attendance {
     @Column(length = 255,nullable = false)
     private String registertime;
 
-    @ManyToOne
-    @JoinColumns({
-            @JoinColumn(name = "adminid",referencedColumnName = "adminid"),
-            @JoinColumn(name = "storeid",referencedColumnName = "storeid"),
-    })
-    private Admin admin;
 }

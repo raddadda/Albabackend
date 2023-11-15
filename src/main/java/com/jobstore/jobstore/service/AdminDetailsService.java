@@ -1,6 +1,5 @@
 package com.jobstore.jobstore.service;
 
-import com.jobstore.jobstore.entity.Admin;
 import com.jobstore.jobstore.repository.AdminRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
