@@ -16,16 +16,17 @@ public class MemberController {
     @Autowired
     MemberService memberService;
     //회원가입
-    @GetMapping("/member/join")
+    @GetMapping("/join")
     @Operation(summary = "문자열 반복", description = "파라미터로 받은 문자열을 2번 반복합니다.")
     public String joinMember(Model model){
         model.addAttribute("memberDto",new MemberDto());
-        return "memberJoin";
+        return "join";
     }
-    @PostMapping("/member/join")
+    @PostMapping("/join")
     public String createMember(MemberDto memberDto){
-        //memberService.join(memberDto);
-        return "memberJoin";
+        memberService.join(memberDto);
+        System.out.println("컨트롤러");
+        return "redirect:/";
     }
     //로그인
     @GetMapping("/login")
