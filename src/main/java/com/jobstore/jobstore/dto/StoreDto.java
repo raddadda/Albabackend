@@ -11,5 +11,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class StoreDto {
     private long storeid;
-    private long companyname;
+    private String companyname;
+    private String ceo;
+    private String companynumber;
+    private String companyimg;
 }
