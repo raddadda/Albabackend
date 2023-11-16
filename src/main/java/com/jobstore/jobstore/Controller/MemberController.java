@@ -9,6 +9,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @Tag(name = "Member", description = "Member CRUD")
@@ -23,10 +25,11 @@ public class MemberController {
         return "join";
     }
     @PostMapping("/join")
-    public String createMember(MemberDto memberDto){
+    @ResponseBody
+    public MemberDto createMember(@RequestBody MemberDto memberDto){
         memberService.join(memberDto);
         System.out.println("컨트롤러");
-        return "redirect:/";
+        return memberDto;
     }
     //로그인
     @GetMapping("/login")
