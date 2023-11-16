@@ -9,10 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class StoreDto {
-    private long storeid;
-    private String companyname;
-    private String ceo;
+public class RequestDto {
+
     private String companynumber;
-    private String companyimg;
+
 }
