@@ -19,7 +19,6 @@ public class MemberController {
     MemberService memberService;
     //회원가입
     @GetMapping("/join")
-    @Operation(summary = "문자열 반복", description = "파라미터로 받은 문자열을 2번 반복합니다.")
     public String joinMember(Model model){
         model.addAttribute("memberDto",new MemberDto());
         return "join";
@@ -37,17 +36,20 @@ public class MemberController {
         return "login";
     }
     @PostMapping("/all")
+    @Operation(summary = "문자열 반복", description = "파라미터로 받은 문자열을 2번 반복합니다.")
     @ResponseBody
     public List<MemberDto> findAllMember(@RequestBody MemberDto memberDto){
         return memberService.findAllMember();
     }
 
     @PatchMapping("/update")
+    @Operation(summary = "문자열 반복", description = "파라미터로 받은 문자열을 2번 반복합니다.")
     @ResponseBody
     public Member updateMember(@RequestBody MemberDto memberDto){
         return memberService.updateMember(memberDto);
     }
     @DeleteMapping("/delete/{memberid}")
+    @Operation(summary = "문자열 반복", description = "파라미터로 받은 문자열을 2번 반복합니다.")
     @ResponseBody
     public String deleteMember(@PathVariable String memberid){
         return memberService.deleteBymemberid(memberid);
