@@ -2,6 +2,8 @@ package com.jobstore.jobstore.Controller;
 
 import com.jobstore.jobstore.dto.StoreDto;
 import com.jobstore.jobstore.service.InvitationCodeService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,12 +14,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
+@Tag(name = "InvitationCode", description = "Invitation code Generator")
 public class InvitationCodeController {
 
         @Autowired
         private InvitationCodeService invitationCodeService;
 
         @PostMapping("/generate")
+        @Operation(summary = "초대코드", description = "Company Number 일치 여부에 따라서 초대 코드가 반환 됩니다.")
         @ResponseBody
         public ResponseEntity<String> generateInvitationCode(@RequestBody StoreDto companynumber) {
             System.out.println(companynumber);
