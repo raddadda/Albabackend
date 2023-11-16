@@ -1,14 +1,16 @@
 package com.jobstore.jobstore.Controller;
 
 import com.jobstore.jobstore.dto.MemberDto;
+import com.jobstore.jobstore.entity.Member;
 import com.jobstore.jobstore.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 @Tag(name = "Member", description = "Member CRUD")
@@ -33,5 +35,21 @@ public class MemberController {
     public String loginMember(Model model){
         // model.addAttribute("loginDto",new loginDto());
         return "login";
+    }
+    @PostMapping("/all")
+    @ResponseBody
+    public List<MemberDto> findAllMember(@RequestBody MemberDto memberDto){
+        return memberService.findAllMember();
+    }
+
+    @PatchMapping("/update")
+    @ResponseBody
+    public Member updateMember(@RequestBody MemberDto memberDto){
+        return memberService.updateMember(memberDto);
+    }
+    @DeleteMapping("/delete/{memberid}")
+    @ResponseBody
+    public String deleteMember(@PathVariable String memberid){
+        return memberService.deleteBymemberid(memberid);
     }
 }
