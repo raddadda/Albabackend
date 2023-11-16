@@ -15,10 +15,15 @@ public interface MemberRepository extends JpaRepository<Member,String> {
     Optional<Member> findByMemberid(String memberid);
 
 
+    Optional<Member> findOneWithAuthByMemberid(String memberid);
+    //Optional<User> findByUserid(String userid);
+
+
 
     //memberid기반삭제
     @Transactional // transaction 내부
     @Modifying // 조회 x
     @Query("DELETE FROM Member m WHERE m.memberid = :memberid")
     int deleteByMemberid(@Param("memberid") String memberid);
+
 }
