@@ -14,10 +14,6 @@ public class JwtTokenUtil {
         //claim에 loginId를 넣어 줌으로써 나중에 loginId를 꺼낼 수 있음
         Claims claims = Jwts.claims();
         claims.put("loginId",loginId);
-        System.out.println("claims"+claims);
-        System.out.println("new Date(System.currentTimeMillis()):"+new Date(System.currentTimeMillis()));
-        System.out.println("new Date(System.currentTimeMillis() + expireTimeMs)"+new Date(System.currentTimeMillis() + expireTimeMs));
-        System.out.println("SignatureAlgorithm.HS256: "+SignatureAlgorithm.HS256+"key: "+key);
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(new Date(System.currentTimeMillis()))

@@ -1,12 +1,9 @@
 package com.jobstore.jobstore.Controller;
 
 import com.jobstore.jobstore.dto.LoginDto;
-import com.jobstore.jobstore.dto.MemberDto;
-import com.jobstore.jobstore.dto.RequestDto;
-import com.jobstore.jobstore.dto.StoreDto;
 import com.jobstore.jobstore.dto.request.AdminjoinDto;
 import com.jobstore.jobstore.dto.request.UserjoinDto;
-import com.jobstore.jobstore.dto.response.AuthresponseDto;
+import com.jobstore.jobstore.dto.response.ResultDto;
 import com.jobstore.jobstore.entity.Member;
 import com.jobstore.jobstore.jwt.JwtTokenUtil;
 import com.jobstore.jobstore.service.MemberService;
@@ -19,19 +16,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import org.springframework.web.bind.annotation.*;
-
-
-import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-//@RequestMapping("/jwt-login")
 @Tag(name = "Auth", description = "Auth CRUD")
-public class JwtLoginApiController {
+public class AuthController {
 
     private final MemberService memberService;
 
@@ -42,27 +32,32 @@ public class JwtLoginApiController {
     //admin
     @PostMapping("/admin/join")
     @Operation(summary = "admin 회원가입", description = "admin 전용 회원가입입니다.")
-    public ResponseEntity joinAdmin(
+    public ResponseEntity<ResultDto<Object>> joinAdmin(
         @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "요청파라미터", required = true,
             content = @Content(schema=@Schema(implementation = AdminjoinDto.class)))
-
         @RequestBody AdminjoinDto adminjoinDto
     ) {
-        memberService.joinAdmin(adminjoinDto);
-        return ResponseEntity.ok("성공");
+        //ID 중복체크
+        if(!memberService.duplicateMemberid(adminjoinDto.getMemberid())) {
+            memberService.joinAdmin(adminjoinDto);
+            return ResponseEntity.ok(ResultDto.of("resultCode","회원가입이 성공했습니다.", adminjoinDto));
+        }
+        return ResponseEntity.ok(ResultDto.of("resultCode","회원가입이 실패했습니다.", null));
     }
     //user
     @PostMapping("/user/join")
     @Operation(summary = "user 회원가입", description = "user 전용 회원가입입니다.")
-    public ResponseEntity joinUser(
-
+    public ResponseEntity<ResultDto<Object>> joinUser(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "요청파라미터", required = true,
                     content = @Content(schema=@Schema(implementation = UserjoinDto.class)))
-
             @RequestBody UserjoinDto userjoinDto
     ) {
-        memberService.joinUser(userjoinDto);
-        return ResponseEntity.ok("성공");
+        //ID 중복체크
+        if(!memberService.duplicateMemberid(userjoinDto.getMemberid())) {
+            memberService.joinUser(userjoinDto);
+            return ResponseEntity.ok(ResultDto.of("resultCode","회원가입이 성공했습니다.", userjoinDto));
+        }
+        return ResponseEntity.ok(ResultDto.of("resultCode","회원가입이 실패했습니다.", null));
     }
 
     /**
@@ -74,10 +69,7 @@ public class JwtLoginApiController {
     public String login(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "요청파라미터", required = true,
                     content = @Content(schema=@Schema(implementation = LoginDto.class)))
-
-
             @RequestBody LoginDto loginDto) {
-
 
         Member member = memberService.login(loginDto);
 

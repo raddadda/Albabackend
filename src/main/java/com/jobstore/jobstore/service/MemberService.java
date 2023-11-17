@@ -31,18 +31,12 @@ public class MemberService  {
     private StoreRepository storeRepository;
 
     PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+
     /**
      회원가입
      */
     //admin
-    public void joinAdmin(AdminjoinDto adminjoinDto
-                          //MemberDto memberDto , StoreDto storeDto
-    ){
-
-//        System.out.println("엔코더 전"+memberDto.getPassword());
-//        System.out.println("엔코더 후"+passwordEncoder.encode(memberDto.getPassword()));
-//
-//        System.out.println("@@@@@@@"+param.get("memberid"));
+    public void joinAdmin(AdminjoinDto adminjoinDto){
         Store storeEntity = new Store();
         storeEntity.setCompanyname(adminjoinDto.getCompanyname());
         storeEntity.setCeo(adminjoinDto.getCeo());
@@ -55,17 +49,15 @@ public class MemberService  {
     }
     //join
     public void joinUser(UserjoinDto userjoinDto){
-        System.out.println("엔코더 전"+userjoinDto.getPassword());
-        System.out.println("엔코더 후"+passwordEncoder.encode(userjoinDto.getPassword()));
         memberRepository.save(userjoinDto.toEntity(passwordEncoder.encode(userjoinDto.getPassword())));
     }
-
+    public boolean duplicateMemberid(String memberid) {
+        return memberRepository.existsByMemberid(memberid);
+    }
     /**
      로그인
      */
     public Member login(LoginDto loginDto) {
-        System.out.println("id : "+loginDto.getMemberid());
-        System.out.println("pw : "+loginDto.getPassword());
         Optional<Member> optionalUser = memberRepository.findByMemberid(loginDto.getMemberid());
 
         // loginId와 일치하는 User가 없으면 null return
@@ -76,12 +68,7 @@ public class MemberService  {
         Member member = optionalUser.get();
 
         // 찾아온 User의 password와 입력된 password가 다르면 null return
-        System.out.println("레포지토리 조회 결과 : "+optionalUser);
         if(!passwordEncoder.matches(loginDto.getPassword(), member.getPassword())) { return null; }
-        System.out.println("2222");
-        //        if(!member.getPassword().equals(loginDto.getPassword())) {
-        //            return null;
-        //        }
 
         return member;
     }
@@ -95,6 +82,9 @@ public class MemberService  {
         return optionalUser.get();
     }
 
+    /**
+    회원 전체 조회
+     */
     public List<MemberDto> findAllMember(){
         List<Member> result=memberRepository.findAll();
         List<MemberDto> list =new ArrayList<MemberDto>();
@@ -113,7 +103,10 @@ public class MemberService  {
     //멤버id존재유무에 따라 memberid가 일치하면 다른정보 수정이 가능하다.
     //그리고 수정이 완료되면 그 수정이 완료된 객체를 반환
     //프론트에서 보기편하게^^
-    //수정
+
+    /**
+     회원 수정
+     */
     public Member updateMember(MemberDto memberDto){
         Member existingMember = memberRepository.findByMemberid(memberDto.getMemberid())
                 .orElseThrow(() -> new RuntimeException("해당 멤버아이디는 존재하지 않는 멤버 아이디입니다"));
@@ -124,6 +117,10 @@ public class MemberService  {
     }
     //아이디가 존재하면 행의갯수는 0보다크니까 삭제성공
     //존재하지 않으면 행의갯수는 0이니까 삭제 실패
+
+    /**
+     회원 삭제
+     */
     //admin유저 삭제
     public String deleteBymemberid(String memberid,long storeid) {
         int deletedRows = memberRepository.deleteByMemberid(memberid);

@@ -30,7 +30,6 @@ public class InvitationCodeController {
                         content = @Content(
                                 schema=@Schema(implementation = RequestDto.class)))
                 @RequestBody StoreDto companynumber) {
-            System.out.println(companynumber);
             String invitationCode = invitationCodeService.generateInvitationCode(companynumber);
             //companynumber와 일치하면 초대코드 발급 일치안하면 Invitation code not found
             //밑에 로직도 프론트랑 연동시 교체

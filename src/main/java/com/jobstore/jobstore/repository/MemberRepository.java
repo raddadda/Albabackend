@@ -18,7 +18,7 @@ public interface MemberRepository extends JpaRepository<Member,String> {
     Optional<Member> findOneWithAuthByMemberid(String memberid);
     //Optional<User> findByUserid(String userid);
 
-
+    boolean existsByMemberid(String memberid);
 
     //memberid기반삭제
     @Transactional // transaction 내부
