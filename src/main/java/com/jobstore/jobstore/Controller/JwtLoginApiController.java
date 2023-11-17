@@ -6,10 +6,7 @@ import com.jobstore.jobstore.entity.Member;
 import com.jobstore.jobstore.jwt.JwtTokenUtil;
 import com.jobstore.jobstore.service.MemberService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class JwtLoginApiController {
     private final MemberService memberService;
     @PostMapping("/jwt-login/join")
-    public String join(@RequestBody MemberDto memberDto) {
+    public MemberDto join(@RequestBody MemberDto memberDto) {
 
 //        // loginId 중복 체크
 //        if(memberService.checkLoginIdDuplicate(joinRequest.getLoginId())) {
@@ -33,9 +30,8 @@ public class JwtLoginApiController {
 //        }
 
         memberService.join(memberDto);
-        return "회원가입 성공";
+        return memberDto;
     }
-
     @PostMapping("/jwt-login/login")
     public String login(@RequestBody LoginDto loginDto) {
 

@@ -58,9 +58,9 @@ public class MemberService  {
         System.out.println("레포지토리 조회 결과 : "+optionalUser);
         if(!passwordEncoder.matches(loginDto.getPassword(), member.getPassword())) { return null; }
         System.out.println("2222");
-//        if(!member.getPassword().equals(loginDto.getPassword())) {
-//            return null;
-//        }
+        //        if(!member.getPassword().equals(loginDto.getPassword())) {
+        //            return null;
+        //        }
 
         return member;
     }

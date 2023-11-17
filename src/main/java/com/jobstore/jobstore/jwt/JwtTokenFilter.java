@@ -15,6 +15,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -23,6 +24,20 @@ import java.util.List;
 public class JwtTokenFilter extends OncePerRequestFilter {
     private final MemberService memberService;
     private final String secretKey;
+
+
+    // OncePerRequestFilter 특정 url 제외시키기
+    @Override
+    protected boolean shouldNotFilter (HttpServletRequest request) throws ServletException {
+
+        if (request.getMethod().equals("OPTIONS")) {
+            return true;
+        }
+        String[] excludePath = {"/jwt-login/join", "/**"};
+        String path = request.getRequestURI();
+        return Arrays.stream(excludePath).anyMatch(path::startsWith);
+    }
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
@@ -41,6 +56,8 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
         // 전송받은 값에서 'Bearer ' 뒷부분(Jwt Token) 추출
         String token = authorizationHeader.split(" ")[1];
+        
+        
 
         // 전송받은 Jwt Token이 만료되었으면 => 다음 필터 진행(인증 X)
         if(JwtTokenUtil.isExpired(token, secretKey)) {
