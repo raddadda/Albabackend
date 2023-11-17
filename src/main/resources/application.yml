@@ -1,3 +1,6 @@
+server:
+  port: 8080
+# spring doc
 springdoc:
   api-docs:
     enabled: true
@@ -9,3 +12,17 @@ springdoc:
     operationsSorter: method
     disable-swagger-default-url: true
     display-request-duration: true
+
+# aws-cloud
+cloud:
+  aws:
+    credentials:
+      # accessKey: ${AKIA5EK2XZJUKDDHOFPV}       # AWS IAM AccessKey 적기
+      # secretKey: ${gXNi+uzOvH0OOlMNQ/XXjsibxsSnxVxMaeU0zhpT}   # AWS IAM SecretKey 적기
+    s3:
+      bucket: 버킷 이름    # ex) marryting-gyunny
+      dir: S3 디렉토리 이름 # ex) /gyunny
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false

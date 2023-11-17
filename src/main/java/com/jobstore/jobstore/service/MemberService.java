@@ -30,6 +30,8 @@ public class MemberService  {
     @Autowired
     private StoreRepository storeRepository;
 
+    @Autowired
+    private StoreRepository storeRepository;
     PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
     /**
      회원가입
@@ -79,9 +81,9 @@ public class MemberService  {
         System.out.println("레포지토리 조회 결과 : "+optionalUser);
         if(!passwordEncoder.matches(loginDto.getPassword(), member.getPassword())) { return null; }
         System.out.println("2222");
-//        if(!member.getPassword().equals(loginDto.getPassword())) {
-//            return null;
-//        }
+        //        if(!member.getPassword().equals(loginDto.getPassword())) {
+        //            return null;
+        //        }
 
         return member;
     }
@@ -94,6 +96,7 @@ public class MemberService  {
 
         return optionalUser.get();
     }
+
     public List<MemberDto> findAllMember(){
         List<Member> result=memberRepository.findAll();
         List<MemberDto> list =new ArrayList<MemberDto>();
@@ -116,20 +119,32 @@ public class MemberService  {
     public Member updateMember(MemberDto memberDto){
         Member existingMember = memberRepository.findByMemberid(memberDto.getMemberid())
                 .orElseThrow(() -> new RuntimeException("해당 멤버아이디는 존재하지 않는 멤버 아이디입니다"));
-        existingMember.setPassword(memberDto.getPassword());
+        existingMember.setPassword(passwordEncoder.encode(memberDto.getPassword()));
         existingMember.setPhonenumber(memberDto.getPhonenumber());
         existingMember.setName(memberDto.getName());
         return memberRepository.save(existingMember);
     }
     //아이디가 존재하면 행의갯수는 0보다크니까 삭제성공
     //존재하지 않으면 행의갯수는 0이니까 삭제 실패
-    public String deleteBymemberid(String memberid) {
+    //admin유저 삭제
+    public String deleteBymemberid(String memberid,long storeid) {
         int deletedRows = memberRepository.deleteByMemberid(memberid);
-        if (deletedRows > 0) {
+        int storeDelteRows=storeRepository.deleteByStoreid(storeid);
+        if (deletedRows > 0 && storeDelteRows > 0) {
             return memberid + "님 탈퇴 성공";
+        } else if (deletedRows > 0 && storeDelteRows > 0) {
+            return "잘못된 접근 방식입니다.";
         } else {
             return "삭제하고자하는 멤버아이디 정보가 없습니다.";
         }
-
+    }
+    //일반유저 삭제
+    public String deleteByUserto_memberid(String memberid) {
+        int deletedRows=memberRepository.deleteByMemberid(memberid);
+        if(deletedRows > 0){
+            return "유저: "+memberid+"님 탈퇴 성공";
+        }else{
+            return "삭제하고자하는 유저정보가 없습니다";
+        }
     }
 }

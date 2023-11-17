@@ -13,6 +13,7 @@ import java.util.List;
 @Setter
 public class Store {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long storeid;
     @Column(length = 255,nullable = false)
     private String companyname;
@@ -22,6 +23,8 @@ public class Store {
     private String companynumber;
     @Column(length = 255,nullable = true)
     private String companyimg;
+    @Column(length = 255,nullable = true)
+    private String invitecode;
 
     @OneToMany(mappedBy = "store")
     List<Member> members;

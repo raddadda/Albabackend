@@ -17,13 +17,6 @@ public class StoreDto {
     private String companynumber;
     private String companyimg;
 
-//    public Store toEntity(){
-//        return Store.builder()
-//                .companyname(this.companyname)
-//                .ceo(this.ceo)
-//                .companynumber(this.companynumber)
-//                .companyimg(this.companyimg)
-//                .build();
-//
-//    }
+    private String invitecode;
+
 }
