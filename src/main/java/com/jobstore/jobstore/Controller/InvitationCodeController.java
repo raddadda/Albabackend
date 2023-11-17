@@ -22,8 +22,6 @@ public class InvitationCodeController {
         @Autowired
         private InvitationCodeService invitationCodeService;
 
-
-
         @PostMapping("/generate")
         @Operation(summary = "초대코드", description = "Company Number 일치 여부에 따라서 초대 코드가 반환 됩니다.")
         @ResponseBody

@@ -25,24 +25,24 @@ public class MemberController {
     @Autowired
     MemberService memberService;
     //회원가입
-    @GetMapping("/join")
-    public String joinMember(Model model){
-        model.addAttribute("memberDto",new MemberDto());
-        return "join";
-    }
-    @PostMapping("/join")
-    @ResponseBody
-    public MemberDto createMember(@RequestBody MemberDto memberDto){
-        memberService.join(memberDto);
-        System.out.println("컨트롤러");
-        return memberDto;
-    }
+//    @GetMapping("/join")
+//    public String joinMember(Model model){
+//        model.addAttribute("memberDto",new MemberDto());
+//        return "join";
+//    }
+//    @PostMapping("/join")
+//    @ResponseBody
+//    public MemberDto createMember(@RequestBody MemberDto memberDto){
+//        memberService.join(memberDto);
+//        System.out.println("컨트롤러");
+//        return memberDto;
+//    }
     //로그인
-    @GetMapping("/login")
-    public String loginMember(Model model){
-        // model.addAttribute("loginDto",new loginDto());
-        return "login";
-    }
+//    @GetMapping("/login")
+//    public String loginMember(Model model){
+//        // model.addAttribute("loginDto",new loginDto());
+//        return "login";
+//    }
     @PostMapping("/all")
     @Operation(summary = "전체유저조회", description = "전체유저정보가 list형식으로 반환됩니다.")
     @ResponseBody
