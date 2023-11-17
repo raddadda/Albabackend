@@ -63,12 +63,13 @@ public class MemberService  {
     }
 
     public Member getLoginUserByLoginId(String loginId) {
-        if(loginId == null) return null;
+        if (loginId == null) return null;
 
         Optional<Member> optionalUser = memberRepository.findByMemberid(loginId);
-        if(optionalUser.isEmpty()) return null;
+        if (optionalUser.isEmpty()) return null;
 
         return optionalUser.get();
+    }
 
     public List<MemberDto> findAllMember(){
         List<Member> result=memberRepository.findAll();
@@ -92,7 +93,7 @@ public class MemberService  {
     public Member updateMember(MemberDto memberDto){
         Member existingMember = memberRepository.findByMemberid(memberDto.getMemberid())
                 .orElseThrow(() -> new RuntimeException("해당 멤버아이디는 존재하지 않는 멤버 아이디입니다"));
-        existingMember.setPassword(memberDto.getPassword());
+        existingMember.setPassword(passwordEncoder.encode(memberDto.getPassword()));
         existingMember.setPhonenumber(memberDto.getPhonenumber());
         existingMember.setName(memberDto.getName());
         return memberRepository.save(existingMember);

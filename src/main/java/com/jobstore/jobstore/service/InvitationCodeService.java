@@ -14,16 +14,20 @@ import java.util.Base64;
 public class InvitationCodeService {
     @Autowired
     StoreRepository storeRepository;
-    public String generateInvitationCode(StoreDto companynumber) {
-        String a = String.valueOf(companynumber.getCompanynumber());
-        System.out.println("conde"+ a);
-        Store store = storeRepository.findByCompanynumber(a);
-        if (store != null) {
-            String code = generateCodeFromCompanyName(a);
-            System.out.println("code======>"+code);
+    public String generateInvitationCode(StoreDto storeDto) {
+        String companynumber = storeDto.getCompanynumber();
+
+        Store existingStore = storeRepository.findByCompanynumber(companynumber);
+        if (existingStore != null) {
+            // 초대코드 생성
+            String code = generateCodeFromCompanyName(companynumber);
+            existingStore.setInvitecode(code); // 초대코드 설정
+
+            storeRepository.save(existingStore); // 변경된 초대코드를 DB에 저장
+
             return code;
         } else {
-          return null;
+            return null;
         }
     }
 
