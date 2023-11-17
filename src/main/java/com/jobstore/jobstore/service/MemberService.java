@@ -30,8 +30,6 @@ public class MemberService  {
     @Autowired
     private StoreRepository storeRepository;
 
-    @Autowired
-    private StoreRepository storeRepository;
     PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
     /**
      회원가입

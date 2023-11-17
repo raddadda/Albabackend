@@ -16,10 +16,7 @@ public class UserjoinDto {
     private String password;
     private String phonenumber;
     private String name;
-    private String role;
     private String memberimg;
-
-
 
     public Member toEntity(String encodedPassword){
         return Member.builder()
