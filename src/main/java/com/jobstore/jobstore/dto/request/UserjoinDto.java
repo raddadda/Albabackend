@@ -1,14 +1,17 @@
-package com.jobstore.jobstore.dto;
-
+package com.jobstore.jobstore.dto.request;
 
 import com.jobstore.jobstore.entity.Member;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MemberDto {
+public class UserjoinDto {
+
     private String memberid;
     private String password;
     private String phonenumber;
@@ -25,6 +28,5 @@ public class MemberDto {
                 .phonenumber(this.phonenumber)
                 .name(this.name)
                 .role("USER").build();
-
     }
 }

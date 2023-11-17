@@ -64,8 +64,8 @@ public class SecurityConfig {
                     formLogin
                             .usernameParameter("username")
                             .passwordParameter("password")
-                            .loginPage("/login") // 인증필요한 주소로 접속하면 이 주소로 이동시킴
-                            .loginProcessingUrl("/login") // 스프링 시큐리티가 로그인 자동 진행
+                            .loginPage("/login1") // 인증필요한 주소로 접속하면 이 주소로 이동시킴
+                            .loginProcessingUrl("/login1") // 스프링 시큐리티가 로그인 자동 진행
                             .defaultSuccessUrl("/"); // 로그인이 정상적이면 "/" 로 이동
                 });
 

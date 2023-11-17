@@ -3,7 +3,11 @@ package com.jobstore.jobstore.service;
 
 import com.jobstore.jobstore.dto.LoginDto;
 import com.jobstore.jobstore.dto.MemberDto;
+import com.jobstore.jobstore.dto.StoreDto;
+import com.jobstore.jobstore.dto.request.AdminjoinDto;
+import com.jobstore.jobstore.dto.request.UserjoinDto;
 import com.jobstore.jobstore.entity.Member;
+import com.jobstore.jobstore.entity.Store;
 import com.jobstore.jobstore.repository.MemberRepository;
 import com.jobstore.jobstore.repository.StoreRepository;
 import lombok.Getter;
@@ -16,32 +20,51 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
-
-import java.util.List;
-
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class MemberService  {
 
     @Autowired
     private MemberRepository memberRepository;
+    @Autowired
+    private StoreRepository storeRepository;
 
     @Autowired
     private StoreRepository storeRepository;
     PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    /**
+     회원가입
+     */
+    //admin
+    public void joinAdmin(AdminjoinDto adminjoinDto
+                          //MemberDto memberDto , StoreDto storeDto
+    ){
 
-    public void join(MemberDto memberDto){
-        System.out.println("엔코더 전"+memberDto.getPassword());
-        System.out.println("엔코더 후"+passwordEncoder.encode(memberDto.getPassword()));
+//        System.out.println("엔코더 전"+memberDto.getPassword());
+//        System.out.println("엔코더 후"+passwordEncoder.encode(memberDto.getPassword()));
+//
+//        System.out.println("@@@@@@@"+param.get("memberid"));
+        Store storeEntity = new Store();
+        storeEntity.setCompanyname(adminjoinDto.getCompanyname());
+        storeEntity.setCeo(adminjoinDto.getCeo());
+        storeEntity.setCompanynumber(adminjoinDto.getCompanynumber());
+        storeEntity.setCompanyimg(adminjoinDto.getCompanyimg());
 
-        memberRepository.save(memberDto.toEntity(passwordEncoder.encode(memberDto.getPassword())));
+        memberRepository.save(adminjoinDto.toEntity(passwordEncoder.encode(adminjoinDto.getPassword())));
 
+        storeRepository.save(storeEntity);
+    }
+    //join
+    public void joinUser(UserjoinDto userjoinDto){
+        System.out.println("엔코더 전"+userjoinDto.getPassword());
+        System.out.println("엔코더 후"+passwordEncoder.encode(userjoinDto.getPassword()));
+        memberRepository.save(userjoinDto.toEntity(passwordEncoder.encode(userjoinDto.getPassword())));
     }
 
+    /**
+     로그인
+     */
     public Member login(LoginDto loginDto) {
         System.out.println("id : "+loginDto.getMemberid());
         System.out.println("pw : "+loginDto.getPassword());
