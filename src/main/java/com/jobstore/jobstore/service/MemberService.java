@@ -55,20 +55,21 @@ public class MemberService  {
         System.out.println("레포지토리 조회 결과 : "+optionalUser);
         if(!passwordEncoder.matches(loginDto.getPassword(), member.getPassword())) { return null; }
         System.out.println("2222");
-//        if(!member.getPassword().equals(loginDto.getPassword())) {
-//            return null;
-//        }
+        //        if(!member.getPassword().equals(loginDto.getPassword())) {
+        //            return null;
+        //        }
 
         return member;
     }
 
     public Member getLoginUserByLoginId(String loginId) {
-        if(loginId == null) return null;
+        if (loginId == null) return null;
 
         Optional<Member> optionalUser = memberRepository.findByMemberid(loginId);
-        if(optionalUser.isEmpty()) return null;
+        if (optionalUser.isEmpty()) return null;
 
         return optionalUser.get();
+    }
 
     public List<MemberDto> findAllMember(){
         List<Member> result=memberRepository.findAll();

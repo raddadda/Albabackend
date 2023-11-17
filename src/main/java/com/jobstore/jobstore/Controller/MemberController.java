@@ -21,6 +21,7 @@ import java.util.List;
 
 @Controller
 @Tag(name = "Member", description = "Member CRUD")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class MemberController {
     @Autowired
     MemberService memberService;
