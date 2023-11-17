@@ -5,6 +5,7 @@ import com.jobstore.jobstore.dto.LoginDto;
 import com.jobstore.jobstore.dto.MemberDto;
 import com.jobstore.jobstore.entity.Member;
 import com.jobstore.jobstore.repository.MemberRepository;
+import com.jobstore.jobstore.repository.StoreRepository;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,8 @@ public class MemberService  {
     @Autowired
     private MemberRepository memberRepository;
 
+    @Autowired
+    private StoreRepository storeRepository;
     PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
     public void join(MemberDto memberDto){
@@ -93,20 +96,32 @@ public class MemberService  {
     public Member updateMember(MemberDto memberDto){
         Member existingMember = memberRepository.findByMemberid(memberDto.getMemberid())
                 .orElseThrow(() -> new RuntimeException("해당 멤버아이디는 존재하지 않는 멤버 아이디입니다"));
-        existingMember.setPassword(memberDto.getPassword());
+        existingMember.setPassword(passwordEncoder.encode(memberDto.getPassword()));
         existingMember.setPhonenumber(memberDto.getPhonenumber());
         existingMember.setName(memberDto.getName());
         return memberRepository.save(existingMember);
     }
     //아이디가 존재하면 행의갯수는 0보다크니까 삭제성공
     //존재하지 않으면 행의갯수는 0이니까 삭제 실패
-    public String deleteBymemberid(String memberid) {
+    //admin유저 삭제
+    public String deleteBymemberid(String memberid,long storeid) {
         int deletedRows = memberRepository.deleteByMemberid(memberid);
-        if (deletedRows > 0) {
+        int storeDelteRows=storeRepository.deleteByStoreid(storeid);
+        if (deletedRows > 0 && storeDelteRows > 0) {
             return memberid + "님 탈퇴 성공";
+        } else if (deletedRows > 0 && storeDelteRows > 0) {
+            return "잘못된 접근 방식입니다.";
         } else {
             return "삭제하고자하는 멤버아이디 정보가 없습니다.";
         }
-
+    }
+    //일반유저 삭제
+    public String deleteByUserto_memberid(String memberid) {
+        int deletedRows=memberRepository.deleteByMemberid(memberid);
+        if(deletedRows > 0){
+            return "유저: "+memberid+"님 탈퇴 성공";
+        }else{
+            return "삭제하고자하는 유저정보가 없습니다";
+        }
     }
 }
