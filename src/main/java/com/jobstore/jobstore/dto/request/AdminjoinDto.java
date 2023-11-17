@@ -31,6 +31,5 @@ public class AdminjoinDto {
                 .phonenumber(this.phonenumber)
                 .name(this.name)
                 .role("ADMIN").build();
-
     }
 }
