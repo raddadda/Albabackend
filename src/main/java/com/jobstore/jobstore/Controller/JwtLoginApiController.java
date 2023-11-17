@@ -2,7 +2,6 @@ package com.jobstore.jobstore.Controller;
 
 import com.jobstore.jobstore.dto.LoginDto;
 import com.jobstore.jobstore.dto.MemberDto;
-import com.jobstore.jobstore.dto.RequestDto;
 import com.jobstore.jobstore.dto.StoreDto;
 import com.jobstore.jobstore.dto.request.AdminjoinDto;
 import com.jobstore.jobstore.dto.request.UserjoinDto;
