@@ -56,10 +56,16 @@ public class MemberController {
     public Member updateMember(@RequestBody MemberDto memberDto){
         return memberService.updateMember(memberDto);
     }
-    @DeleteMapping("/delete/{memberid}")
-    @Operation(summary = "memberid에대한 삭제", description = "memberid삭제여부를 문자열값으로 반환합니다.")
+    @DeleteMapping("/delete/{memberid}/{storeid}")
+    @Operation(summary = "Admin:memberid와 storeid 에대한 삭제", description = "memberid 삭제여부를 문자열값으로 반환합니다.")
     @ResponseBody
-    public String deleteMember(@PathVariable String memberid){
-        return memberService.deleteBymemberid(memberid);
+    public String deleteAdmin(@PathVariable String memberid,@PathVariable long storeid){
+        return memberService.deleteBymemberid(memberid,storeid);
+    }
+    @DeleteMapping("/delete/{memberid}")
+    @Operation(summary = "User:memberid 에대한 삭제", description = "memberid 삭제여부를 문자열값으로 반환합니다.")
+    @ResponseBody
+    public String deleteUser(@PathVariable String memberid){
+        return memberService.deleteByUserto_memberid(memberid);
     }
 }
