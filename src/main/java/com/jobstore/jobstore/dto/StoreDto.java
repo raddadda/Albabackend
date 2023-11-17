@@ -15,4 +15,5 @@ public class StoreDto {
     private String ceo;
     private String companynumber;
     private String companyimg;
+    private String invitecode;
 }
