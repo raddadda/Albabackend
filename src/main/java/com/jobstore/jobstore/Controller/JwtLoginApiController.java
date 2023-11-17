@@ -32,7 +32,6 @@ public class JwtLoginApiController {
         memberService.join(memberDto);
         return memberDto;
     }
-
     @PostMapping("/jwt-login/login")
     public String login(@RequestBody LoginDto loginDto) {
 
