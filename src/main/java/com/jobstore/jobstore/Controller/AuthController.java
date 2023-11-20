@@ -59,21 +59,12 @@ public class AuthController {
     ) {
         //ID 중복체크
         if(!memberService.duplicateMemberid(userjoinDto.getMemberid())) {
-            memberService.joinUser(userjoinDto);
-          //  System.out.println("초대코드가 store에 존재합니다 : "+userjoinDto.getInvitecode());
-            //초대코드 체크
+            if(memberService.joinUser(userjoinDto)){
+                return ResponseEntity.ok(ResultDto.of("resultCode","회원가입이 성공했습니다.", userjoinDto));
+            }else {
+                return ResponseEntity.ok(ResultDto.of("resultCode2","회원가입이 실패(초대코드 인증 실패)", null));
+            }
 
-//                System.out.println("초대코드가 store에 존재합니다 : "+userjoinDto.getInvitecode());
-//                //System.out.println("store@@@ : "+storeRepository.findByStoreid(userjoinDto.getInvitecode()));
-//                Store store=storeRepository.findByInvitecodeStoreid(userjoinDto.getInvitecode());
-//
-//                Member member = new Member();
-//                member.setStore(store);
-//
-//                memberRepository.save(member);
-//                //storeRepository.save(storeRepository.findByStoreid());
-
-            return ResponseEntity.ok(ResultDto.of("resultCode","회원가입이 성공했습니다.", userjoinDto));
         }
 
 
