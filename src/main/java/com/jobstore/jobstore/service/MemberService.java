@@ -51,14 +51,18 @@ public class MemberService  {
 
     }
     //join
-    public void joinUser(UserjoinDto userjoinDto){
+    public boolean joinUser(UserjoinDto userjoinDto){
         Store store = storeRepository.findByInvitecode(userjoinDto.getInvitecode());
+        //초대코드 유효성 검사
         if (store != null) {
             Member member = userjoinDto.toEntity(passwordEncoder.encode(userjoinDto.getPassword()));
             member.setStore(store);
             memberRepository.save(member);
+            return true;
         }
+        return false;
     }
+
     public boolean duplicateMemberid(String memberid) {
         return memberRepository.existsByMemberid(memberid);
     }
