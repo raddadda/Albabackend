@@ -1,6 +1,6 @@
 package com.jobstore.jobstore.Controller;
 
-import com.jobstore.jobstore.dto.RequestDto;
+import com.jobstore.jobstore.dto.request.InvitationCodeDto;
 import com.jobstore.jobstore.dto.StoreDto;
 import com.jobstore.jobstore.service.InvitationCodeService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,7 +28,7 @@ public class InvitationCodeController {
         public ResponseEntity<String> generateInvitationCode(
                 @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "요청파라미터", required = true,
                         content = @Content(
-                                schema=@Schema(implementation = RequestDto.class)))
+                                schema=@Schema(implementation = InvitationCodeDto.class)))
                 @RequestBody StoreDto companynumber) {
             String invitationCode = invitationCodeService.generateInvitationCode(companynumber);
             //companynumber와 일치하면 초대코드 발급 일치안하면 Invitation code not found

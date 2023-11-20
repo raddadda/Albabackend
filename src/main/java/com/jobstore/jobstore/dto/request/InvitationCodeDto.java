@@ -1,4 +1,4 @@
-package com.jobstore.jobstore.dto;
+package com.jobstore.jobstore.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RequestDto {
+public class InvitationCodeDto {
 
     private String companynumber;
 
