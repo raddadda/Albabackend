@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+
+<script>
+    async function fileFormPost (event) {
+        event.preventDefault();
+        const file = document.querySelector('#file');
+        const formData = new FormData();
+        console.log("file" ,file.files[0]);
+
+        formData.append("file", file.files[0]);
+        // for (let i = 0; i < file.files.length; i++) {
+        //     formData.append("files", file.files[i]);
+        // }
+        console.log("formData", formData);
+
+        // const requestData = {
+        //     name :"justin",
+        // }
+
+        const resultbox  = document.querySelector('#resultbox');
+        try {
+            const fileUploadRes = await axios({
+                method:'POST',
+                url :'/fileupload',
+                data : formData,
+                header : {
+                    'Content-Type' : 'mutipart-from-data'
+                }
+            })
+
+            // if (fileUploadRes.data.files.length) {
+            //     //
+            //     // let renderHtml ='';
+            //     // for ( let i = 0; i < fileUploadRes.data.files.length; i++) {
+            //     //     renderHtml += `<img src=${fileUploadRes.data.files[i].location} />`
+            //     // }
+            //     // resultbox.innerHTML = renderHtml
+            // }
+        } catch (err) {
+            console.log(err);
+        }
+    }
+</script>
+
+<body>
+        파일 업로드
+        <div id="resultbox"></div>
+        <form onsubmit="fileFormPost(event)">
+            <input type="file" id="file" multiple/>
+            <button type="submit">업로드</button>
+        </form>
+</body>
+</html>
