@@ -15,6 +15,10 @@ public class Attendance {
     private String start;
     @Column(length = 255,nullable = false)
     private String end;
+    @Column(length = 255,nullable = true)
+    private String gowork;
+    @Column(length = 255,nullable = true)
+    private String leavework;
     @Column(length = 255,nullable = false)
     private String registertime;
 
