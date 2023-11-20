@@ -5,11 +5,13 @@ import com.jobstore.jobstore.dto.LoginDto;
 import com.jobstore.jobstore.dto.MemberDto;
 import com.jobstore.jobstore.dto.StoreDto;
 import com.jobstore.jobstore.dto.request.AdminjoinDto;
+import com.jobstore.jobstore.dto.request.ImageUploadDto;
 import com.jobstore.jobstore.dto.request.UserjoinDto;
 import com.jobstore.jobstore.entity.Member;
 import com.jobstore.jobstore.entity.Store;
 import com.jobstore.jobstore.repository.MemberRepository;
 import com.jobstore.jobstore.repository.StoreRepository;
+import com.jobstore.jobstore.utill.AwsUtill;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,7 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 
@@ -29,6 +32,8 @@ public class MemberService  {
     private MemberRepository memberRepository;
     @Autowired
     private StoreRepository storeRepository;
+    @Autowired
+    private AwsUtill awsUtill;
 
     PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
@@ -154,4 +159,36 @@ public class MemberService  {
             return "삭제하고자하는 유저정보가 없습니다";
         }
     }
+
+    public String ImageUpdate (MultipartFile multipartFile, ImageUploadDto imageUploadDto) {
+
+        String dirname = "profileImage";
+
+        try {
+
+           String imageUrl = awsUtill.upload(multipartFile ,dirname);
+
+           if (imageUploadDto.getStoreid() == 0) { // 멤버 아이디
+
+               Member existingMember = memberRepository.findByMemberid(imageUploadDto.getMemberid())
+                       .orElseThrow(() -> new RuntimeException("해당 멤버아이디는 존재하지 않는 멤버 아이디입니다"));
+
+               existingMember.setMemberimg(imageUrl);
+               memberRepository.save(existingMember);
+
+           } else if (!imageUploadDto.getMemberid().isEmpty()) {
+
+               Store existingStore = storeRepository.findByStoreid(imageUploadDto.getStoreid())
+                       .orElseThrow(() -> new RuntimeException("해당 멤버아이디는 존재하지 않는 멤버 아이디입니다"));
+               existingStore.setCompanyimg(imageUrl);
+               storeRepository.save(existingStore);
+           }
+        } catch ( Exception e) {
+
+        }
+
+        return "";
+    }
+
+
 }
