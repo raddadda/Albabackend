@@ -13,5 +13,7 @@ public class AttendanceDto {
     private long attendid;
     private String start;
     private String end;
+    private String gowork;
+    private String leavework;
     private String registertime;
 }
