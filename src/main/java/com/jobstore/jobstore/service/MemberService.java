@@ -172,23 +172,30 @@ public class MemberService  {
 
                Member existingMember = memberRepository.findByMemberid(imageUploadDto.getMemberid())
                        .orElseThrow(() -> new RuntimeException("해당 멤버아이디는 존재하지 않는 멤버 아이디입니다"));
-
                existingMember.setMemberimg(imageUrl);
+
+               if (!existingMember.getMemberimg().equals("")) {
+                   awsUtill.delete(existingMember.getMemberimg());
+               }
+
                memberRepository.save(existingMember);
 
-           } else if (!imageUploadDto.getMemberid().isEmpty()) {
+           } else {
 
                Store existingStore = storeRepository.findByStoreid(imageUploadDto.getStoreid())
                        .orElseThrow(() -> new RuntimeException("해당 멤버아이디는 존재하지 않는 멤버 아이디입니다"));
+
+               if (!existingStore.getCompanyimg().equals("")) {
+                   awsUtill.delete(existingStore.getCompanyimg());
+               }
+
                existingStore.setCompanyimg(imageUrl);
                storeRepository.save(existingStore);
            }
+
+            return imageUrl;
         } catch ( Exception e) {
-
+            return "";
         }
-
-        return "";
     }
-
-
 }

@@ -30,9 +30,6 @@ public class MemberController {
     @Autowired
     MemberService memberService;
 
-    @Autowired
-    AwsUtill awsUtill;
-
     //회원가입
 //    @GetMapping("/join")
 //    public String joinMember(Model model){
@@ -93,17 +90,16 @@ public class MemberController {
 
     /** 이미지 등록 */
     @PostMapping(value ="/member/image/upload", consumes = {"multipart/form-data"})
-    public String imageUpdate (@RequestPart(value = "file", required = false) MultipartFile multipartFile, ImageUploadDto imageUploadDto) throws IOException {
+    public ResponseEntity<ResultDto<String>> imageUpdate (@RequestPart(value = "file", required = false) MultipartFile multipartFile, ImageUploadDto imageUploadDto) throws IOException {
 
-        System.out.println("test" + multipartFile);
-        System.out.println("test2" + multipartFile.getOriginalFilename());
-        System.out.println("test2" + multipartFile.getName());
-        System.out.println("test2" + multipartFile.getSize());
-        System.out.println("test33" + multipartFile.toString());
-        System.out.println("ss" +  imageUploadDto.getMemberid());
-        System.out.println("ss" +  imageUploadDto.getStoreid());
-        //awsUtill.upload(multipartFile,"static");
-        return "fileupload";
+        String reultURL = memberService.ImageUpdate(multipartFile, imageUploadDto);
+
+        if (reultURL.equals("")) {
+
+            return ResponseEntity.ok(ResultDto.of("resultcode","이미지 등록 실패", null));
+        } else {
+            return ResponseEntity.ok(ResultDto.of("resultcode","이미지 등록 완료", reultURL));
+        }
     }
 
 }
