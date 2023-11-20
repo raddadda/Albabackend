@@ -42,10 +42,12 @@ public class MemberService  {
         storeEntity.setCeo(adminjoinDto.getCeo());
         storeEntity.setCompanynumber(adminjoinDto.getCompanynumber());
         storeEntity.setCompanyimg(adminjoinDto.getCompanyimg());
-
-        memberRepository.save(adminjoinDto.toEntity(passwordEncoder.encode(adminjoinDto.getPassword())));
-
         storeRepository.save(storeEntity);
+
+        Member memberEntity = adminjoinDto.toEntity(passwordEncoder.encode(adminjoinDto.getPassword()));
+        memberEntity.setStore(storeEntity); // Store와의 연관 설정
+        memberRepository.save(memberEntity);
+
     }
     //join
     public void joinUser(UserjoinDto userjoinDto){
