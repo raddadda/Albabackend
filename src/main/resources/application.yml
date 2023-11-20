@@ -17,11 +17,11 @@ springdoc:
 cloud:
   aws:
     credentials:
-      # accessKey: ${AKIA5EK2XZJUKDDHOFPV}       # AWS IAM AccessKey 적기
-      # secretKey: ${gXNi+uzOvH0OOlMNQ/XXjsibxsSnxVxMaeU0zhpT}   # AWS IAM SecretKey 적기
+      accessKey: AKIA6GQIYR7AT3DGOSF6       # AWS IAM AccessKey 적기
+      secretKey: pAuc/Uw/0u4fj0Mu8Rc0NwMJJNWwGW1L8IImyFm2   # AWS IAM SecretKey 적기
     s3:
-      bucket: 버킷 이름    # ex) marryting-gyunny
-      dir: S3 디렉토리 이름 # ex) /gyunny
+      bucket: kdt9-justin    # ex) marryting-gyunny
+      dir: kdt9-justin # ex) /gyunny
     region:
       static: ap-northeast-2
     stack:

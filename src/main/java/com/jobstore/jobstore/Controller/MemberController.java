@@ -1,9 +1,11 @@
 package com.jobstore.jobstore.Controller;
 
 import com.jobstore.jobstore.dto.MemberDto;
+import com.jobstore.jobstore.dto.request.ImageUploadDto;
 import com.jobstore.jobstore.dto.response.ResultDto;
 import com.jobstore.jobstore.entity.Member;
 import com.jobstore.jobstore.service.MemberService;
+import com.jobstore.jobstore.utill.AwsUtill;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +17,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 
@@ -25,6 +29,10 @@ import java.util.List;
 public class MemberController {
     @Autowired
     MemberService memberService;
+
+    @Autowired
+    AwsUtill awsUtill;
+
     //회원가입
 //    @GetMapping("/join")
 //    public String joinMember(Model model){
@@ -44,6 +52,7 @@ public class MemberController {
 //        // model.addAttribute("loginDto",new loginDto());
 //        return "login";
 //    }
+
     @PostMapping("/all")
     @Operation(summary = "전체유저조회", description = "전체유저정보가 list형식으로 반환됩니다.")
     @ResponseBody
@@ -81,4 +90,20 @@ public class MemberController {
         }
         return ResponseEntity.ok(ResultDto.of("resultcode","User 삭제완료",memberService.deleteByUserto_memberid(memberid)));
     }
+
+    /** 이미지 등록 */
+    @PostMapping(value ="/member/image/upload", consumes = {"multipart/form-data"})
+    public String imageUpdate (@RequestPart(value = "file", required = false) MultipartFile multipartFile, ImageUploadDto imageUploadDto) throws IOException {
+
+        System.out.println("test" + multipartFile);
+        System.out.println("test2" + multipartFile.getOriginalFilename());
+        System.out.println("test2" + multipartFile.getName());
+        System.out.println("test2" + multipartFile.getSize());
+        System.out.println("test33" + multipartFile.toString());
+        System.out.println("ss" +  imageUploadDto.getMemberid());
+        System.out.println("ss" +  imageUploadDto.getStoreid());
+        //awsUtill.upload(multipartFile,"static");
+        return "fileupload";
+    }
+
 }
