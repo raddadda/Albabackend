@@ -36,6 +36,7 @@ public class MemberService  {
      회원가입
      */
     //admin
+
     public void joinAdmin(AdminjoinDto adminjoinDto){
         Store storeEntity = new Store();
         storeEntity.setCompanyname(adminjoinDto.getCompanyname());
@@ -51,7 +52,12 @@ public class MemberService  {
     }
     //join
     public void joinUser(UserjoinDto userjoinDto){
-        memberRepository.save(userjoinDto.toEntity(passwordEncoder.encode(userjoinDto.getPassword())));
+        Store store = storeRepository.findByInvitecode(userjoinDto.getInvitecode());
+        if (store != null) {
+            Member member = userjoinDto.toEntity(passwordEncoder.encode(userjoinDto.getPassword()));
+            member.setStore(store);
+            memberRepository.save(member);
+        }
     }
     public boolean duplicateMemberid(String memberid) {
         return memberRepository.existsByMemberid(memberid);
