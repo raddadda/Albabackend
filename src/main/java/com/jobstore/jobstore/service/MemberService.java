@@ -36,20 +36,27 @@ public class MemberService  {
      회원가입
      */
     //admin
+
     public void joinAdmin(AdminjoinDto adminjoinDto){
         Store storeEntity = new Store();
         storeEntity.setCompanyname(adminjoinDto.getCompanyname());
         storeEntity.setCeo(adminjoinDto.getCeo());
         storeEntity.setCompanynumber(adminjoinDto.getCompanynumber());
         storeEntity.setCompanyimg(adminjoinDto.getCompanyimg());
-
-        memberRepository.save(adminjoinDto.toEntity(passwordEncoder.encode(adminjoinDto.getPassword())));
-
         storeRepository.save(storeEntity);
+
+        Member memberEntity = adminjoinDto.toEntity(passwordEncoder.encode(adminjoinDto.getPassword()));
+        memberEntity.setStore(storeEntity); // Store와의 연관 설정
+        memberRepository.save(memberEntity);
     }
     //join
     public void joinUser(UserjoinDto userjoinDto){
-        memberRepository.save(userjoinDto.toEntity(passwordEncoder.encode(userjoinDto.getPassword())));
+        Store store = storeRepository.findByInvitecode(userjoinDto.getInvitecode());
+        if (store != null) {
+            Member member = userjoinDto.toEntity(passwordEncoder.encode(userjoinDto.getPassword()));
+            member.setStore(store);
+            memberRepository.save(member);
+        }
     }
     public boolean duplicateMemberid(String memberid) {
         return memberRepository.existsByMemberid(memberid);

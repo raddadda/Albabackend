@@ -5,7 +5,10 @@ import com.jobstore.jobstore.dto.request.AdminjoinDto;
 import com.jobstore.jobstore.dto.request.UserjoinDto;
 import com.jobstore.jobstore.dto.response.ResultDto;
 import com.jobstore.jobstore.entity.Member;
+import com.jobstore.jobstore.entity.Store;
 import com.jobstore.jobstore.jwt.JwtTokenUtil;
+import com.jobstore.jobstore.repository.MemberRepository;
+import com.jobstore.jobstore.repository.StoreRepository;
 import com.jobstore.jobstore.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -24,6 +27,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final MemberService memberService;
+    private final StoreRepository storeRepository;
+    private final MemberRepository memberRepository;
 
     /**
      회원가입
@@ -55,8 +60,23 @@ public class AuthController {
         //ID 중복체크
         if(!memberService.duplicateMemberid(userjoinDto.getMemberid())) {
             memberService.joinUser(userjoinDto);
+          //  System.out.println("초대코드가 store에 존재합니다 : "+userjoinDto.getInvitecode());
+            //초대코드 체크
+
+//                System.out.println("초대코드가 store에 존재합니다 : "+userjoinDto.getInvitecode());
+//                //System.out.println("store@@@ : "+storeRepository.findByStoreid(userjoinDto.getInvitecode()));
+//                Store store=storeRepository.findByInvitecodeStoreid(userjoinDto.getInvitecode());
+//
+//                Member member = new Member();
+//                member.setStore(store);
+//
+//                memberRepository.save(member);
+//                //storeRepository.save(storeRepository.findByStoreid());
+
             return ResponseEntity.ok(ResultDto.of("resultCode","회원가입이 성공했습니다.", userjoinDto));
         }
+
+
         return ResponseEntity.ok(ResultDto.of("resultCode","회원가입이 실패했습니다.", null));
     }
 

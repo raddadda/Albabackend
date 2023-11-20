@@ -12,6 +12,15 @@ import org.springframework.stereotype.Repository;
 public interface StoreRepository extends JpaRepository<Store,Long> {
    Store findByCompanynumber(String companynumber);
 
+   Store findByInvitecode(String invitecode);
+
+
+   //@Transactional // transaction 내부
+   @Modifying // 조회 x
+   @Query("SELECT s FROM Store s WHERE s.invitecode = :invitecode")
+   Store findByInvitecodeStoreid(@Param("invitecode") String invitecode);
+   //Store findByStoreid(String storeid);
+
    @Transactional // transaction 내부
    @Modifying // 조회 x
    @Query("DELETE FROM Store s WHERE s.storeid = :storeid")
