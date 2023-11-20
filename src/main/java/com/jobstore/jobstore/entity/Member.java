@@ -43,4 +43,8 @@ public class Member {
 
     @OneToMany(mappedBy = "member")
     List<Attendance> attendances;
+
+    @OneToMany(mappedBy = "member")
+    List<Comment> comments;
+
 }

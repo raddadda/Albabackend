@@ -7,10 +7,10 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class WorkDto {
-    private long workid;
-    private String title;
-    private String date;
+@NoArgsConstructor
+public class ContentsDto {
+    private long contentsid;
+    private String contents;
+    private String checked;
 }

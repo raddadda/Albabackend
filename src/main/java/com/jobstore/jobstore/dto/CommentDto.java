@@ -9,8 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class WorkDto {
-    private long workid;
-    private String title;
-    private String date;
+public class CommentDto {
+    private long commentid;
+    private String comment;
 }

@@ -5,22 +5,23 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "work")
+@Table(name = "comment")
 @Getter
 @Setter
-public class Work {
+public class Comment {
     @Id
-    private long workid;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long commentid;
     @Column(length = 255,nullable = false)
-    private String title;
-    @Column(length = 255,nullable = false)
-    private String date;
+    private String comment;
+
     @ManyToOne
     @JoinColumns({
             @JoinColumn(name = "memberid",referencedColumnName = "memberid"),
     })
     private Member member;
 
-    @OneToOne(mappedBy = "work")
+    @ManyToOne
+    @JoinColumn(name = "contentsid",referencedColumnName = "contentsid")
     private Contents contents;
 }
