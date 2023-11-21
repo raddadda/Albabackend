@@ -174,6 +174,7 @@ public class MemberService  {
 
                Member existingMember = memberRepository.findByMemberid(imageUploadDto.getMemberid())
                        .orElseThrow(() -> new RuntimeException("해당 멤버아이디는 존재하지 않는 멤버 아이디입니다"));
+
                existingMember.setMemberimg(imageUrl);
 
                if (!existingMember.getMemberimg().equals("")) {
@@ -202,4 +203,5 @@ public class MemberService  {
             return "";
         }
     }
+
 }

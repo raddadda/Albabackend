@@ -22,6 +22,7 @@ cloud:
     s3:
       bucket: kdt9hotdog    # ex) marryting-gyunny
       dir: profileImage # ex) /gyunny
+
     region:
       static: ap-northeast-2
     stack:
