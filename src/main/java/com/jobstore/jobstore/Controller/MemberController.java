@@ -91,6 +91,7 @@ public class MemberController {
         return ResponseEntity.ok(ResultDto.of("resultcode","User 삭제완료",memberService.deleteByUserto_memberid(memberid)));
     }
 
+
     /** 이미지 등록 */
     @PostMapping(value ="/member/image/upload", consumes = {"multipart/form-data"})
     public String imageUpdate (@RequestPart(value = "file", required = false) MultipartFile multipartFile, ImageUploadDto imageUploadDto) throws IOException {

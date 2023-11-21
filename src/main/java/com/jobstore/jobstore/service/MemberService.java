@@ -8,10 +8,13 @@ import com.jobstore.jobstore.dto.request.AdminjoinDto;
 import com.jobstore.jobstore.dto.request.ImageUploadDto;
 import com.jobstore.jobstore.dto.request.UserjoinDto;
 import com.jobstore.jobstore.entity.Member;
+import com.jobstore.jobstore.entity.Payment;
 import com.jobstore.jobstore.entity.Store;
 import com.jobstore.jobstore.repository.MemberRepository;
+import com.jobstore.jobstore.repository.PaymentRepository;
 import com.jobstore.jobstore.repository.StoreRepository;
 import com.jobstore.jobstore.utill.AwsUtill;
+import jakarta.servlet.http.Part;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +35,9 @@ public class MemberService  {
     private MemberRepository memberRepository;
     @Autowired
     private StoreRepository storeRepository;
+
+    @Autowired
+    private PaymentRepository paymentRepository;
     @Autowired
     private AwsUtill awsUtill;
 
@@ -140,23 +146,38 @@ public class MemberService  {
      */
     //admin유저 삭제
     public String deleteBymemberid(String memberid,long storeid) {
+        paymentRepository.deleteByMemberIdAndStoreId(memberid, storeid);
         int deletedRows = memberRepository.deleteByMemberid(memberid);
         int storeDelteRows=storeRepository.deleteByStoreid(storeid);
         if (deletedRows > 0 && storeDelteRows > 0) {
             return memberid + "님 탈퇴 성공";
-        } else if (deletedRows > 0 && storeDelteRows > 0) {
-            return "잘못된 접근 방식입니다.";
-        } else {
+        } else if (deletedRows <= 0 && storeDelteRows <= 0) {
             return "삭제하고자하는 멤버아이디 정보가 없습니다.";
+        } else {
+            return "잘못된 접근 방식입니다.";
         }
     }
     //일반유저 삭제
     public String deleteByUserto_memberid(String memberid) {
+        deleteMemberAndRelatedPayments(memberid);
         int deletedRows=memberRepository.deleteByMemberid(memberid);
         if(deletedRows > 0){
             return "유저: "+memberid+"님 탈퇴 성공";
         }else{
             return "삭제하고자하는 유저정보가 없습니다";
+        }
+    }
+
+    @Transactional
+    public void deleteMemberAndRelatedPayments(String memberid) {
+        Optional<Member> member = memberRepository.findById(memberid);
+
+        if (member.isPresent()) {
+            Member foundMember = member.get();
+            List<Payment> payments = foundMember.getPayments();
+            for (Payment payment : payments) {
+                paymentRepository.delete(payment);
+            }
         }
     }
 
