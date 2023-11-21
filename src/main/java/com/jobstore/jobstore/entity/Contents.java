@@ -1,11 +1,14 @@
 package com.jobstore.jobstore.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.util.List;
 
 @Entity
 @Table(name = "contents")
+@Getter
+@Setter
 public class Contents {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,10 +18,7 @@ public class Contents {
     @Column(length = 25,nullable = true)
     private String checked;
 
-    @OneToMany(mappedBy = "contents")
-    private List<Comment> comments;
-
-    @OneToOne
+    @ManyToOne
     @JoinColumns({
             @JoinColumn(name = "workid",referencedColumnName = "workid"),
     })

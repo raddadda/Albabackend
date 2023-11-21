@@ -1,8 +1,11 @@
 package com.jobstore.jobstore.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 @Entity
 @Table(name = "work")
@@ -19,6 +22,5 @@ public class Work {
     @Column(length = 255,nullable = false)
     private String date;
 
-    @OneToOne(mappedBy = "work")
-    private Contents contents;
+
 }

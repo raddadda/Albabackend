@@ -1,4 +1,4 @@
-package com.jobstore.jobstore.dto.request.work;
+package com.jobstore.jobstore.dto.request.workComment;
 
 
 import lombok.AllArgsConstructor;
@@ -10,11 +10,10 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class WorkCreateDto {
+public class CommentCreateDto {
 
     private String memberid;
-    private Long storeid;
-    private String title;
-    private String date;
-
+    private long workid;
+    private String comment;
+    private String name;
 }

@@ -1,5 +1,4 @@
-package com.jobstore.jobstore.dto.request.work;
-
+package com.jobstore.jobstore.dto.request.worksContents;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,11 +9,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class WorkCreateDto {
+public class ContentsCheckedDto {
 
     private String memberid;
-    private Long storeid;
-    private String title;
-    private String date;
-
+    private long contentsid;
+    private String checked;
 }
