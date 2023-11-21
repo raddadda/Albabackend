@@ -29,6 +29,8 @@ public class Attendance {
     @Column(length = 255,nullable = true)
     private LocalDateTime leavework;
     @Column(length = 255,nullable = true)
+    private String worker;
+    @Column(length = 255,nullable = true)
     private long wage;
     //@Column(length = 255,nullable = false)
     //private LocalDateTime registertime;

@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 public class AttendanceDto {
     private long attendid;
     private String memberid;
-    private String storeid;
+    private long storeid;
     private LocalDateTime start;
     private LocalDateTime end;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
@@ -25,6 +25,7 @@ public class AttendanceDto {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime leavework;
     private long wage;
+    private String worker;
     //private String registertime;
     //private LocalDateTime registertime;
 
@@ -38,6 +39,7 @@ public class AttendanceDto {
                 .gowork(this.gowork)
                 .leavework(this.leavework)
                 .wage(this.wage)
+                .worker(this.worker)
               //  .registertime(this.registertime)
                 .build();
     }

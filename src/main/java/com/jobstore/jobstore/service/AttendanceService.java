@@ -109,7 +109,11 @@ public class AttendanceService {
 
         }
     }
+    public void monthpay(long result){
 
+
+        // paymentRepository.save();
+    }
     public long payCalculate(AttendanceDto attendanceDto){
         Member member = memberRepository.findByMemberid2(attendanceDto.getMemberid());
         long result;

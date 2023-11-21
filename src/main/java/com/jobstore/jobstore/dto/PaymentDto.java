@@ -12,4 +12,5 @@ import lombok.NoArgsConstructor;
 public class PaymentDto {
     private long payid;
     private long pay;
+
 }

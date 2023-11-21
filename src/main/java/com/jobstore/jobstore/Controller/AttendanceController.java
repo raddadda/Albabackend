@@ -7,6 +7,7 @@ import com.jobstore.jobstore.entity.Attendance;
 import com.jobstore.jobstore.entity.Member;
 import com.jobstore.jobstore.repository.PaymentRepository;
 import com.jobstore.jobstore.service.AttendanceService;
+import com.jobstore.jobstore.service.PaymentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -24,7 +25,7 @@ public class AttendanceController {
     @Autowired
     private AttendanceService attendanceService;
     @Autowired
-    private PaymentRepository paymentRepository;
+    private PaymentService paymentService;
 
     @PostMapping("/admin/attendance")
     public ResponseEntity<ResultDto<Object>> createAttendance(
@@ -49,9 +50,11 @@ public class AttendanceController {
             @RequestBody AttendanceDto attendanceDto
     ) {
         attendanceService.leaveworkAttendance(attendanceDto);
+        //오늘 급여
         long result = attendanceService.payCalculate(attendanceDto);
         if(result!=-1){
-            //paymentRepository.addPaymentForMember(attendanceDto.getMemberid());
+            System.out.println("attendanceDto.getMemberid()"+attendanceDto.getMemberid());
+            paymentService.addPaymentForMember(attendanceDto.getMemberid(),attendanceDto.getStoreid(),result);
             return ResponseEntity.ok(ResultDto.of("[user]출퇴근시간 기록 성공","오늘 급여수당 추가 성공", result));
         }
         return ResponseEntity.ok(ResultDto.of("[user]출퇴근시간 기록 실패","member가 존재하지 않습니다.", null));
@@ -63,7 +66,6 @@ public class AttendanceController {
 //        Member member = memberService.findMember(id);
 //        Attendance attendanceAll = member.getBasket();
         List<Attendance> attendance = attendanceService.findAllAttendance();
-
 
 //        for(Attendance attendance1 : attendance){
 //            System.out.println("dasdasd:"+attendance1.getAttendid());
