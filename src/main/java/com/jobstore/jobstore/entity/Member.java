@@ -1,6 +1,7 @@
 package com.jobstore.jobstore.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -35,7 +36,8 @@ public class Member {
     })
     private Store store;
 
-    @OneToMany(mappedBy = "member")
+    @JsonIgnore
+    @OneToMany(mappedBy = "member",orphanRemoval = true)
     List<Payment> payments;
 
     @OneToMany(mappedBy = "member")

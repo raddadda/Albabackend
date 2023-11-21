@@ -1,10 +1,16 @@
 package com.jobstore.jobstore.Controller;
 
 import com.jobstore.jobstore.dto.MemberDto;
+import com.jobstore.jobstore.dto.request.ImageUploadDto;
+import com.jobstore.jobstore.dto.request.InvitationCodeDto;
+
 import com.jobstore.jobstore.dto.response.ResultDto;
 import com.jobstore.jobstore.entity.Member;
 import com.jobstore.jobstore.service.MemberService;
+import com.jobstore.jobstore.utill.AwsUtill;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +21,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -25,6 +34,7 @@ import java.util.List;
 public class MemberController {
     @Autowired
     MemberService memberService;
+
     //회원가입
 //    @GetMapping("/join")
 //    public String joinMember(Model model){
@@ -44,6 +54,7 @@ public class MemberController {
 //        // model.addAttribute("loginDto",new loginDto());
 //        return "login";
 //    }
+
     @PostMapping("/all")
     @Operation(summary = "전체유저조회", description = "전체유저정보가 list형식으로 반환됩니다.")
     @ResponseBody
@@ -80,5 +91,31 @@ public class MemberController {
             return ResponseEntity.ok(ResultDto.of("resultcode","삭제 실패",null));
         }
         return ResponseEntity.ok(ResultDto.of("resultcode","User 삭제완료",memberService.deleteByUserto_memberid(memberid)));
+    }
+
+
+    /** 이미지 등록 */
+    @PostMapping(value = "/member/image/upload", consumes = {"multipart/form-data"})
+    @Operation(summary = "User,Admin:대한 이미지 등록 api", description = "이미지 등록 api입니다.")
+    public ResponseEntity<ResultDto<Object>> imageUpdate (
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "요청파라미터", required = true,
+                    content = @Content(
+                            schema=@Schema(implementation = ImageUploadDto.class)))
+            @RequestPart(value = "file", required = false) MultipartFile multipartFile,
+            ImageUploadDto imageUploadDto
+
+    ) throws IOException {
+
+        String reultURL = memberService.ImageUpdate(multipartFile, imageUploadDto);
+
+        if (reultURL.equals("")) {
+
+            return ResponseEntity.ok(ResultDto.of("resultcode","이미지 등록 실패", null));
+
+        } else {
+            HashMap hashMap = new HashMap();
+            hashMap.put("imageurl", reultURL);
+            return ResponseEntity.ok(ResultDto.of("resultcode","이미지 등록 완료", hashMap));
+        }
     }
 }

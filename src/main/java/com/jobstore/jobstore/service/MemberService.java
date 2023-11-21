@@ -5,20 +5,27 @@ import com.jobstore.jobstore.dto.LoginDto;
 import com.jobstore.jobstore.dto.MemberDto;
 import com.jobstore.jobstore.dto.StoreDto;
 import com.jobstore.jobstore.dto.request.AdminjoinDto;
+import com.jobstore.jobstore.dto.request.ImageUploadDto;
 import com.jobstore.jobstore.dto.request.UserjoinDto;
 import com.jobstore.jobstore.entity.Member;
+import com.jobstore.jobstore.entity.Payment;
 import com.jobstore.jobstore.entity.Store;
 import com.jobstore.jobstore.repository.MemberRepository;
+import com.jobstore.jobstore.repository.PaymentRepository;
 import com.jobstore.jobstore.repository.StoreRepository;
+import com.jobstore.jobstore.utill.AwsUtill;
+import jakarta.servlet.http.Part;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 
@@ -29,6 +36,11 @@ public class MemberService  {
     private MemberRepository memberRepository;
     @Autowired
     private StoreRepository storeRepository;
+
+    @Autowired
+    private PaymentRepository paymentRepository;
+    @Autowired
+    private AwsUtill awsUtill;
 
     PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
@@ -135,18 +147,20 @@ public class MemberService  {
      */
     //admin유저 삭제
     public String deleteBymemberid(String memberid,long storeid) {
+        paymentRepository.deleteByMemberIdAndStoreId(memberid, storeid);
         int deletedRows = memberRepository.deleteByMemberid(memberid);
         int storeDelteRows=storeRepository.deleteByStoreid(storeid);
         if (deletedRows > 0 && storeDelteRows > 0) {
             return memberid + "님 탈퇴 성공";
-        } else if (deletedRows > 0 && storeDelteRows > 0) {
-            return "잘못된 접근 방식입니다.";
-        } else {
+        } else if (deletedRows <= 0 && storeDelteRows <= 0) {
             return "삭제하고자하는 멤버아이디 정보가 없습니다.";
+        } else {
+            return "잘못된 접근 방식입니다.";
         }
     }
     //일반유저 삭제
     public String deleteByUserto_memberid(String memberid) {
+        deleteMemberAndRelatedPayments(memberid);
         int deletedRows=memberRepository.deleteByMemberid(memberid);
         if(deletedRows > 0){
             return "유저: "+memberid+"님 탈퇴 성공";
@@ -154,4 +168,64 @@ public class MemberService  {
             return "삭제하고자하는 유저정보가 없습니다";
         }
     }
+
+
+    @Transactional
+    public void deleteMemberAndRelatedPayments(String memberid) {
+        Optional<Member> member = memberRepository.findById(memberid);
+
+        if (member.isPresent()) {
+            Member foundMember = member.get();
+            List<Payment> payments = foundMember.getPayments();
+            for (Payment payment : payments) {
+                paymentRepository.delete(payment);
+            }
+        }
+    }
+
+
+    // 이미지 업로드
+
+    public String ImageUpdate (MultipartFile multipartFile, ImageUploadDto imageUploadDto) {
+
+        String dirname = "profileImage";
+
+        try {
+
+           String imageUrl = awsUtill.upload(multipartFile ,dirname);
+
+           if (imageUploadDto.getStoreid() == 0) { // 멤버 아이디
+
+               Member existingMember = memberRepository.findByMemberid(imageUploadDto.getMemberid())
+                       .orElseThrow(() -> new RuntimeException("해당 멤버아이디는 존재하지 않는 멤버 아이디입니다"));
+
+               existingMember.setMemberimg(imageUrl);
+
+               if (!existingMember.getMemberimg().equals("")) {
+                   String [] url = existingMember.getMemberimg().split("amazonaws.com");
+                   if (!url[1].isEmpty()){
+                       awsUtill.delete(url[1].substring(1));
+                   }
+               }
+               memberRepository.save(existingMember);
+
+           } else {
+
+               Store existingStore = storeRepository.findByStoreid(imageUploadDto.getStoreid())
+                       .orElseThrow(() -> new RuntimeException("해당 멤버아이디는 존재하지 않는 멤버 아이디입니다"));
+               if (!existingStore.getCompanyimg().equals("")) {
+                   String [] url = existingStore.getCompanyimg().split("amazonaws.com");
+                   if (!url[1].isEmpty()){
+                       awsUtill.delete(url[1].substring(1));
+                   }
+               }
+               existingStore.setCompanyimg(imageUrl);
+               storeRepository.save(existingStore);
+           }
+            return imageUrl;
+        } catch ( Exception e) {
+            return "";
+        }
+    }
+
 }
