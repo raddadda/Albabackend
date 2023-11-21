@@ -4,7 +4,10 @@ import com.jobstore.jobstore.dto.AttendanceDto;
 import com.jobstore.jobstore.entity.Attendance;
 import com.jobstore.jobstore.repository.AttendanceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+
+@Service
 public class AttendanceService {
     @Autowired
     private AttendanceRepository attendanceRepository;
