@@ -14,4 +14,7 @@ public interface PaymentRepository extends JpaRepository<Payment,Long> {
     @Transactional
     @Query("DELETE FROM Payment p WHERE p.member.memberid = :memberId AND p.member.store.storeid = :storeId")
     void deleteByMemberIdAndStoreId(@Param("memberId") String memberId, @Param("storeId") Long storeId);
+
+    @Query("SELECT p FROM Payment p WHERE p.member.memberid = :memberid")
+    List<Payment> findByMemberId(@Param("memberid") String memberid);
 }

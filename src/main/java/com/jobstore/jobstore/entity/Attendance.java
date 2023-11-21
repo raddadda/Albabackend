@@ -40,6 +40,4 @@ public class Attendance {
     })
     private Member member;
 
-
-
 }
