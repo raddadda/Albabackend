@@ -3,6 +3,7 @@ package com.jobstore.jobstore.utill;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,7 +22,7 @@ public class AwsUtill {
 
     private final AmazonS3Client amazonS3Client;
     @Value("${cloud.aws.s3.bucket}")
-    public String bucket = "kdt9-justin";  // S3 버킷
+    public String bucket;  // S3 버킷
 
     // S3 파일 업로드
     public String upload(MultipartFile multipartFile, String dirName) throws IOException {
@@ -51,9 +52,9 @@ public class AwsUtill {
     public void delete (String url) {
         try {
             // deleteObject(버킷명, 키값)으로 객체 삭제
-            amazonS3Client.deleteObject(bucket, url);
+            amazonS3Client.deleteObject( new DeleteObjectRequest(bucket, url));
         } catch (AmazonServiceException e) {
-            //log.error(e.toString());
+
         }
     }
 }
