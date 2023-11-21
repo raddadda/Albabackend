@@ -18,6 +18,7 @@ import jakarta.servlet.http.Part;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
@@ -168,6 +169,7 @@ public class MemberService  {
         }
     }
 
+
     @Transactional
     public void deleteMemberAndRelatedPayments(String memberid) {
         Optional<Member> member = memberRepository.findById(memberid);
@@ -180,6 +182,9 @@ public class MemberService  {
             }
         }
     }
+
+
+    // 이미지 업로드
 
     public String ImageUpdate (MultipartFile multipartFile, ImageUploadDto imageUploadDto) {
 
@@ -195,21 +200,32 @@ public class MemberService  {
                        .orElseThrow(() -> new RuntimeException("해당 멤버아이디는 존재하지 않는 멤버 아이디입니다"));
 
                existingMember.setMemberimg(imageUrl);
+
+               if (!existingMember.getMemberimg().equals("")) {
+                   String [] url = existingMember.getMemberimg().split("amazonaws.com");
+                   if (!url[1].isEmpty()){
+                       awsUtill.delete(url[1].substring(1));
+                   }
+               }
                memberRepository.save(existingMember);
 
-           } else if (!imageUploadDto.getMemberid().isEmpty()) {
+           } else {
 
                Store existingStore = storeRepository.findByStoreid(imageUploadDto.getStoreid())
                        .orElseThrow(() -> new RuntimeException("해당 멤버아이디는 존재하지 않는 멤버 아이디입니다"));
+               if (!existingStore.getCompanyimg().equals("")) {
+                   String [] url = existingStore.getCompanyimg().split("amazonaws.com");
+                   if (!url[1].isEmpty()){
+                       awsUtill.delete(url[1].substring(1));
+                   }
+               }
                existingStore.setCompanyimg(imageUrl);
                storeRepository.save(existingStore);
            }
+            return imageUrl;
         } catch ( Exception e) {
-
+            return "";
         }
-
-        return "";
     }
-
 
 }
