@@ -17,6 +17,9 @@ public interface MemberRepository extends JpaRepository<Member,String> {
     Optional<Member> findByMemberid(String memberid);
 
 
+
+    @Query("SELECT m FROM Member m WHERE m.memberid = :memberid")
+    Member findByMemberid2(@Param("memberid") String memberid);
     Optional<Member> findOneWithAuthByMemberid(String memberid);
     //Optional<User> findByUserid(String userid);
 
