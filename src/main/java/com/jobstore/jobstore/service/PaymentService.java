@@ -20,10 +20,12 @@ public class PaymentService {
 
     public Payment addPaymentForMember(String memberid, long storeid, long pay) {
         Member member = memberRepository.findByMemberidAndStoreid(memberid, storeid);
+
         if (member != null) {
             Payment newPayment = new Payment();
             newPayment.setPay(pay);
             newPayment.setMember(member);
+            System.out.println("newPayment : "+newPayment);
             return paymentRepository.save(newPayment);
         } else {
             return null;
