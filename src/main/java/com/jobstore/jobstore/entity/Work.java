@@ -10,16 +10,14 @@ import lombok.Setter;
 @Setter
 public class Work {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long workid;
+    @Column(nullable = false)
+    private long storeid;
     @Column(length = 255,nullable = false)
     private String title;
     @Column(length = 255,nullable = false)
     private String date;
-    @ManyToOne
-    @JoinColumns({
-            @JoinColumn(name = "memberid",referencedColumnName = "memberid"),
-    })
-    private Member member;
 
     @OneToOne(mappedBy = "work")
     private Contents contents;

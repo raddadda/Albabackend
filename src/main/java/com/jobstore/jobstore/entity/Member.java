@@ -31,16 +31,12 @@ public class Member {
 
     @ManyToOne
     @JoinColumns({
-            @JoinColumn(name = "storeid",referencedColumnName = "storeid")
+            @JoinColumn(name = "storeid", referencedColumnName = "storeid")
     })
     private Store store;
 
     @OneToMany(mappedBy = "member")
     List<Payment> payments;
-
-    @OneToMany(mappedBy = "member")
-    List<Work> works;
-
     @OneToMany(mappedBy = "member")
     List<Attendance> attendances;
 
