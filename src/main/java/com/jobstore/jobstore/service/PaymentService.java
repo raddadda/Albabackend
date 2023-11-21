@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -28,5 +29,17 @@ public class PaymentService {
         } else {
             return null;
         }
+    }
+    public List<PaymentDto> findMemberid_ForAllPayment(String memberid){
+        List<Payment> memberPaymentData=paymentRepository.findByMemberId(memberid);
+        List<PaymentDto> result=new ArrayList<>();
+        for(Payment paydata:memberPaymentData){
+            PaymentDto p= PaymentDto.builder()
+                    .payid(paydata.getPayid())
+                    .pay(paydata.getPay())
+                    .build();
+            result.add(p);
+        }
+        return result;
     }
 }

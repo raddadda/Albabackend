@@ -27,5 +27,4 @@ public class Attendance {
             @JoinColumn(name = "memberid",referencedColumnName = "memberid"),
     })
     private Member member;
-
 }
