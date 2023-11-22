@@ -24,6 +24,8 @@ public class PaymentService {
     public Payment addPaymentForMember(String memberid, LocalDateTime register, long pay) {
         // Member member = memberRepository.findByMemberidAndStoreid(memberid, storeid);
         Member member = memberRepository.findByMemberid2(memberid);
+        long storeid=memberRepository.findeByMemberidForStoreid(memberid);
+        System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@"+storeid);
         if (member != null) {
             Payment newPayment = new Payment();
             newPayment.setPay(pay);
