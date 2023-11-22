@@ -5,6 +5,8 @@ import com.jobstore.jobstore.dto.WorkDto;
 import com.jobstore.jobstore.dto.request.work.WorkCreateDto;
 import com.jobstore.jobstore.dto.request.work.WorkUpdateDto;
 import com.jobstore.jobstore.dto.response.ResultDto;
+import com.jobstore.jobstore.dto.response.work.WorkDetailDto;
+import com.jobstore.jobstore.dto.response.work.WorkPagenationDto;
 import com.jobstore.jobstore.entity.Work;
 import com.jobstore.jobstore.service.work.WorkService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -32,8 +34,8 @@ public class WorkController {
     @Parameter(name = "storeid", description = "storeid", required = true)
     @Parameter(name = "page", description = "페이지", required = true)
     @ResponseBody
-    public ResponseEntity<ResultDto<Page<WorkDto>>> findAllWorkBoard(@PathVariable("storeid") long storeid,
-                                                                     @PathVariable("page") Integer page) {
+    public ResponseEntity<ResultDto<WorkPagenationDto>> findAllWorkBoard(@PathVariable("storeid") long storeid,
+                                                                         @PathVariable("page") Integer page) {
 
         return ResponseEntity.ok(ResultDto.of("100","조회 완료",
                 workService.findPagenation(storeid, page)));
@@ -43,21 +45,20 @@ public class WorkController {
     @Operation(summary = "work 게시판 상세", description = "work 게시판 상세.")
     @Parameter(name = "workid", description = "workid", required = true)
     @ResponseBody
-    public ResponseEntity<ResultDto<Optional<Work>>> boardDetail(@PathVariable("workid") long workid) {
+    public ResponseEntity<ResultDto<WorkDetailDto>> boardDetail(@PathVariable("workid") long workid) {
 
-        Optional<Work> result = workService.boardDetail(workid);
+        WorkDetailDto result = workService.boardDetail(workid);
 
         if (result == null) {
             return ResponseEntity.ok(ResultDto.of("403","게시판 없음",
                     null));
-        } else if (result.isPresent()) {
+        } else if ((Long)result.getWorkid() != null) {
             return ResponseEntity.ok(ResultDto.of("200","조회 완료",
                     result));
         } else {
             return ResponseEntity.ok(ResultDto.of("500","back error",
                     null));
         }
-
     }
 
     @PostMapping("/board/create")
