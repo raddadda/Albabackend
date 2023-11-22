@@ -27,12 +27,14 @@ import java.util.Optional;
 @RequestMapping("/work")
 public class WorkController {
 
+
+
     @Autowired
     WorkService workService;
     @GetMapping("/boards/{storeid}/{page}")
     @Operation(summary = "work 게시판 페이지네이션", description = "work 게시판 페이지네이션입니다.")
     @Parameter(name = "storeid", description = "storeid", required = true)
-    @Parameter(name = "page", description = "페이지", required = true)
+    @Parameter(name = "page", description = "페이지 번호 0부터 시작", required = true)
     @ResponseBody
     public ResponseEntity<ResultDto<WorkPagenationDto>> findAllWorkBoard(@PathVariable("storeid") long storeid,
                                                                          @PathVariable("page") Integer page) {
@@ -105,7 +107,7 @@ public class WorkController {
 
     @DeleteMapping("/board/delete/{workid}")
     @Operation(summary = "work 게시판 삭제", description = "work 게시판 삭제입니다.")
-    @Parameter(name = "workid", description = "2번 반복할 문자열", required = true)
+    @Parameter(name = "workid", description = "workid", required = true)
     @ResponseBody
     public ResponseEntity<ResultDto<Object>> deleteWorkBoard(@PathVariable("workid") long workid) {
 
