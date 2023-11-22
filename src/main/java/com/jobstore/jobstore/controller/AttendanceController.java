@@ -1,6 +1,5 @@
-package com.jobstore.jobstore.Controller;
+package com.jobstore.jobstore.controller;
 
-import com.jobstore.jobstore.config.PrincipalDetails;
 import com.jobstore.jobstore.dto.Attendance.*;
 import com.jobstore.jobstore.dto.response.ResultDto;
 import com.jobstore.jobstore.entity.Attendance;
@@ -11,7 +10,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

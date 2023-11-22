@@ -3,7 +3,6 @@ package com.jobstore.jobstore.service;
 
 import com.jobstore.jobstore.dto.LoginDto;
 import com.jobstore.jobstore.dto.MemberDto;
-import com.jobstore.jobstore.dto.StoreDto;
 import com.jobstore.jobstore.dto.request.AdminjoinDto;
 import com.jobstore.jobstore.dto.request.ImageUploadDto;
 import com.jobstore.jobstore.dto.request.UserjoinDto;
@@ -14,13 +13,8 @@ import com.jobstore.jobstore.repository.MemberRepository;
 import com.jobstore.jobstore.repository.PaymentRepository;
 import com.jobstore.jobstore.repository.StoreRepository;
 import com.jobstore.jobstore.utill.AwsUtill;
-import jakarta.servlet.http.Part;
-import lombok.Getter;
-import lombok.Setter;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

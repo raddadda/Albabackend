@@ -1,11 +1,10 @@
-package com.jobstore.jobstore.Controller;
+package com.jobstore.jobstore.controller;
 
 import com.jobstore.jobstore.dto.LoginDto;
 import com.jobstore.jobstore.dto.request.AdminjoinDto;
 import com.jobstore.jobstore.dto.request.UserjoinDto;
 import com.jobstore.jobstore.dto.response.ResultDto;
 import com.jobstore.jobstore.entity.Member;
-import com.jobstore.jobstore.entity.Store;
 import com.jobstore.jobstore.jwt.JwtTokenUtil;
 import com.jobstore.jobstore.repository.MemberRepository;
 import com.jobstore.jobstore.repository.StoreRepository;

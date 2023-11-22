@@ -1,13 +1,11 @@
-package com.jobstore.jobstore.Controller;
+package com.jobstore.jobstore.controller;
 
 import com.jobstore.jobstore.dto.MemberDto;
 import com.jobstore.jobstore.dto.request.ImageUploadDto;
-import com.jobstore.jobstore.dto.request.InvitationCodeDto;
-
 import com.jobstore.jobstore.dto.response.ResultDto;
 import com.jobstore.jobstore.entity.Member;
 import com.jobstore.jobstore.service.MemberService;
-import com.jobstore.jobstore.utill.AwsUtill;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
