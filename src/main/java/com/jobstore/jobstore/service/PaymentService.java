@@ -34,18 +34,18 @@ public class PaymentService {
             return null;
         }
     }
-    public List<PaymentDto> findMemberid_ForAllPayment(String memberid){
-        List<Payment> memberPaymentData=paymentRepository.findByMemberId(memberid);
-        List<PaymentDto> result=new ArrayList<>();
-        for(Payment paydata:memberPaymentData){
-            PaymentDto p= PaymentDto.builder()
-                    .payid(paydata.getPayid())
-                    .pay(paydata.getPay())
-                    .build();
-            result.add(p);
-        }
-        return result;
-    }
+//    public List<PaymentDto> findMemberid_ForAllPayment(String memberid){
+//        List<Payment> memberPaymentData=paymentRepository.findByMemberId(memberid);
+//        List<PaymentDto> result=new ArrayList<>();
+//        for(Payment paydata:memberPaymentData){
+//            PaymentDto p= PaymentDto.builder()
+//                    .payid(paydata.getPayid())
+//                    .pay(paydata.getPay())
+//                    .build();
+//            result.add(p);
+//        }
+//        return result;
+//    }
 
     public Long paymentMain(long month){
         List<Payment> payments =  paymentRepository.findByMonth(month);
@@ -58,7 +58,7 @@ public class PaymentService {
         return result;
     }
 
-//    public Long localdatetomonth(long month){
-//
-//    }
+    public long localDateTimeToMonth(LocalDateTime localDateTime){
+        return localDateTime.getMonthValue();
+    }
 }

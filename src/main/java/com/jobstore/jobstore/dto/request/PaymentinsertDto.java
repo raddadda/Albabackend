@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class PaymentinsertDto {
     String memberid;
-    long storeid;
     long pay;
     LocalDateTime register;
 }

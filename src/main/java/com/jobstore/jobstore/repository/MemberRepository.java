@@ -34,5 +34,6 @@ public interface MemberRepository extends JpaRepository<Member,String> {
     @Query("DELETE FROM Member m WHERE m.memberid = :memberid")
     int deleteByMemberid(@Param("memberid") String memberid);
 
-
+    @Query("SELECT m.role From Member m WHERE m.memberid=:memberid")
+    String findByMemberidToRole(@Param("memberid") String memberid);
 }

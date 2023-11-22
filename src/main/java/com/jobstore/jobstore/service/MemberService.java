@@ -227,5 +227,8 @@ public class MemberService  {
             return "";
         }
     }
+    public String findByMemberidToRole(String memberid){
+        return memberRepository.findByMemberidToRole(memberid);
+    }
 
 }
