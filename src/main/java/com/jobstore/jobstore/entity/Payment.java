@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "payment")
 @Getter
@@ -15,8 +17,10 @@ public class Payment {
     private long payid;
     @Column(nullable = false)
     private long pay;
-    @Column(nullable = false,length = 25)
+    @Column(nullable = true,length = 25)
     private long month;
+    @Column(length = 255,nullable = true)
+    private LocalDateTime register;
 
     @JsonIgnore
     @ManyToOne
