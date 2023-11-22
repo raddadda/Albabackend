@@ -1,6 +1,7 @@
 package com.jobstore.jobstore.Controller.work;
 
 
+import com.jobstore.jobstore.dto.WorkDto;
 import com.jobstore.jobstore.dto.request.work.WorkCreateDto;
 import com.jobstore.jobstore.dto.request.work.WorkUpdateDto;
 import com.jobstore.jobstore.dto.response.ResultDto;
@@ -31,8 +32,8 @@ public class WorkController {
     @Parameter(name = "storeid", description = "storeid", required = true)
     @Parameter(name = "page", description = "페이지", required = true)
     @ResponseBody
-    public ResponseEntity<ResultDto<Page<Work>>> findAllWorkBoard(@PathVariable("storeid") long storeid,
-                                                                  @PathVariable("page") Integer page) {
+    public ResponseEntity<ResultDto<Page<WorkDto>>> findAllWorkBoard(@PathVariable("storeid") long storeid,
+                                                                     @PathVariable("page") Integer page) {
 
         return ResponseEntity.ok(ResultDto.of("100","조회 완료",
                 workService.findPagenation(storeid, page)));

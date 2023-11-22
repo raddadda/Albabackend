@@ -1,5 +1,6 @@
 package com.jobstore.jobstore.service.work;
 
+import com.jobstore.jobstore.dto.WorkDto;
 import com.jobstore.jobstore.dto.request.work.WorkCreateDto;
 import com.jobstore.jobstore.dto.request.work.WorkUpdateDto;
 import com.jobstore.jobstore.entity.Member;
@@ -11,7 +12,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
+
+import java.util.List;
 import java.util.Optional;
 
 
@@ -24,13 +26,27 @@ public class WorkService {
     private MemberRepository memberRepository;
 
     // 페이지 네이션
-    public Page<Work> findPagenation (long storeid, Integer page){
+    public Page<WorkDto> findPagenation (long storeid, Integer page){
 
         Integer size = 10;
         PageRequest pageRequest = PageRequest.of(page, size);
         Page<Work> work =  workRepository.findByStoreid(storeid, pageRequest);
-        HashMap<String, Object> hashMap = new HashMap<>();
-        return work;
+
+        //work를 DTO로 변환
+        Page<WorkDto> toMap = work.map(m -> new WorkDto(m.getWorkid(), m.getTitle(), m.getDate()));
+
+
+        System.out.println(toMap.getContent()); //컨텐츠 사이즈
+        System.out.println(toMap.getContent().size()); //컨텐츠 사이즈
+        System.out.println(toMap.getTotalElements()); //멤버 개수
+        System.out.println(toMap.getNumber()); //페이지 번호
+        System.out.println(toMap.getTotalPages()); //전체 페이지 개수
+        System.out.println(toMap.isFirst()); //페이지가 첫 번째 페이지인가
+        System.out.println(toMap.hasNext()); //다음 페이지가 있는지
+
+
+
+        return toMap;
 
     }
 
