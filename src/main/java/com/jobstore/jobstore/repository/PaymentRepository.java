@@ -17,4 +17,9 @@ public interface PaymentRepository extends JpaRepository<Payment,Long> {
 
     @Query("SELECT p FROM Payment p WHERE p.member.memberid = :memberid")
     List<Payment> findByMemberId(@Param("memberid") String memberid);
+
+    @Query("SELECT p FROM Payment p WHERE p.month = :month")
+    List<Payment> findByMonth(@Param("month") Long month);
+//    @Query("SELECT p FROM Payment p WHERE p.month = :month")
+//    Payment findByMonth(@Param("month") Long month);
 }

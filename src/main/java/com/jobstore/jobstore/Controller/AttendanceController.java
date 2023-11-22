@@ -54,7 +54,7 @@ public class AttendanceController {
         long result = attendanceService.payCalculate(attendanceDto);
         if(result!=-1){
             System.out.println("attendanceDto.getMemberid()"+attendanceDto.getMemberid());
-            paymentService.addPaymentForMember(attendanceDto.getMemberid(),attendanceDto.getStoreid(),result);
+            paymentService.addPaymentForMember(attendanceDto.getMemberid(),attendanceDto.getLeavework(),result);
             return ResponseEntity.ok(ResultDto.of("[user]출퇴근시간 기록 성공","오늘 급여수당 추가 성공", result));
         }
         return ResponseEntity.ok(ResultDto.of("[user]출퇴근시간 기록 실패","member가 존재하지 않습니다.", null));

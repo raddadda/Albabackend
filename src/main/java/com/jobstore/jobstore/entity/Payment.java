@@ -15,8 +15,8 @@ public class Payment {
     private long payid;
     @Column(nullable = false)
     private long pay;
-//    @Column(nullable = false,length = 25)
-//    private String month;
+    @Column(nullable = false,length = 25)
+    private long month;
 
     @JsonIgnore
     @ManyToOne
