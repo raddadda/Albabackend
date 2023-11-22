@@ -1,7 +1,6 @@
 package com.jobstore.jobstore.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.jobstore.jobstore.dto.AttendanceDto;
 import jakarta.persistence.*;
 import lombok.*;
 

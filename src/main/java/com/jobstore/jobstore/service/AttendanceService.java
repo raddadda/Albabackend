@@ -1,10 +1,8 @@
 package com.jobstore.jobstore.service;
 
-import com.jobstore.jobstore.dto.AttendanceDto;
-import com.jobstore.jobstore.dto.MemberDto;
+import com.jobstore.jobstore.dto.Attendance.*;
 import com.jobstore.jobstore.entity.Attendance;
 import com.jobstore.jobstore.entity.Member;
-import com.jobstore.jobstore.entity.Store;
 import com.jobstore.jobstore.repository.AttendanceRepository;
 import com.jobstore.jobstore.repository.MemberRepository;
 import com.jobstore.jobstore.repository.PaymentRepository;
@@ -27,7 +25,6 @@ public class AttendanceService {
     private AttendanceRepository attendanceRepository;
     @Autowired
     private MemberRepository memberRepository;
-
     @Autowired
     private PaymentRepository paymentRepository;
 
@@ -35,7 +32,6 @@ public class AttendanceService {
         Member member = memberRepository.findByMemberid2(attendanceDto.getMemberid());
         if (member != null) {
             Attendance attendance = attendanceDto.toEntity();
-            //attendance.setLeavework(attendanceDto.getGowork());
             attendance.setMember(member);
             attendanceRepository.save(attendance);
         }
@@ -43,18 +39,19 @@ public class AttendanceService {
     public void goworkAttendance(AttendanceDto attendanceDto){
         Member member = memberRepository.findByMemberid2(attendanceDto.getMemberid());
         if (member != null) {
-            Attendance attendance = attendanceDto.toEntity();
+            Attendance attendance = attendanceRepository.findByAttendid(attendanceDto.getAttendid());
+            //Attendance attendance = attendanceDto.toEntity();
             attendance.setGowork(attendanceDto.getGowork());
-            attendance.setMember(member);
+            //attendance.setMember(member);
             attendanceRepository.save(attendance);
         }
     }
     public void leaveworkAttendance(AttendanceDto attendanceDto){
         Member member = memberRepository.findByMemberid2(attendanceDto.getMemberid());
         if (member != null) {
-            Attendance attendance = attendanceDto.toEntity();
+            Attendance attendance = attendanceRepository.findByAttendid(attendanceDto.getAttendid());
             attendance.setLeavework(attendanceDto.getLeavework());
-            attendance.setMember(member);
+           // attendance.setMember(member);
             attendanceRepository.save(attendance);
         }
     }
@@ -88,25 +85,23 @@ public class AttendanceService {
         //Optional<Attendance> optionalAttendance = attendanceRepository.findById(attendanceDto.getAttendid());
         Member member = memberRepository.findByMemberid2(attendanceDto.getMemberid());
         if(attendance != null){
-            Attendance existAttendance = attendanceDto.toEntity();
+           // Attendance existAttendance = attendanceDto.toEntity();
             if (member != null) {
-                existAttendance.setEnd(attendance.getEnd());
-                existAttendance.setStart(attendance.getStart());
-                attendanceRepository.save(existAttendance);
+                attendance.setEnd(attendance.getEnd());
+                attendance.setStart(attendance.getStart());
+                attendanceRepository.save(attendance);
             }
         }
     }
-
     public void deleteAttendance(AttendanceDto attendanceDto){
-        Optional<Attendance> attendance = attendanceRepository.findById(attendanceDto.getAttendid());
-        if (attendance.isPresent()) {
-            Attendance existAttendance = attendance.get();
-            Member member = memberRepository.findByMemberid2(attendanceDto.getMemberid());
-            if(member != null){
-                attendanceRepository.delete(existAttendance);
-//deleteById
+        Attendance attendance = attendanceRepository.findByAttendid(attendanceDto.getAttendid());
+        //Optional<Attendance> optionalAttendance = attendanceRepository.findById(attendanceDto.getAttendid());
+        Member member = memberRepository.findByMemberid2(attendanceDto.getMemberid());
+        if(attendance != null){
+            // Attendance existAttendance = attendanceDto.toEntity();
+            if (member != null) {
+                attendanceRepository.delete(attendance);
             }
-
         }
     }
     public void monthpay(long result){
@@ -119,8 +114,6 @@ public class AttendanceService {
         long result;
         if(member != null){
             Attendance attendance = attendanceRepository.findByAttendid(attendanceDto.getAttendid());
-            System.out.println("attendance.getLeavework():"+attendance.getLeavework());
-            System.out.println("attendance.getGowork():"+attendance.getGowork());
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
 //            LocalDateTime start = attendance.getStart();
@@ -135,24 +128,12 @@ public class AttendanceService {
             LocalDateTime go = attendance.getGowork();
             String formatGo = go.format(formatter);
 
-
-            System.out.println("formatLeave:"+formatLeave);
-            System.out.println("formatGo"+formatGo);
             Duration duration2 = Duration.between(go, leave); // 두 시간의 차이 계산
             long hours = duration2.toHours(); // 시간 단위로 시간 차이 구하기
             long minutes = duration2.toMinutes(); // 분 단위로 시간 차이 구하기
-            System.out.println("hours: "+hours);
-            System.out.println("minutes: "+minutes);
+
             result = minutes*attendanceDto.getWage();
 
-
-
-//            minutes %= 60;
-////            320 360-20(20분 지각) = 340
-////                    360-40(40분 지각) = 320
-//            if(minutes  <=30){
-//                resultpay-=60;
-//            }
             return result;
         }
     return -1;

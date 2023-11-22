@@ -1,4 +1,4 @@
-package com.jobstore.jobstore.dto;
+package com.jobstore.jobstore.dto.Attendance;
 
 import com.jobstore.jobstore.entity.Attendance;
 import com.jobstore.jobstore.entity.Member;
@@ -40,7 +40,6 @@ public class AttendanceDto {
                 .leavework(this.leavework)
                 .wage(this.wage)
                 .worker(this.worker)
-              //  .registertime(this.registertime)
                 .build();
     }
 }
