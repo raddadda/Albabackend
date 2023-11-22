@@ -1,17 +1,13 @@
 package com.jobstore.jobstore.service;
 
-import com.jobstore.jobstore.dto.PaymentDto;
 import com.jobstore.jobstore.entity.Member;
 import com.jobstore.jobstore.entity.Payment;
 import com.jobstore.jobstore.repository.MemberRepository;
 import com.jobstore.jobstore.repository.PaymentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -24,6 +20,8 @@ public class PaymentService {
     public Payment addPaymentForMember(String memberid, LocalDateTime register, long pay) {
         // Member member = memberRepository.findByMemberidAndStoreid(memberid, storeid);
         Member member = memberRepository.findByMemberid2(memberid);
+        long storeid=memberRepository.findeByMemberidForStoreid(memberid);
+        System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@"+storeid);
         if (member != null) {
             Payment newPayment = new Payment();
             newPayment.setPay(pay);

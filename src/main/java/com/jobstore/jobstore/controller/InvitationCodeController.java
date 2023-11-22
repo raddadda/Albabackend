@@ -1,4 +1,4 @@
-package com.jobstore.jobstore.Controller;
+package com.jobstore.jobstore.controller;
 
 import com.jobstore.jobstore.dto.request.InvitationCodeDto;
 import com.jobstore.jobstore.dto.StoreDto;

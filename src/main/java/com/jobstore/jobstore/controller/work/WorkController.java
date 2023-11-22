@@ -1,13 +1,11 @@
-package com.jobstore.jobstore.Controller.work;
+package com.jobstore.jobstore.controller.work;
 
 
-import com.jobstore.jobstore.dto.WorkDto;
 import com.jobstore.jobstore.dto.request.work.WorkCreateDto;
 import com.jobstore.jobstore.dto.request.work.WorkUpdateDto;
 import com.jobstore.jobstore.dto.response.ResultDto;
 import com.jobstore.jobstore.dto.response.work.WorkDetailDto;
 import com.jobstore.jobstore.dto.response.work.WorkPagenationDto;
-import com.jobstore.jobstore.entity.Work;
 import com.jobstore.jobstore.service.work.WorkService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -16,11 +14,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 @RestController
 @Tag(name = "Work", description = "Work CRUD")

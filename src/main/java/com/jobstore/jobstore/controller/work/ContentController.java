@@ -1,4 +1,4 @@
-package com.jobstore.jobstore.Controller.work;
+package com.jobstore.jobstore.controller.work;
 
 
 import com.jobstore.jobstore.dto.request.worksContents.ContentsCheckedDto;

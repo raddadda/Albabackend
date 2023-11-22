@@ -1,13 +1,9 @@
-package com.jobstore.jobstore.Controller;
+package com.jobstore.jobstore.controller;
 
 import com.jobstore.jobstore.config.PrincipalDetails;
-import com.jobstore.jobstore.dto.LoginDto;
-import com.jobstore.jobstore.dto.MemberDto;
-import com.jobstore.jobstore.dto.PaymentDto;
 import com.jobstore.jobstore.dto.request.PaymentAllPaymentDto;
 import com.jobstore.jobstore.dto.request.PaymentinsertDto;
 import com.jobstore.jobstore.dto.response.ResultDto;
-import com.jobstore.jobstore.entity.Member;
 import com.jobstore.jobstore.entity.Payment;
 import com.jobstore.jobstore.repository.MemberRepository;
 import com.jobstore.jobstore.service.MemberService;
@@ -15,21 +11,18 @@ import com.jobstore.jobstore.service.PaymentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 
 @Controller
+@Tag(name = "Payment", description = "Payment CRUD")
 public class PaymentController {
     @Autowired
     private PaymentService paymentService;

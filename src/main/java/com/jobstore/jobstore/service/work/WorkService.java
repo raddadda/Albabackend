@@ -29,12 +29,10 @@ public class WorkService {
 
     @Autowired
     private WorkRepository workRepository;
-
     @Autowired
     private CommentsRepository commentsRepository;
     @Autowired
     private ContentRepository contentRepository;
-
     @Autowired
     private MemberRepository memberRepository;
 

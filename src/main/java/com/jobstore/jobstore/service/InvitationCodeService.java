@@ -6,7 +6,6 @@ import com.jobstore.jobstore.repository.StoreRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.security.SecureRandom;
 import java.util.Base64;
 
 //companynumber 찾아서 일치 하였을 때 초대코드 발급
