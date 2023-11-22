@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -36,7 +37,7 @@ public class PaymentController {
     public ResponseEntity<ResultDto<Payment>> addPayment(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "요청파라미터", required = true,
             content = @Content(schema=@Schema(implementation = PaymentinsertDto.class)))
                                                              @RequestBody PaymentinsertDto paymentinsertDto) {
-        Payment paydata=paymentService.addPaymentForMember(paymentinsertDto.getMemberid(), paymentinsertDto.getStoreid(), paymentinsertDto.getPay());
+        Payment paydata=paymentService.addPaymentForMember(paymentinsertDto.getMemberid(), paymentinsertDto.getRegister(), paymentinsertDto.getPay());
         if(paydata != null){
             return ResponseEntity.ok(ResultDto.of("resultcode","급여정보삽입완료",paydata));
         }else{
@@ -51,6 +52,15 @@ public class PaymentController {
            return ResponseEntity.ok(ResultDto.of("resultcode","유저에대한 조회 성공",paymentDtos));
         }
         return ResponseEntity.ok(ResultDto.of("resultcode","조회실패",null));
+    }
+
+    @PostMapping("/allpayment2")
+    @ResponseBody
+    public ResponseEntity<ResultDto<Long>> paymentMain(@RequestParam String memberid , @RequestParam long month){
+        //   2023-11-20T12:00:00
+        // Long month = localdatetomonth(time);
+        Long payment = paymentService.paymentMain(month);
+        return ResponseEntity.ok(ResultDto.of("resultcode","조회실패",payment));
     }
 }
 

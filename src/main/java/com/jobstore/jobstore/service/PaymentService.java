@@ -7,8 +7,10 @@ import com.jobstore.jobstore.repository.MemberRepository;
 import com.jobstore.jobstore.repository.PaymentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,9 +21,9 @@ public class PaymentService {
     @Autowired
     private MemberRepository memberRepository;
 
-    public Payment addPaymentForMember(String memberid, long storeid, long pay) {
-        Member member = memberRepository.findByMemberidAndStoreid(memberid, storeid);
-
+    public Payment addPaymentForMember(String memberid, LocalDateTime register, long pay) {
+        // Member member = memberRepository.findByMemberidAndStoreid(memberid, storeid);
+        Member member = memberRepository.findByMemberid2(memberid);
         if (member != null) {
             Payment newPayment = new Payment();
             newPayment.setPay(pay);
@@ -44,4 +46,19 @@ public class PaymentService {
         }
         return result;
     }
+
+    public Long paymentMain(long month){
+        List<Payment> payments =  paymentRepository.findByMonth(month);
+       // Payment payment =  paymentRepository.findByMonth(month);
+        long result =0;
+        //List<Long> payList = new ArrayList<>();
+        for(Payment payment : payments){
+            result += payment.getPay();
+        }
+        return result;
+    }
+
+//    public Long localdatetomonth(long month){
+//
+//    }
 }
