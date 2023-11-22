@@ -93,6 +93,7 @@ public class MemberController {
         return ResponseEntity.ok(ResultDto.of("resultcode","User 삭제완료",memberService.deleteByUserto_memberid(memberid)));
     }
 
+
     /** 이미지 등록 */
     @PostMapping(value = "/member/image/upload", consumes = {"multipart/form-data"})
     @Operation(summary = "User,Admin:대한 이미지 등록 api", description = "이미지 등록 api입니다.")
