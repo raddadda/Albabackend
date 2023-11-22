@@ -25,6 +25,7 @@ public class PaymentService {
         if (member != null) {
             Payment newPayment = new Payment();
             newPayment.setPay(pay);
+            newPayment.setRegister(register);
             newPayment.setMember(member);
             System.out.println("newPayment : "+newPayment);
             return paymentRepository.save(newPayment);
