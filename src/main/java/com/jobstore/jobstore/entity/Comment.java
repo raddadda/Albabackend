@@ -12,6 +12,10 @@ public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long commentid;
+
+    @Column(length = 255,nullable = false)
+    private String name;
+
     @Column(length = 255,nullable = false)
     private String comment;
 
@@ -22,6 +26,6 @@ public class Comment {
     private Member member;
 
     @ManyToOne
-    @JoinColumn(name = "contentsid",referencedColumnName = "contentsid")
-    private Contents contents;
+    @JoinColumn(name = "workid",referencedColumnName = "workid")
+    private Work work;
 }

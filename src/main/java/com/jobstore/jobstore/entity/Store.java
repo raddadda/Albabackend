@@ -12,6 +12,7 @@ import java.util.List;
 @Getter
 @Setter
 public class Store {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long storeid;
@@ -28,4 +29,5 @@ public class Store {
 
     @OneToMany(mappedBy = "store")
     List<Member> members;
+
 }
