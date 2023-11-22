@@ -4,6 +4,7 @@ import com.jobstore.jobstore.dto.LoginDto;
 import com.jobstore.jobstore.dto.request.AdminjoinDto;
 import com.jobstore.jobstore.dto.request.UserjoinDto;
 import com.jobstore.jobstore.dto.response.ResultDto;
+import com.jobstore.jobstore.dto.response.auth.LoginResponseDto;
 import com.jobstore.jobstore.entity.Member;
 import com.jobstore.jobstore.entity.Store;
 import com.jobstore.jobstore.jwt.JwtTokenUtil;
@@ -66,8 +67,6 @@ public class AuthController {
             }
 
         }
-
-
         return ResponseEntity.ok(ResultDto.of("resultCode","회원가입이 실패했습니다.", null));
     }
 
@@ -77,7 +76,8 @@ public class AuthController {
 
     @PostMapping("/login")
     @Operation(summary = "로그인", description = "user, admin 공통 로그인")
-    public String login(
+
+    public ResponseEntity<ResultDto<LoginResponseDto>> login(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "요청파라미터", required = true,
                     content = @Content(schema=@Schema(implementation = LoginDto.class)))
             @RequestBody LoginDto loginDto) {
@@ -85,14 +85,22 @@ public class AuthController {
         Member member = memberService.login(loginDto);
 
         // 로그인 아이디나 비밀번호가 틀린 경우 global error return
-        if(member == null) {
-            return"로그인 아이디 또는 비밀번호가 틀렸습니다.";
+        if (member == null) {
+            return ResponseEntity.ok(ResultDto.of("403", "로그인 아이디 또는 비밀번호가 틀렸습니다.", null));
         }
+
         // 로그인 성공 => Jwt Token 발급
         String secretKey = "my-secret-key-123123";
         long expireTimeMs = 1000 * 60 * 60;     // Token 유효 시간 = 60분
         String jwtToken = JwtTokenUtil.createToken(member.getMemberid(), secretKey, expireTimeMs);
-        return jwtToken;
+
+        LoginResponseDto reposonse = new LoginResponseDto();
+        reposonse.setToken(jwtToken);
+        reposonse.setMemberid(member.getMemberid());
+        reposonse.setStoreid(member.getStore().getStoreid());
+
+        return ResponseEntity.ok(ResultDto.of("200", "로그인 성공.", reposonse));
+
     }
 
 //    @GetMapping("/info")
