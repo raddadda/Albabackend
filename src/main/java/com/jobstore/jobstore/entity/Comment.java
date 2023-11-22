@@ -1,5 +1,6 @@
 package com.jobstore.jobstore.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,6 +21,7 @@ public class Comment {
     private String comment;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumns({
             @JoinColumn(name = "memberid",referencedColumnName = "memberid"),
     })

@@ -3,16 +3,23 @@ package com.jobstore.jobstore.service.work;
 import com.jobstore.jobstore.dto.WorkDto;
 import com.jobstore.jobstore.dto.request.work.WorkCreateDto;
 import com.jobstore.jobstore.dto.request.work.WorkUpdateDto;
+import com.jobstore.jobstore.dto.response.work.WorkDetailDto;
+import com.jobstore.jobstore.dto.response.work.WorkPagenationDto;
+import com.jobstore.jobstore.entity.Contents;
 import com.jobstore.jobstore.entity.Member;
 import com.jobstore.jobstore.entity.Work;
 import com.jobstore.jobstore.repository.MemberRepository;
+import com.jobstore.jobstore.repository.work.CommentsRepository;
+import com.jobstore.jobstore.repository.work.ContentRepository;
 import com.jobstore.jobstore.repository.work.WorkRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,40 +29,50 @@ public class WorkService {
 
     @Autowired
     private WorkRepository workRepository;
+
+    @Autowired
+    private CommentsRepository commentsRepository;
+    @Autowired
+    private ContentRepository contentRepository;
+
     @Autowired
     private MemberRepository memberRepository;
 
     // 페이지 네이션
-    public Page<WorkDto> findPagenation (long storeid, Integer page){
+    public WorkPagenationDto findPagenation (long storeid, Integer page){
 
         Integer size = 10;
-        PageRequest pageRequest = PageRequest.of(page, size);
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.DESC, "workid");
         Page<Work> work =  workRepository.findByStoreid(storeid, pageRequest);
 
         //work를 DTO로 변환
         Page<WorkDto> toMap = work.map(m -> new WorkDto(m.getWorkid(), m.getTitle(), m.getDate()));
 
-
-        System.out.println(toMap.getContent()); //컨텐츠 사이즈
-        System.out.println(toMap.getContent().size()); //컨텐츠 사이즈
-        System.out.println(toMap.getTotalElements()); //멤버 개수
-        System.out.println(toMap.getNumber()); //페이지 번호
-        System.out.println(toMap.getTotalPages()); //전체 페이지 개수
-        System.out.println(toMap.isFirst()); //페이지가 첫 번째 페이지인가
-        System.out.println(toMap.hasNext()); //다음 페이지가 있는지
-
-
-
-        return toMap;
+        WorkPagenationDto dto = new WorkPagenationDto(
+                toMap.getContent(),
+                toMap.getContent().size(),
+                toMap.getNumber(),
+                toMap.getTotalPages(),
+                toMap.hasNext()
+        );
+        return dto;
 
     }
 
-    public Optional<Work> boardDetail (long workid) {
+    public WorkDetailDto boardDetail (long workid) {
 
         Optional<Work> work = workRepository.findByWorkid(workid);
 
         if (work.isPresent()) {
-            return work;
+
+            WorkDetailDto workDetailDto = new WorkDetailDto();
+            workDetailDto.setWorkid(work.get().getWorkid());
+            workDetailDto.setTitle(work.get().getTitle());
+            workDetailDto.setDate(work.get().getDate());
+            workDetailDto.setContents(contentRepository.findByWorkWorkid(workid, Sort.by(Sort.Direction.DESC, "contentsid")));
+            workDetailDto.setComment(commentsRepository.findByWorkWorkid(workid, Sort.by(Sort.Direction.DESC, "commentid")));
+
+            return workDetailDto;
         }
         return null;
     }

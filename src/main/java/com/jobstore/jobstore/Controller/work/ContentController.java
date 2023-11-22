@@ -36,8 +36,8 @@ public class ContentController {
         String result = contentService.createContent(contentCreateDto);
         if (result.equals("success")) {
             return ResponseEntity.ok(ResultDto.of("200", "등록 완료", contentCreateDto));
-        } else if (result.equals("autherror")) {
-            return ResponseEntity.ok(ResultDto.of("403", "등록 되지 않은 아이디", null));
+        } else if (result.equals("nodata")) {
+            return ResponseEntity.ok(ResultDto.of("403", "등록 되지 않은 work 게시판", null));
         } else {
             return ResponseEntity.ok(ResultDto.of("500", "back error", null));
         }
