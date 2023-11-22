@@ -66,7 +66,7 @@ public class ContentController {
 
     @DeleteMapping ("/delete/{contensid}")
     @Operation(summary = "work 게시판 content todo 삭제", description = "work 게시판 todo 삭제.")
-    @Parameter(name = "contensid", description = "id", required = true)
+    @Parameter(name = "contensid", description = "contensid", required = true)
     @ResponseBody
     public ResponseEntity<ResultDto<ContentsUpdateDto>> deleteContent (
         @PathVariable("contensid") long contensid

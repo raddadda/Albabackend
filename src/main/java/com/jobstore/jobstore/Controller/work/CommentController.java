@@ -68,7 +68,7 @@ public class CommentController {
 
     @DeleteMapping ("/delete/{commentid}")
     @Operation(summary = "work 게시판 댓글  삭제", description = "work 게시판 댓글 삭제.")
-    @Parameter(name = "commentid", description = "id", required = true)
+    @Parameter(name = "commentid", description = "commentid", required = true)
     @ResponseBody
     public ResponseEntity<ResultDto<Object>> deleteContent (
             @PathVariable("commentid") long commentid
