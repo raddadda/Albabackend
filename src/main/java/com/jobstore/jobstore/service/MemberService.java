@@ -2,6 +2,7 @@ package com.jobstore.jobstore.service;
 
 
 import com.jobstore.jobstore.dto.LoginDto;
+import com.jobstore.jobstore.dto.MemberAndStoreDetailsDto;
 import com.jobstore.jobstore.dto.MemberDto;
 import com.jobstore.jobstore.dto.request.AdminjoinDto;
 import com.jobstore.jobstore.dto.request.ImageUploadDto;
@@ -103,6 +104,17 @@ public class MemberService  {
     /**
     회원 전체 조회
      */
+    //한명에대한 조회
+    public MemberAndStoreDetailsDto findMemberDetails(String memberid){
+        System.out.println("asdsadasdasdas:       "+memberid);
+        Member member=memberRepository.findByMemberid2(memberid);
+        long storeidletsgo=memberRepository.findeByMemberidForStoreid(memberid);
+        System.out.println("sadadasdasdasdasd:     "+storeidletsgo);
+        Store store=storeRepository.findByStoreid2(storeidletsgo);
+        return new MemberAndStoreDetailsDto(member,store);
+    }
+
+
     public List<MemberDto> findAllMember(){
         List<Member> result=memberRepository.findAll();
         List<MemberDto> list =new ArrayList<MemberDto>();

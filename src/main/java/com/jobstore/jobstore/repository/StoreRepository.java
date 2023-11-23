@@ -20,6 +20,9 @@ public interface StoreRepository extends JpaRepository<Store,Long> {
 
    Store findByInvitecode(String invitecode);
 
+   @Query("SELECT s FROM Store s WHERE s.storeid=:storeid")
+   Store findByStoreid2(@Param("storeid") long storeid);
+
 
    //@Transactional // transaction 내부
    @Modifying // 조회 x

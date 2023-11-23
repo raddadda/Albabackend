@@ -30,6 +30,7 @@ public class Member {
     @Column(length = 255, nullable = true)
     private String memberimg;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumns({
             @JoinColumn(name = "storeid", referencedColumnName = "storeid")

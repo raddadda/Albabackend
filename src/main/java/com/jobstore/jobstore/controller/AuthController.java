@@ -2,6 +2,7 @@ package com.jobstore.jobstore.controller;
 
 import com.jobstore.jobstore.dto.LoginDto;
 import com.jobstore.jobstore.dto.request.AdminjoinDto;
+import com.jobstore.jobstore.dto.request.DoubleCheckDto;
 import com.jobstore.jobstore.dto.request.UserjoinDto;
 import com.jobstore.jobstore.dto.response.ResultDto;
 import com.jobstore.jobstore.dto.response.auth.LoginResponseDto;
@@ -33,6 +34,18 @@ public class AuthController {
     /**
      회원가입
      */
+
+    @PostMapping("/doublecheck")
+    @Operation(summary = "memberid 중복확인검사", description = "admin 전용 회원가입입니다.")
+    public ResponseEntity<ResultDto<Object>> doublecheck(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "요청파라미터", required = true,
+            content = @Content(schema=@Schema(implementation = DoubleCheckDto.class)))@RequestBody DoubleCheckDto doubleCheckDto){
+        if(!memberService.duplicateMemberid(doubleCheckDto.getMemberid())){
+            return ResponseEntity.ok(ResultDto.of("resultcode","사용가능한 아이디입니다.",doubleCheckDto));
+        }
+        return  ResponseEntity.ok(ResultDto.of("resultcode","아이디가 중복이 됩니다",null));
+    }
+
+
 
     //admin
     @PostMapping("/admin/join")
