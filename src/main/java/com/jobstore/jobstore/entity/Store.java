@@ -1,5 +1,6 @@
 package com.jobstore.jobstore.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,6 +28,7 @@ public class Store {
     @Column(length = 255,nullable = true)
     private String invitecode;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "store")
     List<Member> members;
 

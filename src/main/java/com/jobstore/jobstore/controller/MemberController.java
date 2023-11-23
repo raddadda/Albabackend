@@ -1,7 +1,10 @@
 package com.jobstore.jobstore.controller;
 
+import com.jobstore.jobstore.dto.MemberAndStoreDetailsDto;
 import com.jobstore.jobstore.dto.MemberDto;
+import com.jobstore.jobstore.dto.request.DoubleCheckDto;
 import com.jobstore.jobstore.dto.request.ImageUploadDto;
+import com.jobstore.jobstore.dto.request.UserjoinDto;
 import com.jobstore.jobstore.dto.response.ResultDto;
 import com.jobstore.jobstore.entity.Member;
 import com.jobstore.jobstore.service.MemberService;
@@ -61,6 +64,23 @@ public class MemberController {
             return ResponseEntity.ok(ResultDto.of("resultcode","전체유저 조회실패",null));
         }
         return ResponseEntity.ok(ResultDto.of("resultcode","전체유저 조회완료",memberService.findAllMember()));
+    }
+
+    @PostMapping("/detail")
+    @Operation(summary = "memberid에대한 user,admin정보", description = "memberid에 대한 상세객체가 반환됩니다")
+    @ResponseBody
+    public ResponseEntity<ResultDto<MemberAndStoreDetailsDto>> findMemberDetails(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "요청파라미터", required = true,
+                    content = @Content(schema=@Schema(implementation = DoubleCheckDto.class)))
+            @RequestBody DoubleCheckDto doubleCheckDto){
+        System.out.println("asdadadsadsaasdsada"+doubleCheckDto.getMemberid());
+        MemberAndStoreDetailsDto memberAndStoreDetailsDto=memberService.findMemberDetails(doubleCheckDto.getMemberid());
+        if(memberAndStoreDetailsDto!=null){
+            return ResponseEntity.ok(ResultDto.of("resultcode","성공",memberService.findMemberDetails(doubleCheckDto.getMemberid())));
+        }else{
+            ResponseEntity.ok(ResultDto.of("resultcode","실패",null));
+        }
+        return null;
     }
 
     @PatchMapping("/update")
