@@ -7,6 +7,7 @@ import com.jobstore.jobstore.repository.AttendanceRepository;
 import com.jobstore.jobstore.repository.MemberRepository;
 import com.jobstore.jobstore.repository.PaymentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -156,5 +157,10 @@ public class AttendanceService {
        return false;
     }
 
-
+//    public List<Attendance> findAll(int size){
+//        return attendanceRepository.findByFirstpage(size);
+//    }
+//    public List<Attendance> findByCursor(String memberid,long cursor,int size){
+//        return attendanceRepository.findByCursor(memberid,cursor,size);
+//    }
 }
