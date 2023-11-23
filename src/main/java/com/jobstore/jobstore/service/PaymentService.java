@@ -7,7 +7,11 @@ import com.jobstore.jobstore.repository.PaymentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.DayOfWeek;
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 
 @Service
@@ -25,6 +29,8 @@ public class PaymentService {
         if (member != null) {
             Payment newPayment = new Payment();
             newPayment.setPay(pay);
+
+            newPayment.setMonth(localDateTimeToMonth(register));
             newPayment.setRegister(register);
             newPayment.setMember(member);
             System.out.println("newPayment : "+newPayment);
@@ -46,6 +52,9 @@ public class PaymentService {
 //        return result;
 //    }
 
+    /**
+     월급 계산
+     */
     public Long paymentMain(long month){
         List<Payment> payments =  paymentRepository.findByMonth(month);
        // Payment payment =  paymentRepository.findByMonth(month);
@@ -56,8 +65,68 @@ public class PaymentService {
         }
         return result;
     }
+    /**
+     주급 계산
+     */
+    public Long wageWeek(long month){
+        List<Payment> payments =  paymentRepository.findByMonth(month);
+        // Payment payment =  paymentRepository.findByMonth(month);
+        long result =0;
+        //List<Long> payList = new ArrayList<>();
+        for(Payment payment : payments){
+            result += payment.getPay();
+        }
+        return result;
+    }
+    public boolean checkLocaltime(LocalDateTime before,LocalDateTime after){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        Duration duration = Duration.between(before, after);
+        //두 시간차가 음수일때 , 즉 after시간보다 before시간이 더 최근일때를 의미한다.
+        if(duration.toMinutes() <0){
+            return false;
+        }
+        return true;
 
+    }
     public long localDateTimeToMonth(LocalDateTime localDateTime){
         return localDateTime.getMonthValue();
+    }
+
+    public long localDateTimeToWeek(LocalDateTime time,String memberid){
+
+        LocalDateTime now = LocalDateTime.now(); // 현재 날짜와 시간
+
+        LocalDateTime startOfWeek = now.with(TemporalAdjusters.previousOrSame(java.time.DayOfWeek.MONDAY)); // 이번 주 시작일
+        LocalDateTime endOfWeek = now.with(TemporalAdjusters.nextOrSame(java.time.DayOfWeek.SUNDAY)).withHour(23).withMinute(59).withSecond(59); // 이번 주 마지막 일시
+
+        long month = localDateTimeToMonth(time);
+
+        List<Payment> payments =  paymentRepository.findByRegister(memberid);
+        long result =0;
+        //List<Long> payList = new ArrayList<>();
+        for(Payment payment : payments){
+            if(checkLocaltime(startOfWeek,payment.getRegister())){
+                System.out.println("startOfWeek : "+startOfWeek);
+                System.out.println("payment.getRegister(): "+payment.getRegister());
+
+                if(checkLocaltime(payment.getRegister(),endOfWeek)){
+                    System.out.println("endOfWeek : "+endOfWeek);
+                    System.out.println("payment.getRegister(): "+payment.getRegister());
+                    result += payment.getPay();
+
+                }
+            }
+            //result += payment.getPay();
+        }
+        return result;
+        //System.out.println("result : "+result);
+        //return result;
+       // Payment payments =  paymentRepository.findByRegister(memberid);
+        // System.out.println("payments.getRegister: "+payments.getRegister());
+        //payments.getRegister()
+
+     //   System.out.println("endOfWeek: "+endOfWeek);
+
+
     }
 }

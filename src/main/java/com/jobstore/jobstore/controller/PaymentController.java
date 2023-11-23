@@ -1,6 +1,7 @@
 package com.jobstore.jobstore.controller;
 
 import com.jobstore.jobstore.config.PrincipalDetails;
+import com.jobstore.jobstore.dto.PaymentMainDto;
 import com.jobstore.jobstore.dto.request.PaymentAllPaymentDto;
 import com.jobstore.jobstore.dto.request.PaymentinsertDto;
 import com.jobstore.jobstore.dto.response.ResultDto;
@@ -74,14 +75,37 @@ public class PaymentController {
     @PostMapping("/allpayment")
     @Operation(summary = "Payment api", description = "payment api입니다.")
     @ResponseBody
-    public ResponseEntity<ResultDto<Long>> paymentMain(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "요청파라미터", required = true,
+    public ResponseEntity<ResultDto<PaymentMainDto>> paymentMain(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "요청파라미터", required = true,
             content = @Content(schema=@Schema(implementation = PaymentinsertDto.class)))
                                                            @RequestBody PaymentAllPaymentDto paymentAllPaymentDto){
         //   2023-11-20T12:00:00
         long month= paymentService.localDateTimeToMonth(paymentAllPaymentDto.getTime());
+
+        //한달급여
         Long payment = paymentService.paymentMain(month);
-        return ResponseEntity.ok(ResultDto.of("resultcode","조회실패",payment));
+        //주급
+        long week = paymentService.localDateTimeToWeek(paymentAllPaymentDto.getTime(),paymentAllPaymentDto.getMemberid());
+
+        PaymentMainDto paymentMainDto = new PaymentMainDto();
+        return ResponseEntity.ok(ResultDto.of("resultcode","조회성공",new PaymentMainDto(payment,week)));
     }
+
+//    @PostMapping("/payment")
+//    @Operation(summary = "Payment api", description = "payment api입니다.")
+//    @ResponseBody
+//    public ResponseEntity<ResultDto<Long>> paymentMain(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "요청파라미터", required = true,
+//            content = @Content(schema=@Schema(implementation = PaymentinsertDto.class)))
+//                                                       @RequestBody PaymentAllPaymentDto paymentAllPaymentDto){
+//        //   2023-11-20T12:00:00
+//        long month= paymentService.localDateTimeToMonth(paymentAllPaymentDto.getTime());
+//
+//        long week = paymentService.localDateTimeToWeek(paymentAllPaymentDto.getTime(),paymentAllPaymentDto.getMemberid());
+//
+//        //System.out.println("month:"+month);
+//        Long payment = paymentService.paymentMain(month);
+//        //System.out.println("payment:"+payment);
+//        return ResponseEntity.ok(ResultDto.of("resultcode","조회성공",payment));
+//    }
 }
 
 
