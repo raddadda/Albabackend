@@ -16,4 +16,15 @@ public interface AttendanceRepository extends JpaRepository<Attendance,Long> {
 
     @Query("SELECT a FROM Attendance a WHERE a.worker = :worker AND a.attendid = :attendid")
     Attendance findByWorkderAndAttendid(@Param("worker") String worker,@Param("attendid") long attendid);
+
+//    @Query(value = "SELECT * FROM attendance LIMIT :size desc", nativeQuery = true)
+//    List<Attendance> findByFirstpage(@Param("size") int size);
+//
+//    //findAllAttendance
+//    @Query(value = "SELECT * FROM attendance WHERE memberid > :cursor ORDER BY memberid LIMIT :size", nativeQuery = true)
+//    List<Attendance> findByCursor(@Param("memberid") String memberid,@Param("cursor") Long cursor, @Param("size") int size);
+
+    @Query("SELECT a FROM Attendance a WHERE a.worker = :worker AND a.attendid = :attendid")
+    Attendance findAttendancehistory(@Param("worker") String worker,@Param("attendid") long attendid);
+    //디폴트
 }

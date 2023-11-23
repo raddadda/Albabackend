@@ -33,7 +33,6 @@ public class WorkController {
     @ResponseBody
     public ResponseEntity<ResultDto<WorkPagenationDto>> findAllWorkBoard(@PathVariable("storeid") long storeid,
                                                                          @PathVariable("page") Integer page) {
-
         return ResponseEntity.ok(ResultDto.of("100","조회 완료",
                 workService.findPagenation(storeid, page)));
     }

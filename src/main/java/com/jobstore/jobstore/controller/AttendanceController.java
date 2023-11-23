@@ -3,6 +3,8 @@ package com.jobstore.jobstore.controller;
 import com.jobstore.jobstore.dto.Attendance.*;
 import com.jobstore.jobstore.dto.response.ResultDto;
 import com.jobstore.jobstore.entity.Attendance;
+import com.jobstore.jobstore.entity.Member;
+import com.jobstore.jobstore.entity.Payment;
 import com.jobstore.jobstore.service.AttendanceService;
 import com.jobstore.jobstore.service.MemberService;
 import com.jobstore.jobstore.service.PaymentService;
@@ -11,9 +13,14 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -29,7 +36,65 @@ public class AttendanceController {
     @Autowired
     private MemberService memberService;
 
-    @PostMapping("/admin/attendance")
+//    @GetMapping("/admin/attendance/{memberid}/{cursor}")
+//    public  ResponseEntity<ResultDto<Object>> getUserById(@PathVariable String memberid
+//                                                          ,@PathVariable(required = false) Long cursor
+//    ) {
+//        int size = 3;
+//        System.out.println("memberid:"+memberid);
+//       // System.out.println("cursor:"+cursor);
+//        if (cursor == null) {
+//            // 최초 요청 시 커서 값이 없는 경우 첫 페이지 데이터 조회
+//            List<Attendance> list = attendanceService.findAll(size);
+//            return ResponseEntity.ok(ResultDto.of("성공","첫페이지",list));
+//
+//        }
+//        else {
+//            // 커서 값이 있는 경우 다음 페이지 데이터 조회
+//            List<Attendance> list =  attendanceService.findByCursor(memberid,cursor,size);
+//            System.out.println("cursor:"+cursor);
+//            return ResponseEntity.ok(ResultDto.of("성공","두번째부터",list));
+//        }
+//    }
+//    @GetMapping("/admin/attendance")
+//    public Page<Payment> getPayments(
+//            @RequestParam(defaultValue = "0") int page,
+//            @RequestParam(defaultValue = "10") int size
+//    ) {
+//        PageRequest pageRequest = PageRequest.of(page, size);
+//        return paymentRepository.findAll(pageRequest);
+//    }
+//    @PostMapping("/admin/attendance")
+//    @Operation(summary = "admin 메인화면", description = "월급,주급,히스토리")
+//    public ResponseEntity<ResultDto<Object>> adminAttendanceMain(
+//            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "요청파라미터", required = true,
+//                    content = @Content(schema=@Schema(implementation = AttendanceDto.class)))
+//            @RequestBody AttendanceDto attendanceDto
+//    ) {
+//        String role = memberService.findByMemberidToRole(attendanceDto.getMemberid());
+//        if(role.equals("ADMIN")){
+//            List<Attendance> attendance = attendanceService.findAllAttendance();
+//            return ResponseEntity.ok(ResultDto.of("성공","admin 근태 조회",attendance));
+//        }
+//        return ResponseEntity.ok(ResultDto.of("실패","admin 권한이 아닙니다.",null));
+//    }
+//
+//    @PostMapping("/user/attendance")
+//    @Operation(summary = "user 메인화면", description = "admin이 모든 user들에대한 근태기록을 볼 수 있는 곳입니다.")
+//    public ResponseEntity<ResultDto<Object>> userAttendanceMain(
+//            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "요청파라미터", required = true,
+//                    content = @Content(schema=@Schema(implementation = AttendanceDto.class)))
+//            @RequestBody AttendanceDto attendanceDto
+//    ) {
+//        String role = memberService.findByMemberidToRole(attendanceDto.getMemberid());
+//        if(role.equals("ADMIN")){
+//            List<Attendance> attendance = attendanceService.findAllAttendance();
+//            return ResponseEntity.ok(ResultDto.of("성공","admin 근태 조회",attendance));
+//        }
+//        return ResponseEntity.ok(ResultDto.of("실패","admin 권한이 아닙니다.",null));
+//    }
+
+    @PostMapping("/admin/attendance/create")
     @Operation(summary = "admin 근태추가", description = "admin 근태생성")
     public ResponseEntity<ResultDto<Object>> createAttendance(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "요청파라미터", required = true,
@@ -107,6 +172,7 @@ public class AttendanceController {
         }
         return ResponseEntity.ok(ResultDto.of("실패","admin 권한이 아닙니다.",null));
     }
+
 
     @PostMapping("/admin/attendance/update")
     @Operation(summary = "admin 근태업데이트", description = "admin이 근태를 업데이트하는 곳입니다.")
