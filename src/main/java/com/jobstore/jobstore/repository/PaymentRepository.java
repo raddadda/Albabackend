@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface PaymentRepository extends JpaRepository<Payment,Long> {
@@ -22,4 +23,9 @@ public interface PaymentRepository extends JpaRepository<Payment,Long> {
     List<Payment> findByMonth(@Param("month") Long month);
 //    @Query("SELECT p FROM Payment p WHERE p.month = :month")
 //    Payment findByMonth(@Param("month") Long month);
+
+
+    @Query("SELECT p FROM Payment p WHERE p.member.memberid = :memberid")
+    List<Payment> findByRegister(@Param("memberid") String memberid);
+
 }

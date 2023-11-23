@@ -225,4 +225,6 @@ public class MemberService  {
         return memberRepository.findByMemberidToRole(memberid);
     }
 
+
+
 }

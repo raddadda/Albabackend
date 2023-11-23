@@ -35,21 +35,25 @@ public class AttendanceService {
             attendanceRepository.save(attendance);
         }
     }
-    public void goworkAttendance(AttendanceDto attendanceDto){
-        Member member = memberRepository.findByMemberid2(attendanceDto.getMemberid());
+    public void goworkAttendance(AttendanceUpdateDto attendanceUpdateDto){
+        Member member = memberRepository.findByMemberid2(attendanceUpdateDto.getMemberid());
+        System.out.println("5555555");
         if (member != null) {
-            Attendance attendance = attendanceRepository.findByAttendid(attendanceDto.getAttendid());
+            System.out.println("66666666");
+            Attendance attendance = attendanceRepository.findByWorkderAndAttendid(attendanceUpdateDto.getWorker(),attendanceUpdateDto.getAttendid());
+            System.out.println("77777777");
             //Attendance attendance = attendanceDto.toEntity();
-            attendance.setGowork(attendanceDto.getGowork());
+            LocalDateTime Gowork = attendanceUpdateDto.getGowork();
+            attendance.setGowork(attendanceUpdateDto.getGowork());
             //attendance.setMember(member);
             attendanceRepository.save(attendance);
         }
     }
-    public void leaveworkAttendance(AttendanceDto attendanceDto){
-        Member member = memberRepository.findByMemberid2(attendanceDto.getMemberid());
+    public void leaveworkAttendance(AttendanceUpdateDto attendanceUpdateDto){
+        Member member = memberRepository.findByMemberid2(attendanceUpdateDto.getMemberid());
         if (member != null) {
-            Attendance attendance = attendanceRepository.findByAttendid(attendanceDto.getAttendid());
-            attendance.setLeavework(attendanceDto.getLeavework());
+            Attendance attendance = attendanceRepository.findByWorkderAndAttendid(attendanceUpdateDto.getWorker(),attendanceUpdateDto.getAttendid());
+            attendance.setLeavework(attendanceUpdateDto.getLeavework());
            // attendance.setMember(member);
             attendanceRepository.save(attendance);
         }
@@ -79,23 +83,28 @@ public class AttendanceService {
 //        System.out.println("findAllAttendance22"+attendance);
 //        return attendance;
     }
-    public void updateAttendance(AttendanceDto attendanceDto){
-        Attendance attendance = attendanceRepository.findByAttendid(attendanceDto.getAttendid());
+    public void updateAttendance(AttendanceUpdateDto attendanceUpdateDto){
+        System.out.println("attendanceUpdateDto.getAttendid(): "+attendanceUpdateDto.getAttendid());
+        Attendance attendance = attendanceRepository.findByAttendid(attendanceUpdateDto.getAttendid());
+        //Attendance attendance = attendanceRepository.findByWorkder(attendanceDto.getWorker());
         //Optional<Attendance> optionalAttendance = attendanceRepository.findById(attendanceDto.getAttendid());
-        Member member = memberRepository.findByMemberid2(attendanceDto.getMemberid());
+        Member member = memberRepository.findByMemberid2(attendanceUpdateDto.getMemberid());
         if(attendance != null){
            // Attendance existAttendance = attendanceDto.toEntity();
             if (member != null) {
-                attendance.setEnd(attendance.getEnd());
-                attendance.setStart(attendance.getStart());
+
+                attendance.setEnd(attendanceUpdateDto.getEnd());
+                attendance.setStart(attendanceUpdateDto.getStart());
+                attendance.setWage(attendanceUpdateDto.getWage());
+                attendance.setWorker(attendanceUpdateDto.getWorker());
                 attendanceRepository.save(attendance);
             }
         }
     }
-    public void deleteAttendance(AttendanceDto attendanceDto){
-        Attendance attendance = attendanceRepository.findByAttendid(attendanceDto.getAttendid());
+    public void deleteAttendance(AttendanceUpdateDto attendanceUpdateDto){
+        Attendance attendance = attendanceRepository.findByWorkderAndAttendid(attendanceUpdateDto.getWorker(),attendanceUpdateDto.getAttendid());
         //Optional<Attendance> optionalAttendance = attendanceRepository.findById(attendanceDto.getAttendid());
-        Member member = memberRepository.findByMemberid2(attendanceDto.getMemberid());
+        Member member = memberRepository.findByMemberid2(attendanceUpdateDto.getMemberid());
         if(attendance != null){
             // Attendance existAttendance = attendanceDto.toEntity();
             if (member != null) {
@@ -108,11 +117,11 @@ public class AttendanceService {
 
         // paymentRepository.save();
     }
-    public long payCalculate(AttendanceDto attendanceDto){
-        Member member = memberRepository.findByMemberid2(attendanceDto.getMemberid());
+    public long payCalculate(AttendanceUpdateDto attendanceUpdateDto){
+        Member member = memberRepository.findByMemberid2(attendanceUpdateDto.getMemberid());
         long result;
         if(member != null){
-            Attendance attendance = attendanceRepository.findByAttendid(attendanceDto.getAttendid());
+            Attendance attendance = attendanceRepository.findByWorkderAndAttendid(attendanceUpdateDto.getWorker(),attendanceUpdateDto.getAttendid());
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
 //            LocalDateTime start = attendance.getStart();
@@ -131,10 +140,21 @@ public class AttendanceService {
             long hours = duration2.toHours(); // 시간 단위로 시간 차이 구하기
             long minutes = duration2.toMinutes(); // 분 단위로 시간 차이 구하기
 
-            result = minutes*attendanceDto.getWage();
+            result = minutes*attendanceUpdateDto.getWage();
 
             return result;
         }
     return -1;
     }
+
+
+    public boolean existGoworkCheck(AttendanceUpdateDto attendanceUpdateDto){
+        Attendance attendance = attendanceRepository.findByWorkderAndAttendid(attendanceUpdateDto.getWorker(),attendanceUpdateDto.getAttendid());
+        if(attendance.getGowork() != null){
+            return true;
+        }
+       return false;
+    }
+
+
 }

@@ -18,7 +18,6 @@ public class Attendance {
     @Id
     @GeneratedValue
     private long attendid;
-
     @Column(length = 255,nullable = false)
     private LocalDateTime start;
     @Column(length = 255,nullable = false)
