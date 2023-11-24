@@ -106,10 +106,10 @@ public class MemberService  {
      */
     //한명에대한 조회
     public MemberAndStoreDetailsDto findMemberDetails(String memberid){
-        System.out.println("asdsadasdasdas:       "+memberid);
+        // System.out.println("asdsadasdasdas:       "+memberid);
         Member member=memberRepository.findByMemberid2(memberid);
         long storeidletsgo=memberRepository.findeByMemberidForStoreid(memberid);
-        System.out.println("sadadasdasdasdasd:     "+storeidletsgo);
+        // System.out.println("sadadasdasdasdasd:     "+storeidletsgo);
         Store store=storeRepository.findByStoreid2(storeidletsgo);
         return new MemberAndStoreDetailsDto(member,store);
     }

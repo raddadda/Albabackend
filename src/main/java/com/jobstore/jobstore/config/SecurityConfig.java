@@ -30,9 +30,7 @@ public class SecurityConfig {
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
-
-                .csrf(csrf ->  csrf.disable()  // csrf 토큰 비활성화
-
+                .csrf(csrf ->  csrf.disable()  // csrf 토큰 비활성
                 )
                 .addFilter(corsConfig.corsFilter())
                 .headers((headerConfig) ->
@@ -40,11 +38,9 @@ public class SecurityConfig {
                                 frameOptionsConfig.disable()
                         )
                 )
-                //.addFilterBefore(new JwtTokenFilter(userService, secretKey), UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement(configurer -> configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 // 특정 URL에 대한 권한 설정
                 .addFilterBefore(new JwtTokenFilter(memberService, secretKey), UsernamePasswordAuthenticationFilter.class)
-
                 .authorizeHttpRequests((authorizeRequests) -> {
                     authorizeRequests
                             .requestMatchers(HttpMethod.OPTIONS, "/**/*").permitAll()
