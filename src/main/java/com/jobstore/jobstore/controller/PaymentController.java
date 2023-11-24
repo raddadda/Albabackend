@@ -1,8 +1,11 @@
 package com.jobstore.jobstore.controller;
 
 import com.jobstore.jobstore.config.PrincipalDetails;
+import com.jobstore.jobstore.dto.request.PaymentHistoryDto;
 import com.jobstore.jobstore.dto.PaymentMainDto;
+import com.jobstore.jobstore.dto.request.PaymentAdminAllpayment;
 import com.jobstore.jobstore.dto.request.PaymentAllPaymentDto;
+import com.jobstore.jobstore.dto.request.PaymentPercentageDto;
 import com.jobstore.jobstore.dto.request.PaymentinsertDto;
 import com.jobstore.jobstore.dto.response.ResultDto;
 import com.jobstore.jobstore.entity.Payment;
@@ -17,9 +20,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @Controller
@@ -106,6 +109,47 @@ public class PaymentController {
 //        //System.out.println("payment:"+payment);
 //        return ResponseEntity.ok(ResultDto.of("resultcode","조회성공",payment));
 //    }
+    @PostMapping("/percent")
+    @Operation(summary = "Payment api", description = "저번달 대비 퍼센트 증감률")
+    @ResponseBody
+    public ResponseEntity<ResultDto<Double>> last_recentpercentage(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "요청파라미터", required = true,
+                    content = @Content(schema=@Schema(implementation = PaymentPercentageDto.class)))@RequestBody PaymentPercentageDto paymentPercentageDto){
+        return ResponseEntity.ok(ResultDto.of("resultcode","성공",paymentService.last_recentpercentage(paymentPercentageDto.getMemberid(),paymentPercentageDto.getMonth())));
+
+    }
+
+    @GetMapping("/allpayment/{memberid}/{cursor}")
+    public  ResponseEntity<ResultDto<Object>> getUserById(@PathVariable String memberid
+            ,@PathVariable(required = false) Long cursor
+    ) {
+        //maxcursor와 조회 리스트를 담은 Dto 객체 생성
+        PaymentHistoryDto paymentHistoryDto = new PaymentHistoryDto();
+        //한페이지당 보여줄 리스트 수
+        int size = 3;
+        //페이지 커서의 최대 개수
+        int maxcursor;
+        cursor= cursor*3;
+        int max = paymentService.findAll().size();
+        if(max%size>0){
+            maxcursor = max/size +1;
+        }else {
+            maxcursor = max/size;
+        }
+        List<Payment> list =  paymentService.findByCursor(memberid,cursor,size);
+
+        paymentHistoryDto.setPayments(list);
+        paymentHistoryDto.setMaxcursor(maxcursor);
+        return ResponseEntity.ok(ResultDto.of("성공","두번째부터",paymentHistoryDto));
+    }
+    @PostMapping("/admin/allpayment")
+    @ResponseBody
+    public ResponseEntity<ResultDto<Long>> adminAllPay(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "요청파라미터", required = true,
+                    content = @Content(schema=@Schema(implementation = PaymentAdminAllpayment.class)))@RequestBody PaymentAdminAllpayment paymentAdminAllpayment){
+//        System.out.println("asdsadasddssadsa:sadasdas"+memberid);
+        return ResponseEntity.ok(ResultDto.of("resultcode","월중전체 지출액 성공",paymentService.addPaymentForAdmin(paymentAdminAllpayment.getMemberid(),paymentAdminAllpayment.getMonth())));
+    }
 }
 
 
