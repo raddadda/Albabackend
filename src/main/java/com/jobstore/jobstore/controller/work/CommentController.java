@@ -17,8 +17,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@Tag(name = "Work Commnet", description = "Work Commnet CRUD")
-@RequestMapping("/work/commnet")
+@Tag(name = "Work Comment", description = "Work Comment CRUD")
+@RequestMapping("/work/comment")
 public class CommentController {
 
     @Autowired
@@ -29,7 +29,7 @@ public class CommentController {
     @ResponseBody
     public ResponseEntity<ResultDto<CommentCreateDto>> createWorkContent (
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "요청파라미터", required = true,
-                    content = @Content(schema=@Schema(implementation = ContentsCreateDto.class)))
+                    content = @Content(schema=@Schema(implementation =CommentCreateDto.class)))
             @Valid @RequestBody CommentCreateDto commentCreateDto
     ) {
 

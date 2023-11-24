@@ -31,8 +31,8 @@ public class WorkController {
     @Parameter(name = "storeid", description = "storeid", required = true)
     @Parameter(name = "page", description = "페이지 번호 0부터 시작", required = true)
     @ResponseBody
-    public ResponseEntity<ResultDto<WorkPagenationDto>> findAllWorkBoard(@PathVariable("storeid") long storeid,
-                                                                         @PathVariable("page") Integer page) {
+    public ResponseEntity<ResultDto<WorkPagenationDto>> findAllWorkBoard(@PathVariable(value = "storeid", required = true) long storeid,
+                                                                         @PathVariable(value = "page" , required = true) Integer page) {
 
         return ResponseEntity.ok(ResultDto.of("100","조회 완료",
                 workService.findPagenation(storeid, page)));
@@ -42,7 +42,7 @@ public class WorkController {
     @Operation(summary = "work 게시판 상세", description = "work 게시판 상세.")
     @Parameter(name = "workid", description = "workid", required = true)
     @ResponseBody
-    public ResponseEntity<ResultDto<WorkDetailDto>> boardDetail(@PathVariable("workid") long workid) {
+    public ResponseEntity<ResultDto<WorkDetailDto>> boardDetail(@PathVariable(value = "workid", required = true) long workid) {
 
         WorkDetailDto result = workService.boardDetail(workid);
 

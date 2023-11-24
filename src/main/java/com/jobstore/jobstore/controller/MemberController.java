@@ -73,7 +73,7 @@ public class MemberController {
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "요청파라미터", required = true,
                     content = @Content(schema=@Schema(implementation = DoubleCheckDto.class)))
             @RequestBody DoubleCheckDto doubleCheckDto){
-        System.out.println("asdadadsadsaasdsada"+doubleCheckDto.getMemberid());
+        // System.out.println("asdadadsadsaasdsada"+doubleCheckDto.getMemberid());
         MemberAndStoreDetailsDto memberAndStoreDetailsDto=memberService.findMemberDetails(doubleCheckDto.getMemberid());
         if(memberAndStoreDetailsDto!=null){
             return ResponseEntity.ok(ResultDto.of("resultcode","성공",memberService.findMemberDetails(doubleCheckDto.getMemberid())));
