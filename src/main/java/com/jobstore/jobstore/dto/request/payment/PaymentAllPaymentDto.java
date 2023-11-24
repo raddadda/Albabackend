@@ -1,4 +1,4 @@
-package com.jobstore.jobstore.dto.request;
+package com.jobstore.jobstore.dto.request.payment;
 
 import lombok.Getter;
 import lombok.Setter;

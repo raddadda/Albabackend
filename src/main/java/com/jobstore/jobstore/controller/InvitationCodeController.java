@@ -1,6 +1,6 @@
 package com.jobstore.jobstore.controller;
 
-import com.jobstore.jobstore.dto.request.InvitationCodeDto;
+import com.jobstore.jobstore.dto.request.member.InvitationCodeDto;
 import com.jobstore.jobstore.dto.StoreDto;
 import com.jobstore.jobstore.service.InvitationCodeService;
 import io.swagger.v3.oas.annotations.Operation;

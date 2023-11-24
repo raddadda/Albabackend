@@ -1,10 +1,9 @@
 package com.jobstore.jobstore.controller;
 
-import com.jobstore.jobstore.dto.MemberAndStoreDetailsDto;
+import com.jobstore.jobstore.dto.request.member.MemberAndStoreDetailsDto;
 import com.jobstore.jobstore.dto.MemberDto;
-import com.jobstore.jobstore.dto.request.DoubleCheckDto;
-import com.jobstore.jobstore.dto.request.ImageUploadDto;
-import com.jobstore.jobstore.dto.request.UserjoinDto;
+import com.jobstore.jobstore.dto.request.member.DoubleCheckDto;
+import com.jobstore.jobstore.dto.request.member.ImageUploadDto;
 import com.jobstore.jobstore.dto.response.ResultDto;
 import com.jobstore.jobstore.entity.Member;
 import com.jobstore.jobstore.service.MemberService;
