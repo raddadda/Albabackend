@@ -1,5 +1,4 @@
-package com.jobstore.jobstore.dto.request;
-
+package com.jobstore.jobstore.dto.request.payment;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,10 +7,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
-public class ImageUploadDto {
-
+@NoArgsConstructor
+public class PaymentAdminAllpayment {
     private String memberid;
-    private long storeid;
+    private long month;
 }

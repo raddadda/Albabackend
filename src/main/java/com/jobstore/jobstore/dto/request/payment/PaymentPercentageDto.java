@@ -1,15 +1,15 @@
-package com.jobstore.jobstore.dto;
+package com.jobstore.jobstore.dto.request.payment;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
-@Builder
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PaymentMainDto {
+public class PaymentPercentageDto {
+    private String memberid;
     private long month;
-    private long week;
 }

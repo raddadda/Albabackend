@@ -1,9 +1,9 @@
 package com.jobstore.jobstore.controller;
 
 import com.jobstore.jobstore.dto.LoginDto;
-import com.jobstore.jobstore.dto.request.AdminjoinDto;
-import com.jobstore.jobstore.dto.request.DoubleCheckDto;
-import com.jobstore.jobstore.dto.request.UserjoinDto;
+import com.jobstore.jobstore.dto.request.member.AdminjoinDto;
+import com.jobstore.jobstore.dto.request.member.DoubleCheckDto;
+import com.jobstore.jobstore.dto.request.member.UserjoinDto;
 import com.jobstore.jobstore.dto.response.ResultDto;
 import com.jobstore.jobstore.dto.response.auth.LoginResponseDto;
 import com.jobstore.jobstore.entity.Member;

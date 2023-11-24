@@ -1,4 +1,4 @@
-package com.jobstore.jobstore.dto.request;
+package com.jobstore.jobstore.dto.request.payment;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +9,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PaymentAdminAllpayment {
+public class PaymentAdminFindAllDto {
     private String memberid;
-    private long month;
 }

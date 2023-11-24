@@ -2,11 +2,11 @@ package com.jobstore.jobstore.service;
 
 
 import com.jobstore.jobstore.dto.LoginDto;
-import com.jobstore.jobstore.dto.MemberAndStoreDetailsDto;
+import com.jobstore.jobstore.dto.request.member.MemberAndStoreDetailsDto;
 import com.jobstore.jobstore.dto.MemberDto;
-import com.jobstore.jobstore.dto.request.AdminjoinDto;
-import com.jobstore.jobstore.dto.request.ImageUploadDto;
-import com.jobstore.jobstore.dto.request.UserjoinDto;
+import com.jobstore.jobstore.dto.request.member.AdminjoinDto;
+import com.jobstore.jobstore.dto.request.member.ImageUploadDto;
+import com.jobstore.jobstore.dto.request.member.UserjoinDto;
 import com.jobstore.jobstore.entity.Member;
 import com.jobstore.jobstore.entity.Payment;
 import com.jobstore.jobstore.entity.Store;

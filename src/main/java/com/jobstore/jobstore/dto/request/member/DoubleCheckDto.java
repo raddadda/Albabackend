@@ -1,4 +1,4 @@
-package com.jobstore.jobstore.dto.request;
+package com.jobstore.jobstore.dto.request.member;
 
 import lombok.Getter;
 import lombok.Setter;

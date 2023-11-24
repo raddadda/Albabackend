@@ -1,5 +1,6 @@
 package com.jobstore.jobstore.service;
 
+import com.jobstore.jobstore.dto.PaymentAdminDto;
 import com.jobstore.jobstore.entity.Member;
 import com.jobstore.jobstore.entity.Payment;
 import com.jobstore.jobstore.entity.PaymentAdmin;
@@ -14,6 +15,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -79,6 +81,20 @@ public class PaymentService {
 //        }
 //        return result;
 //    }
+    public List<PaymentAdminDto> findByMemberidAdmin(String memberid){
+        List<PaymentAdmin> admindata=paymentAdminRepository.findBymemberid(memberid);
+        List<PaymentAdminDto> result=new ArrayList<>();
+        for(PaymentAdmin paydata:admindata){
+            PaymentAdminDto paymentAdminDto= PaymentAdminDto.builder()
+                    .memberid(paydata.getMemberid())
+                    .storeid(paydata.getStoreid())
+                    .sum(paydata.getSum())
+                    .month(paydata.getMonth())
+                    .build();
+            result.add(paymentAdminDto);
+        }
+        return result;
+    }
     //전체 유저 조회 및 페이지네이션
 public List<Payment> findAll(){
     return paymentRepository.findAll();

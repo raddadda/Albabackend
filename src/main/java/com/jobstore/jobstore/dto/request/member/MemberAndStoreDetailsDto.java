@@ -1,4 +1,4 @@
-package com.jobstore.jobstore.dto;
+package com.jobstore.jobstore.dto.request.member;
 
 import com.jobstore.jobstore.entity.Member;
 import com.jobstore.jobstore.entity.Store;

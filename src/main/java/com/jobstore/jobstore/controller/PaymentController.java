@@ -1,12 +1,8 @@
 package com.jobstore.jobstore.controller;
 
 import com.jobstore.jobstore.config.PrincipalDetails;
-import com.jobstore.jobstore.dto.request.PaymentHistoryDto;
-import com.jobstore.jobstore.dto.PaymentMainDto;
-import com.jobstore.jobstore.dto.request.PaymentAdminAllpayment;
-import com.jobstore.jobstore.dto.request.PaymentAllPaymentDto;
-import com.jobstore.jobstore.dto.request.PaymentPercentageDto;
-import com.jobstore.jobstore.dto.request.PaymentinsertDto;
+import com.jobstore.jobstore.dto.PaymentAdminDto;
+import com.jobstore.jobstore.dto.request.payment.*;
 import com.jobstore.jobstore.dto.response.ResultDto;
 import com.jobstore.jobstore.entity.Payment;
 import com.jobstore.jobstore.repository.MemberRepository;
@@ -74,6 +70,14 @@ public class PaymentController {
 //        }
 //        return ResponseEntity.ok(ResultDto.of("resultcode","조회실패",null));
 //    }
+@PostMapping("/admin/findall")
+@Operation(summary = "Payment api", description = "admin전체 조회 api")
+@ResponseBody
+public ResponseEntity<ResultDto<List<PaymentAdminDto>>> findAdminAllpayment(
+        @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "요청파라미터", required = true,
+                content = @Content(schema=@Schema(implementation = PaymentAdminFindAllDto.class)))@RequestBody PaymentAdminFindAllDto paymentAdminFindAllDto){
+    return ResponseEntity.ok(ResultDto.of("resultcode","전체조회 완료",paymentService.findByMemberidAdmin(paymentAdminFindAllDto.getMemberid())));
+}
 
     @PostMapping("/allpayment")
     @Operation(summary = "Payment api", description = "payment api입니다.")
