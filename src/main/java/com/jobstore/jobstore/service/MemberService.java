@@ -194,32 +194,30 @@ public class MemberService  {
 
     public String ImageUpdate (MultipartFile multipartFile, ImageUploadDto imageUploadDto) {
 
-        String dirname = "profileImage";
-
         try {
 
-           String imageUrl = awsUtill.upload(multipartFile ,dirname);
+           String imageUrl = awsUtill.upload(multipartFile);
 
-           if (imageUploadDto.getStoreid() == 0) { // 멤버 아이디
+           if (imageUploadDto.getRole().equals("USER")) { // 유저일 때
 
                Member existingMember = memberRepository.findByMemberid(imageUploadDto.getMemberid())
                        .orElseThrow(() -> new RuntimeException("해당 멤버아이디는 존재하지 않는 멤버 아이디입니다"));
 
-               existingMember.setMemberimg(imageUrl);
-
-               if (!existingMember.getMemberimg().equals("")) {
+               if (existingMember.getMemberimg().contains("https://")) {
                    String [] url = existingMember.getMemberimg().split("amazonaws.com");
                    if (!url[1].isEmpty()){
                        awsUtill.delete(url[1].substring(1));
                    }
                }
+
+               existingMember.setMemberimg(imageUrl);
                memberRepository.save(existingMember);
+               return imageUrl;
 
            } else {
-
                Store existingStore = storeRepository.findByStoreid(imageUploadDto.getStoreid())
                        .orElseThrow(() -> new RuntimeException("해당 멤버아이디는 존재하지 않는 멤버 아이디입니다"));
-               if (!existingStore.getCompanyimg().equals("")) {
+               if (existingStore.getCompanyimg().contains("https://")) {
                    String [] url = existingStore.getCompanyimg().split("amazonaws.com");
                    if (!url[1].isEmpty()){
                        awsUtill.delete(url[1].substring(1));
@@ -227,8 +225,9 @@ public class MemberService  {
                }
                existingStore.setCompanyimg(imageUrl);
                storeRepository.save(existingStore);
+               return imageUrl;
            }
-            return imageUrl;
+
         } catch ( Exception e) {
             return "";
         }

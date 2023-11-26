@@ -13,6 +13,7 @@ import com.jobstore.jobstore.repository.work.WorkRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.Optional;
 
 @Service
@@ -26,11 +27,15 @@ public class ContentsService {
     private ContentRepository contentsRepository;
 
 
-    public String createContent (ContentsCreateDto contentCreateDto) {
+    public HashMap createContent (ContentsCreateDto contentCreateDto) {
 
         Optional<Work> existingWork = workRepository.findByWorkid(contentCreateDto.getWorkid());
+        HashMap result = new HashMap();
         if (!existingWork.isPresent()){
-            return "nodata";
+
+            result.put("message", "nodata");
+
+            return result;
         }
 
         Contents contents = new Contents();
@@ -39,7 +44,10 @@ public class ContentsService {
         work.setWorkid(contentCreateDto.getWorkid());
         contents.setWork(work);
         contentsRepository.save(contents);
-        return "success";
+        result.put("message", "success");
+        result.put("contentsid", contents.getContentsid());
+
+        return result;
     }
 
     public String updateContent (ContentsUpdateDto contentsUpdateDto) {

@@ -27,9 +27,11 @@ public class AwsUtill {
     @Value("${cloud.aws.s3.bucket}")
     public String bucket;  // S3 버킷
 
+    @Value("${cloud.aws.s3.dir}")
+    public String dir;  // S3 버킷
 
     // S3 파일 업로드
-    public String upload(MultipartFile multipartFile, String dirName) throws IOException {
+    public String upload(MultipartFile multipartFile) throws IOException {
 
         // MultipartFile -> File
         File file = new File(multipartFile.getOriginalFilename());
@@ -43,7 +45,9 @@ public class AwsUtill {
         }
 
         // S3에 저장할 파일명
-        String fileName = dirName + "/" + UUID.randomUUID() + "_" + file.getName();
+        String fileName = dir + "/" + UUID.randomUUID() + "_" + file.getName();
+
+        System.out.println(fileName);
         // S3에 파일 업로드
         amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, file).withCannedAcl(CannedAccessControlList.PublicRead));
         String uploadImageUrl = amazonS3Client.getUrl(bucket, fileName).toString();

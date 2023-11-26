@@ -30,4 +30,9 @@ public interface ContentRepository extends JpaRepository <Contents,Long>  {
     int deletebyContentsid(@Param("id") long id);
 
 
+    @Transactional
+    @Modifying // 조회 X
+    @Query("DELETE FROM Contents c WHERE c.work.workid = :id")
+    int deletebyWorkid(@Param("id") long id);
+
 }
