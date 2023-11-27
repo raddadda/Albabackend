@@ -17,7 +17,6 @@ public class MemberDto {
     private String memberimg;
 
 
-
     public Member toEntity(String encodedPassword){
         return Member.builder()
                 .memberid(this.memberid)

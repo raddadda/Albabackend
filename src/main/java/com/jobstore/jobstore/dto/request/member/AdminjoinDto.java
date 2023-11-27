@@ -17,11 +17,9 @@ public class AdminjoinDto {
     private String phonenumber;
     private String name;
     private String role;
-    private String memberimg;
     private String companyname;
     private String ceo;
     private String companynumber;
-    private String companyimg;
 
 
     public Member toEntity(String encodedPassword){

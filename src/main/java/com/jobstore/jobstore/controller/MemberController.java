@@ -4,6 +4,7 @@ import com.jobstore.jobstore.dto.request.member.MemberAndStoreDetailsDto;
 import com.jobstore.jobstore.dto.MemberDto;
 import com.jobstore.jobstore.dto.request.member.DoubleCheckDto;
 import com.jobstore.jobstore.dto.request.member.ImageUploadDto;
+import com.jobstore.jobstore.dto.request.member.MemberUpdateDto;
 import com.jobstore.jobstore.dto.response.ResultDto;
 import com.jobstore.jobstore.entity.Member;
 import com.jobstore.jobstore.service.MemberService;
@@ -88,7 +89,7 @@ public class MemberController {
     @PatchMapping("/update")
     @Operation(summary = "memberid에대한 user정보 업데이트", description = "수정이 된 객체가 반환됩니다")
     @ResponseBody
-    public ResponseEntity<ResultDto<Member>> updateMember(@RequestBody MemberDto memberDto){
+    public ResponseEntity<ResultDto<Member>> updateMember(@RequestBody MemberUpdateDto memberDto){
         if(memberDto==null){
             return ResponseEntity.ok(ResultDto.of("resultcode","수정 실패",null));
         }

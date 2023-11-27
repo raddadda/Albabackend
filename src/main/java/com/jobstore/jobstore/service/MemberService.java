@@ -2,11 +2,8 @@ package com.jobstore.jobstore.service;
 
 
 import com.jobstore.jobstore.dto.LoginDto;
-import com.jobstore.jobstore.dto.request.member.MemberAndStoreDetailsDto;
+import com.jobstore.jobstore.dto.request.member.*;
 import com.jobstore.jobstore.dto.MemberDto;
-import com.jobstore.jobstore.dto.request.member.AdminjoinDto;
-import com.jobstore.jobstore.dto.request.member.ImageUploadDto;
-import com.jobstore.jobstore.dto.request.member.UserjoinDto;
 import com.jobstore.jobstore.entity.Member;
 import com.jobstore.jobstore.entity.Payment;
 import com.jobstore.jobstore.entity.Store;
@@ -49,7 +46,6 @@ public class MemberService  {
         storeEntity.setCompanyname(adminjoinDto.getCompanyname());
         storeEntity.setCeo(adminjoinDto.getCeo());
         storeEntity.setCompanynumber(adminjoinDto.getCompanynumber());
-        storeEntity.setCompanyimg(adminjoinDto.getCompanyimg());
         storeRepository.save(storeEntity);
 
         Member memberEntity = adminjoinDto.toEntity(passwordEncoder.encode(adminjoinDto.getPassword()));
@@ -137,7 +133,7 @@ public class MemberService  {
     /**
      회원 수정
      */
-    public Member updateMember(MemberDto memberDto){
+    public Member updateMember(MemberUpdateDto memberDto){
         Member existingMember = memberRepository.findByMemberid(memberDto.getMemberid())
                 .orElseThrow(() -> new RuntimeException("해당 멤버아이디는 존재하지 않는 멤버 아이디입니다"));
         existingMember.setPassword(passwordEncoder.encode(memberDto.getPassword()));
