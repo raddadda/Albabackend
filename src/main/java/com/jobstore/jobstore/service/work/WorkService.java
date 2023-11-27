@@ -36,6 +36,29 @@ public class WorkService {
     private MemberRepository memberRepository;
 
     // 페이지 네이션
+    public WorkPagenationDto searchPagenation (long storeid, String search, Integer page){
+
+        Integer size = 10;
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.DESC, "workid");
+
+        String SearchLike = search + "%";
+        Page<Work> work =  workRepository.findByStoreidAndTitleLike(storeid, SearchLike, pageRequest);
+        //work를 DTO로 변환
+        Page<WorkDto> toMap = work.map(m -> new WorkDto(m.getWorkid(), m.getTitle(), m.getDate()));
+
+        WorkPagenationDto dto = new WorkPagenationDto(
+                toMap.getContent(),
+                toMap.getContent().size(),
+                toMap.getNumber(),
+                toMap.getTotalPages(),
+                toMap.hasNext()
+        );
+        return dto;
+
+    }
+
+
+    // 페이지 네이션
     public WorkPagenationDto findPagenation (long storeid, Integer page){
 
         Integer size = 10;

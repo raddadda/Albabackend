@@ -41,6 +41,21 @@ public class WorkController {
                 workService.findPagenation(storeid, page)));
     }
 
+    @GetMapping("/boards/{storeid}/{search}/{page}")
+    @Operation(summary = "work 게시판 검색어 페이지네이션", description = "work 게시판 검색어 페이지네이션입니다.")
+    @Parameter(name = "storeid", description = "storeid", required = true)
+    @Parameter(name = "search", description = "search", required = true)
+    @Parameter(name = "page", description = "페이지 번호 0부터 시작", required = true)
+    @ResponseBody
+    public ResponseEntity<ResultDto<WorkPagenationDto>> searchWorkBoard(@PathVariable(value = "storeid", required = true) long storeid,
+                                                                        @PathVariable(value = "search", required = true) String search,
+                                                                         @PathVariable(value = "page" , required = true) Integer page) {
+
+        return ResponseEntity.ok(ResultDto.of("200","조회 완료",
+                workService.searchPagenation(storeid, search, page)));
+    }
+
+
     @GetMapping("/boards/detail/{workid}")
     @Operation(summary = "work 게시판 상세", description = "work 게시판 상세.")
     @Parameter(name = "workid", description = "workid", required = true)
@@ -60,6 +75,7 @@ public class WorkController {
                     null));
         }
     }
+
 
     @PostMapping("/board/create")
     @Operation(summary = "work 게시판 등록", description = "work 게시판 등록입니다.")

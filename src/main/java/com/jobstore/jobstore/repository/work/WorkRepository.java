@@ -16,6 +16,10 @@ public interface WorkRepository extends JpaRepository<Work,Long> {
     Optional<Work> findByWorkid(long workid);
     Page<Work> findByStoreid(long storeid, Pageable pageable);
 
+
+    Page<Work> findByStoreidAndTitleLike(long storeid,String title, Pageable pageable);
+
+
     @Transactional
     @Modifying // 조회 X
     @Query("DELETE FROM Work w WHERE w.workid = :id")
