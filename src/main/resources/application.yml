@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8000
 # spring doc
 springdoc:
   api-docs:
@@ -18,7 +18,7 @@ cloud:
   aws:
     credentials:
       accessKey: AKIA5EK2XZJUKDDHOFPV       # AWS IAM AccessKey 적기
-      secretKey: gXNi+uzOvH0OOlMNQ/XXjsibxsSnxVxMaeU0zhpTpAuc/Uw/0u4fj0Mu8Rc0NwMJJNWwGW1L8IImyFm2  # AWS IAM SecretKey 적기
+      secretKey: gXNi+uzOvH0OOlMNQ/XXjsibxsSnxVxMaeU0zhpT  # AWS IAM SecretKey 적기
     s3:
       bucket: kdt9hotdog    # ex) marryting-gyunny
       dir: profileImage # ex) /gyunny
