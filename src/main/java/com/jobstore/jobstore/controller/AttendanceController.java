@@ -3,7 +3,6 @@ package com.jobstore.jobstore.controller;
 import com.jobstore.jobstore.dto.Attendance.*;
 import com.jobstore.jobstore.dto.AttendanceHistoryDto;
 import com.jobstore.jobstore.dto.AttendanceMainDto;
-import com.jobstore.jobstore.dto.PaymentMainDto;
 import com.jobstore.jobstore.dto.response.ResultDto;
 import com.jobstore.jobstore.entity.Attendance;
 import com.jobstore.jobstore.entity.Member;
