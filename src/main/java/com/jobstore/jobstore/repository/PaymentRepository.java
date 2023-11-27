@@ -37,4 +37,9 @@ public interface PaymentRepository extends JpaRepository<Payment,Long> {
     @Query(value = "SELECT * FROM payment WHERE memberid = :memberid AND payid > :cursor ORDER BY payid LIMIT :size", nativeQuery = true)
     List<Payment> findByCursor(@Param("memberid") String memberid,@Param("cursor") Long cursor, @Param("size") int size);
 
+    @Query("SELECT p.member.memberid FROM Payment p WHERE p.member.store.storeid=:storeid AND p.month=:month")
+    List<String> findByAdminEachMember(@Param("storeid")long storeid, @Param("month") long month);
+
+    @Query("SELECT p.member.memberid, SUM(p.pay) FROM Payment p WHERE p.member.store.storeid = :storeid AND p.month = :month GROUP BY p.member.memberid")
+    List<Object[]> findMonthlyPayByStoreAndMonth(@Param("storeid") long storeid, @Param("month") long month);
 }

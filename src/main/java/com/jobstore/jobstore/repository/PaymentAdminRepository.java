@@ -14,4 +14,7 @@ import java.util.List;
 public interface PaymentAdminRepository extends JpaRepository<PaymentAdmin,String> {
     @Query("SELECT p FROM PaymentAdmin p WHERE p.memberid=:memberid")
     Page<PaymentAdmin> findBymemberid(@Param("memberid") String memberid, Pageable pageable);
+
+    @Query("SELECT p.sum FROM PaymentAdmin p WHERE p.memberid=:memberid AND p.month=:month")
+    long findBymemberidForAdminPay(@Param("memberid") String memberid,@Param("month") long month);
 }

@@ -18,6 +18,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 
 @Controller
 @Tag(name = "Payment", description = "Payment CRUD")
@@ -127,6 +129,14 @@ public ResponseEntity<ResultDto<PaymentPagenationDto>> findAllmember(@PathVariab
         return ResponseEntity.ok(ResultDto.of("resultcode","성공",paymentService.last_recentpercentage(paymentPercentageDto.getMemberid(),paymentPercentageDto.getMonth())));
 
     }
+    @PostMapping("/admin/percent")
+    @Operation(summary = "Payment api",description = "Admin 저번달 대비 퍼센트 증감률")
+    @ResponseBody
+    public ResponseEntity<ResultDto<Double>> last_recentAdminPercentage(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "요청파라미터", required = true,
+            content = @Content(schema=@Schema(implementation = PaymentPercentageDto.class)))@RequestBody PaymentPercentageDto paymentPercentageDto){
+            return ResponseEntity.ok(ResultDto.of("200","성공",paymentService.last_recentAdminPercentage(paymentPercentageDto.getMemberid(),paymentPercentageDto.getMonth())));
+    }
 
     @PostMapping("/admin/allpayment")
     @ResponseBody
@@ -135,6 +145,12 @@ public ResponseEntity<ResultDto<PaymentPagenationDto>> findAllmember(@PathVariab
                     content = @Content(schema=@Schema(implementation = PaymentAdminAllpayment.class)))@RequestBody PaymentAdminAllpayment paymentAdminAllpayment){
 //        System.out.println("asdsadasddssadsa:sadasdas"+memberid);
         return ResponseEntity.ok(ResultDto.of("resultcode","월중전체 지출액 성공",paymentService.addPaymentForAdmin(paymentAdminAllpayment.getMemberid(),paymentAdminAllpayment.getMonth())));
+    }
+    @GetMapping("/admin/each/{memberid}/{month}")
+    @Operation(summary = "Payment api", description = "Admin에서 유저별 월급 계산후 반환")
+    @ResponseBody
+    public Map<String,Long> abcde(@PathVariable String memberid,@PathVariable long month){
+        return paymentService.AdminfindEachMemberPay(memberid,month);
     }
 }
 
