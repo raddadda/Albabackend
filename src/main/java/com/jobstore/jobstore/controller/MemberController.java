@@ -9,10 +9,13 @@ import com.jobstore.jobstore.entity.Member;
 import com.jobstore.jobstore.service.MemberService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 
@@ -115,13 +118,26 @@ public class MemberController {
     @PostMapping(value = "/member/image/upload", consumes = {"multipart/form-data"})
     @Operation(summary = "User,Admin:대한 이미지 등록 api", description = "이미지 등록 api입니다.")
     public ResponseEntity<ResultDto<Object>> imageUpdate (
-            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "요청파라미터", required = true,
-                    content = @Content(
-                            schema=@Schema(implementation = ImageUploadDto.class)))
-            @RequestPart(value = "file", required = false) MultipartFile multipartFile,
-            ImageUploadDto imageUploadDto
+
+            // ------------ Multipart Object ------------
+
+            @Parameter(description = "Additional request data")
+            @RequestParam("role") @Valid String role,
+            @RequestParam("memberid") @Valid String memberid,
+            @RequestParam("storeid") @Valid int storeid,
+            // ------------ File uploads go next ------------
+            @Parameter(
+                    description = "Files to be uploaded",
+                    content = @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE)
+            )
+            @RequestParam("file") @Valid MultipartFile multipartFile
 
     ) throws IOException {
+        System.out.println(multipartFile);
+        ImageUploadDto imageUploadDto = new ImageUploadDto();
+        imageUploadDto.setMemberid(memberid);
+        imageUploadDto.setStoreid(storeid);
+        imageUploadDto.setRole(role);
 
         String reultURL = memberService.ImageUpdate(multipartFile, imageUploadDto);
 

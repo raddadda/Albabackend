@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -22,5 +23,12 @@ public class Work {
     @Column(length = 255,nullable = false)
     private String date;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "work", orphanRemoval = true, cascade = CascadeType.ALL)
+    private List<Comment> comments = new ArrayList<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "work", orphanRemoval = true, cascade = CascadeType.ALL)
+    private List<Contents> contents = new ArrayList<>();
 
 }

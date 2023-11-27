@@ -1,6 +1,7 @@
 package com.jobstore.jobstore.controller.work;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jobstore.jobstore.dto.request.worksContents.ContentsCheckedDto;
 import com.jobstore.jobstore.dto.request.worksContents.ContentsCreateDto;
 import com.jobstore.jobstore.dto.request.worksContents.ContentsUpdateDto;
@@ -16,6 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 @Tag(name = "Work Content", description = "Work Content CRUD")
 @RequestMapping("/work/content")
@@ -27,16 +31,21 @@ public class ContentController {
     @PostMapping("/create")
     @Operation(summary = "work 게시판 content todo 등록", description = "work 게시판 todo 등록.")
     @ResponseBody
-    public ResponseEntity<ResultDto<ContentsCreateDto>> createWorkContent (
+    public ResponseEntity<ResultDto<Object>> createWorkContent (
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "요청파라미터", required = true,
                     content = @Content(schema=@Schema(implementation = ContentsCreateDto.class)))
             @Valid @RequestBody ContentsCreateDto contentCreateDto
     ) {
 
-        String result = contentService.createContent(contentCreateDto);
-        if (result.equals("success")) {
-            return ResponseEntity.ok(ResultDto.of("200", "등록 완료", contentCreateDto));
-        } else if (result.equals("nodata")) {
+        HashMap result = contentService.createContent(contentCreateDto);
+        if (result.get("message").equals("success")) {
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            Map<String, Object> map = objectMapper.convertValue(contentCreateDto, Map.class);
+            map.put("contentsid", result.get("contentsid"));
+
+            return ResponseEntity.ok(ResultDto.of("200", "등록 완료", map));
+        } else if (result.get("message").equals("nodata")) {
             return ResponseEntity.ok(ResultDto.of("403", "등록 되지 않은 work 게시판", null));
         } else {
             return ResponseEntity.ok(ResultDto.of("500", "back error", null));
@@ -69,7 +78,7 @@ public class ContentController {
     @Parameter(name = "contensid", description = "contensid", required = true)
     @ResponseBody
     public ResponseEntity<ResultDto<ContentsUpdateDto>> deleteContent (
-        @PathVariable("contensid") long contensid
+        @PathVariable("contensid") int contensid
     ) {
 
         int result = contentService.deleteContent(contensid);

@@ -5,6 +5,7 @@ import com.jobstore.jobstore.dto.request.work.WorkCreateDto;
 import com.jobstore.jobstore.dto.request.work.WorkUpdateDto;
 import com.jobstore.jobstore.dto.response.work.WorkDetailDto;
 import com.jobstore.jobstore.dto.response.work.WorkPagenationDto;
+import com.jobstore.jobstore.entity.Comment;
 import com.jobstore.jobstore.entity.Contents;
 import com.jobstore.jobstore.entity.Member;
 import com.jobstore.jobstore.entity.Work;
@@ -19,9 +20,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 
 @Service
@@ -76,15 +75,19 @@ public class WorkService {
     }
 
 
-    public String createWorkBoard (WorkCreateDto workCreateDto) {
+    public HashMap createWorkBoard (WorkCreateDto workCreateDto) {
 
         Optional<Member> member = memberRepository.findByMemberid(workCreateDto.getMemberid());
-        System.out.println(member);
+        HashMap result = new HashMap();
+
+
         if (!member.isPresent()) {
-            return "noMember";
+            result.put("message", "noMember");
+            return result;
         }
         if (!member.get().getRole().equals("ADMIN")) {
-            return "noAuth";
+            result.put("message", "noAuth");
+            return result;
         }
 
         Work work = new Work();
@@ -92,7 +95,10 @@ public class WorkService {
         work.setTitle(workCreateDto.getTitle());
         work.setDate(workCreateDto.getDate());
         workRepository.save(work);
-        return "success";
+
+        result.put("message", "success");
+        result.put("workid", work.getWorkid());
+        return result;
     }
 
     public String updateWorkBoard (WorkUpdateDto workUpdateDto) {
@@ -106,15 +112,20 @@ public class WorkService {
         return  "success";
     }
 
-    public int deleteWorkBoard (long id) {
+    public int deleteWorkBoard (int id) {
 
         Optional<Work> work = workRepository.findByWorkid(id);
         if (!work.isPresent()) {
             return 3;
         }
+
+        work.get().getContents().removeAll(work.get().getContents());
+        work.get().getComments().removeAll(work.get().getComments());
+
+        workRepository.save(work.get());
+
         int result = workRepository.deletebyWorkid(id);
 
         return result;
     }
-
 }

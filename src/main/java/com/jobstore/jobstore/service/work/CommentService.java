@@ -12,6 +12,7 @@ import com.jobstore.jobstore.repository.work.WorkRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.Optional;
 
 @Service
@@ -24,15 +25,19 @@ public class CommentService {
     @Autowired
     private CommentsRepository commentsRepository;
 
-    public String createComment (CommentCreateDto commentCreateDto) {
+    public HashMap createComment (CommentCreateDto commentCreateDto) {
 
         Optional<Work> existingWork = workRepository.findByWorkid(commentCreateDto.getWorkid());
+        HashMap result = new HashMap();
+
         if (!existingWork.isPresent()){
-            return "nodata";
+            result.put("message", "nodata");
+            return result;
         }
         Optional<Member> member = memberRepository.findByMemberid(commentCreateDto.getMemberid());
         if (!member.isPresent()) {
-            return "noMember";
+            result.put("message", "noMember");
+            return result;
         }
         Comment comment = new Comment();
         comment.setName(member.get().getName());
@@ -46,7 +51,9 @@ public class CommentService {
         comment.setMember(member1);
 
         commentsRepository.save(comment);
-        return "success";
+        result.put("message", "success");
+        result.put("commentid", comment.getCommentid());
+        return result;
     }
 
     public String updateComment (CommentUpdateDto commentUpdateDto) {
@@ -61,9 +68,11 @@ public class CommentService {
 
     }
 
-    public int deleteComment (long commentid) {
+    public int deleteComment (int commentid) {
 
-        Optional<Comment> Contents = commentsRepository.findByCommentid(commentid);
+        Long id = Long.valueOf(commentid);
+
+        Optional<Comment> Contents = commentsRepository.findByCommentid(id);
 
         if (!Contents.isPresent()) {
             return 3;
