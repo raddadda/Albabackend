@@ -199,7 +199,7 @@ public class MemberService  {
                Member existingMember = memberRepository.findByMemberid(imageUploadDto.getMemberid())
                        .orElseThrow(() -> new RuntimeException("해당 멤버아이디는 존재하지 않는 멤버 아이디입니다"));
 
-               if (existingMember.getMemberimg().contains("https://")) {
+               if ( existingMember.getMemberimg() != null  && existingMember.getMemberimg().contains("https://")) {
                    String [] url = existingMember.getMemberimg().split("amazonaws.com");
                    if (!url[1].isEmpty()){
                        awsUtill.delete(url[1].substring(1));
@@ -213,8 +213,10 @@ public class MemberService  {
            } else {
                Store existingStore = storeRepository.findByStoreid(imageUploadDto.getStoreid())
                        .orElseThrow(() -> new RuntimeException("해당 멤버아이디는 존재하지 않는 멤버 아이디입니다"));
-               if (existingStore.getCompanyimg().contains("https://")) {
+
+               if (existingStore.getCompanyimg() != null && existingStore.getCompanyimg().contains("https://")) {
                    String [] url = existingStore.getCompanyimg().split("amazonaws.com");
+
                    if (!url[1].isEmpty()){
                        awsUtill.delete(url[1].substring(1));
                    }
