@@ -33,7 +33,7 @@ public class PaymentController {
     private MemberService memberService;
 
     @PostMapping("/add")
-    @Operation(summary = "Payment api", description = "payment api입니다.")
+    @Operation(summary = "Payment api", description = "근태정보에서 급여 정보 반환 (이건굳이 안써도됨) 일급데이터 삽입")
     @ResponseBody
     public ResponseEntity<ResultDto<Payment>> addPayment(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "요청파라미터", required = true,
             content = @Content(schema=@Schema(implementation = PaymentinsertDto.class)))
@@ -71,7 +71,7 @@ public class PaymentController {
 //        return ResponseEntity.ok(ResultDto.of("resultcode","조회실패",null));
 //    }
 @GetMapping("/admin/findall/{memberid}/{page}")
-@Operation(summary = "Payment api", description = "admin전체 조회 api")
+@Operation(summary = "Payment api", description = "admin전체 조회 api(history와 데이터 그래프에서 사용)")
 @Parameter(name = "memberid", description = "memberid", required = true)
 @Parameter(name = "page", description = "페이지 번호 0부터 시작", required = true)
 @ResponseBody
@@ -79,7 +79,7 @@ public ResponseEntity<ResultDto<PaymentPagenationDto>> findAdminAllpayment(@Path
     return ResponseEntity.ok(ResultDto.of("200","성공",paymentService.findByMemberidAdmin(memberid,page)));
 }
 @GetMapping("/user/findall/{memberid}/{page}")
-@Operation(summary = "Payment api", description = "User전체 조회 api")
+@Operation(summary = "Payment api", description = "User전체 조회 api(history와 데이터 그래프에서 사용)")
 @Parameter(name = "memberid", description = "memberid", required = true)
 @Parameter(name = "page", description = "페이지 번호 0부터 시작", required = true)
 public ResponseEntity<ResultDto<PaymentPagenationDto>> findAllmember(@PathVariable String memberid,@PathVariable Integer page){
@@ -87,7 +87,7 @@ public ResponseEntity<ResultDto<PaymentPagenationDto>> findAllmember(@PathVariab
 }
 
     @PostMapping("/allpayment")
-    @Operation(summary = "Payment api", description = "payment api입니다.")
+    @Operation(summary = "Payment api", description = "payment api입니다.(User에 관한 월급과 주급 반환)")
     @ResponseBody
     public ResponseEntity<ResultDto<PaymentMainDto>> paymentMain(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "요청파라미터", required = true,
             content = @Content(schema=@Schema(implementation = PaymentinsertDto.class)))
@@ -121,7 +121,7 @@ public ResponseEntity<ResultDto<PaymentPagenationDto>> findAllmember(@PathVariab
 //        return ResponseEntity.ok(ResultDto.of("resultcode","조회성공",payment));
 //    }
     @PostMapping("/percent")
-    @Operation(summary = "Payment api", description = "저번달 대비 퍼센트 증감률")
+    @Operation(summary = "Payment api", description = "저번달 대비 퍼센트 증감률(User)")
     @ResponseBody
     public ResponseEntity<ResultDto<Double>> last_recentpercentage(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "요청파라미터", required = true,
@@ -130,7 +130,7 @@ public ResponseEntity<ResultDto<PaymentPagenationDto>> findAllmember(@PathVariab
 
     }
     @PostMapping("/admin/percent")
-    @Operation(summary = "Payment api",description = "Admin 저번달 대비 퍼센트 증감률")
+    @Operation(summary = "Payment api",description = "Admin 저번달 대비 퍼센트 증감률(Admin)")
     @ResponseBody
     public ResponseEntity<ResultDto<Double>> last_recentAdminPercentage(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "요청파라미터", required = true,
@@ -139,6 +139,7 @@ public ResponseEntity<ResultDto<PaymentPagenationDto>> findAllmember(@PathVariab
     }
 
     @PostMapping("/admin/allpayment")
+    @Operation(summary = "Payment api",description = "그 해당달에 전체 지출액 반환하면서 동시에 PaymentAdmin table에 해당달 지출액 정보 삽입")
     @ResponseBody
     public ResponseEntity<ResultDto<Long>> adminAllPay(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "요청파라미터", required = true,
@@ -147,7 +148,7 @@ public ResponseEntity<ResultDto<PaymentPagenationDto>> findAllmember(@PathVariab
         return ResponseEntity.ok(ResultDto.of("200","월중전체 지출액 성공",paymentService.addPaymentForAdmin(paymentAdminAllpayment.getMemberid(),paymentAdminAllpayment.getMonth())));
     }
     @GetMapping("/admin/each/{memberid}/{month}")
-    @Operation(summary = "Payment api", description = "Admin에서 유저별 월급 계산후 반환")
+    @Operation(summary = "Payment api", description = "Admin에서 유저별 월급 계산후 반환(그 가게에 속한 사람들 memberid별 월급 계산후 반환 <리스트>)")
     @ResponseBody
     public ResponseEntity<ResultDto<Map<String,Long>>> abcde(@PathVariable String memberid,@PathVariable long month){
         return ResponseEntity.ok(ResultDto.of("200","스토어에 속해있는 전체 멤버별 월급리스트맵 반환",paymentService.AdminfindEachMemberPay(memberid,month)));
