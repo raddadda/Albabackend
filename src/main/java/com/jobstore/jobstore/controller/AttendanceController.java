@@ -1,6 +1,9 @@
 package com.jobstore.jobstore.controller;
 
 import com.jobstore.jobstore.dto.Attendance.*;
+import com.jobstore.jobstore.dto.AttendanceHistoryDto;
+import com.jobstore.jobstore.dto.AttendanceMainDto;
+import com.jobstore.jobstore.dto.PaymentMainDto;
 import com.jobstore.jobstore.dto.response.ResultDto;
 import com.jobstore.jobstore.entity.Attendance;
 import com.jobstore.jobstore.entity.Member;
@@ -15,15 +18,19 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
@@ -36,26 +43,84 @@ public class AttendanceController {
     @Autowired
     private MemberService memberService;
 
-//    @GetMapping("/admin/attendance/{memberid}/{cursor}")
-//    public  ResponseEntity<ResultDto<Object>> getUserById(@PathVariable String memberid
-//                                                          ,@PathVariable(required = false) Long cursor
-//    ) {
-//        int size = 3;
-//        System.out.println("memberid:"+memberid);
-//       // System.out.println("cursor:"+cursor);
-//        if (cursor == null) {
-//            // 최초 요청 시 커서 값이 없는 경우 첫 페이지 데이터 조회
-//            List<Attendance> list = attendanceService.findAll(size);
-//            return ResponseEntity.ok(ResultDto.of("성공","첫페이지",list));
-//
-//        }
-//        else {
-//            // 커서 값이 있는 경우 다음 페이지 데이터 조회
-//            List<Attendance> list =  attendanceService.findByCursor(memberid,cursor,size);
-//            System.out.println("cursor:"+cursor);
-//            return ResponseEntity.ok(ResultDto.of("성공","두번째부터",list));
-//        }
+
+//    @GetMapping("/admin/attendance/{attendid}")
+//    public ResponseEntity<ResultDto<Slice<Attendance>>> getAttendances(@PathVariable Long attendid) {
+//        int pageSize = 3; // 페이지당 아이템 수
+//        Pageable pageable = PageRequest.of(0, pageSize); // 첫 번째 페이지
+//        return ResponseEntity.ok(ResultDto.of("실패","admin 권한이 아닙니다.",attendanceService.getAttendancesById(attendid, pageable)));
 //    }
+
+    /**
+     근태 조회 및 페이지네이션
+     */
+    @GetMapping("/admin/attendance/{memberid}/{storeid}/{page}")
+@Operation(summary = "admin history", description = "admin history조회")
+public ResponseEntity<ResultDto<AttendanceHistoryDto>> getHistoryAdmin(@PathVariable String memberid, @PathVariable Long storeid
+        , @PathVariable(required = false) Integer page
+) {
+    return ResponseEntity.ok(ResultDto.of("성공","조회성공",attendanceService.getAttendancesByMemberId("ADMIN",memberid,storeid,page)));
+}
+@GetMapping("/user/attendance/{memberid}/{storeid}/{page}")
+@Operation(summary = "user history", description = "user history조회")
+public ResponseEntity<ResultDto<AttendanceHistoryDto>> getHistoryUser(@PathVariable String memberid, @PathVariable Long storeid
+        , @PathVariable(required = false) Integer page
+) {
+    return ResponseEntity.ok(ResultDto.of("성공","조회성공",attendanceService.getAttendancesByMemberId("USER",memberid,storeid,page)));
+}
+    /**
+     이번달 일한 시간
+     */
+@GetMapping("/user/attendance/month/{memberid}/{storeid}")
+@Operation(summary = "user 이번달 일한시간", description = "user가 이번달에 일한시간을 조회")
+public ResponseEntity<ResultDto<Long>> getWeek(@PathVariable String memberid, @PathVariable Long storeid
+){
+   // LocalDateTime time = LocalDateTime.now();
+   // long week = attendanceService.workCalculate();
+   // long month = 11;
+    long nowmonth = attendanceService.localDateTimeToMonth(LocalDateTime.now());
+    long month = attendanceService.workMonth(nowmonth,memberid);
+    //System.out.println("weekWork:");
+   // System.out.println("weekWork:"+month);
+    //LocalDateTime time;
+//    long localDateTimeToWeek = attendanceService.localDateTimeToWeek(memberid);
+//    long thisWeek = paymentService.localDateTimeToWeek(time,memberid);
+//    long week = attendanceService.workWeek(thisWeek,memberid);
+    return ResponseEntity.ok(ResultDto.of("성공","주급 월급 조회성공",month));
+}
+    /**
+     이번주 일한 시간
+     */
+    @GetMapping("/user/attendance/week/{memberid}/{storeid}")
+    @Operation(summary = "user 이번주 일한시간", description = "user가 이번주에 일한시간을 조회")
+    public ResponseEntity<ResultDto<Long>> getMonth(@PathVariable String memberid, @PathVariable Long storeid
+    ){
+        // LocalDateTime time = LocalDateTime.now();
+        // long week = attendanceService.workCalculate();
+        // long month = 11;
+
+        //System.out.println("weekWork:");
+       // System.out.println("weekWork:"+month);
+        //LocalDateTime time;
+        long localDateTimeToWeek = attendanceService.localDateTimeToWeek(memberid);
+//    long thisWeek = paymentService.localDateTimeToWeek(time,memberid);
+//    long week = attendanceService.workWeek(thisWeek,memberid);
+        return ResponseEntity.ok(ResultDto.of("성공","주급 월급 조회성공",localDateTimeToWeek));
+    }
+    /**
+     이번달과 저번달간의 일한시간 퍼센트 지표
+     */
+@GetMapping("/user/attendance/percent/{memberid}/{storeid}")
+@Operation(summary = "user percent조회", description = "user의 저번달과 이번달간의 일한 시간 차이를 계산하는 percent조회")
+public ResponseEntity<ResultDto<Long>> getPercent(@PathVariable String memberid, @PathVariable Long storeid
+){
+    double result = attendanceService.workPercent(memberid);
+    System.out.println("result: "+result);
+    if(result != -1){
+        return ResponseEntity.ok(ResultDto.of("성공","퍼센트 조회성공",null));
+    }
+    return ResponseEntity.ok(ResultDto.of("실패","퍼센트 조회실패",null));
+}
 //    @GetMapping("/admin/attendance")
 //    public Page<Payment> getPayments(
 //            @RequestParam(defaultValue = "0") int page,
@@ -93,7 +158,9 @@ public class AttendanceController {
 //        }
 //        return ResponseEntity.ok(ResultDto.of("실패","admin 권한이 아닙니다.",null));
 //    }
-
+    /**
+     근태 CRUD
+     */
     @PostMapping("/admin/attendance/create")
     @Operation(summary = "admin 근태추가", description = "admin 근태생성")
     public ResponseEntity<ResultDto<Object>> createAttendance(
@@ -156,6 +223,9 @@ public class AttendanceController {
             return ResponseEntity.ok(ResultDto.of("실패","member가 존재하지 않습니다.", null));
         }
         paymentService.addPaymentForMember(attendanceUpdateDto.getMemberid(),attendanceUpdateDto.getLeavework(),result);
+       // long month = 11;
+       // long weekWork = attendanceService.wageWeek(month);
+
         return ResponseEntity.ok(ResultDto.of("성공","퇴근 및 오늘 급여수당 추가 성공", result));
     }
     @PostMapping("/admin/attendance/findAll")

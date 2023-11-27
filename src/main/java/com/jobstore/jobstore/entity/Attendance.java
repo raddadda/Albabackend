@@ -18,6 +18,8 @@ public class Attendance {
     @Id
     @GeneratedValue
     private long attendid;
+    @Column(nullable = false)
+    private long storeid;
     @Column(length = 255,nullable = false)
     private LocalDateTime start;
     @Column(length = 255,nullable = false)
@@ -37,6 +39,7 @@ public class Attendance {
     @ManyToOne
     @JoinColumns({
             @JoinColumn(name = "memberid",referencedColumnName = "memberid"),
+           // @JoinColumn(name = "storeid",referencedColumnName = "storeid")
     })
     private Member member;
 
