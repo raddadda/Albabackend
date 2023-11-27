@@ -1,4 +1,4 @@
-package com.jobstore.jobstore.dto;
+package com.jobstore.jobstore.dto.response.attendance;
 
 import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
