@@ -43,10 +43,10 @@ public class PaymentController {
         if(memberService.findByMemberidToRole(paymentinsertDto.getMemberid()).equals("USER")) {
             Payment paydata = paymentService.addPaymentForMember(paymentinsertDto.getMemberid(), paymentinsertDto.getRegister(), paymentinsertDto.getPay());
             if (paydata != null) {
-                return ResponseEntity.ok(ResultDto.of("resultcode", "급여정보삽입완료", paydata));
+                return ResponseEntity.ok(ResultDto.of("200", "급여정보삽입완료", paydata));
             }
         }
-        return ResponseEntity.ok(ResultDto.of("resultcode", "실패", null));
+        return ResponseEntity.ok(ResultDto.of("200", "실패", null));
 
 //        String memberid=principalDetails.getMember().getMemberid();
 //        if(paymentinsertDto.getMemberid().equals(memberid)){
@@ -101,7 +101,7 @@ public ResponseEntity<ResultDto<PaymentPagenationDto>> findAllmember(@PathVariab
         long week = paymentService.localDateTimeToWeek(paymentAllPaymentDto.getTime(),paymentAllPaymentDto.getMemberid());
 
         PaymentMainDto paymentMainDto = new PaymentMainDto();
-        return ResponseEntity.ok(ResultDto.of("resultcode","조회성공",new PaymentMainDto(payment,week)));
+        return ResponseEntity.ok(ResultDto.of("200","조회성공",new PaymentMainDto(payment,week)));
     }
 
 //    @PostMapping("/payment")
@@ -126,7 +126,7 @@ public ResponseEntity<ResultDto<PaymentPagenationDto>> findAllmember(@PathVariab
     public ResponseEntity<ResultDto<Double>> last_recentpercentage(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "요청파라미터", required = true,
                     content = @Content(schema=@Schema(implementation = PaymentPercentageDto.class)))@RequestBody PaymentPercentageDto paymentPercentageDto){
-        return ResponseEntity.ok(ResultDto.of("resultcode","성공",paymentService.last_recentpercentage(paymentPercentageDto.getMemberid(),paymentPercentageDto.getMonth())));
+        return ResponseEntity.ok(ResultDto.of("200","성공",paymentService.last_recentpercentage(paymentPercentageDto.getMemberid(),paymentPercentageDto.getMonth())));
 
     }
     @PostMapping("/admin/percent")
@@ -144,13 +144,13 @@ public ResponseEntity<ResultDto<PaymentPagenationDto>> findAllmember(@PathVariab
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "요청파라미터", required = true,
                     content = @Content(schema=@Schema(implementation = PaymentAdminAllpayment.class)))@RequestBody PaymentAdminAllpayment paymentAdminAllpayment){
 //        System.out.println("asdsadasddssadsa:sadasdas"+memberid);
-        return ResponseEntity.ok(ResultDto.of("resultcode","월중전체 지출액 성공",paymentService.addPaymentForAdmin(paymentAdminAllpayment.getMemberid(),paymentAdminAllpayment.getMonth())));
+        return ResponseEntity.ok(ResultDto.of("200","월중전체 지출액 성공",paymentService.addPaymentForAdmin(paymentAdminAllpayment.getMemberid(),paymentAdminAllpayment.getMonth())));
     }
     @GetMapping("/admin/each/{memberid}/{month}")
     @Operation(summary = "Payment api", description = "Admin에서 유저별 월급 계산후 반환")
     @ResponseBody
-    public Map<String,Long> abcde(@PathVariable String memberid,@PathVariable long month){
-        return paymentService.AdminfindEachMemberPay(memberid,month);
+    public ResponseEntity<ResultDto<Map<String,Long>>> abcde(@PathVariable String memberid,@PathVariable long month){
+        return ResponseEntity.ok(ResultDto.of("200","스토어에 속해있는 전체 멤버별 월급리스트맵 반환",paymentService.AdminfindEachMemberPay(memberid,month)));
     }
 }
 
