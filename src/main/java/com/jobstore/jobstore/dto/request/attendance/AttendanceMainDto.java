@@ -1,4 +1,4 @@
-package com.jobstore.jobstore.dto;
+package com.jobstore.jobstore.dto.request.attendance;
 
 
 import com.jobstore.jobstore.entity.Attendance;

@@ -1,6 +1,7 @@
-package com.jobstore.jobstore.dto.Attendance;
+package com.jobstore.jobstore.dto.request.attendance;
 
 import com.jobstore.jobstore.entity.Attendance;
+import com.jobstore.jobstore.entity.Member;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,8 +14,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AttendanceUpdateDto {
-    private long attendid;
+public class AttendanceDto {
     private String memberid;
     private long storeid;
     private LocalDateTime start;
@@ -25,12 +25,13 @@ public class AttendanceUpdateDto {
     private LocalDateTime leavework;
     private long wage;
     private String worker;
+    //private String registertime;
+    //private LocalDateTime registertime;
 
 
 
     public Attendance toEntity(){
         return Attendance.builder()
-                .attendid(this.attendid)
                 .start(this.start)
                 .end(this.end)
                 .gowork(this.gowork)
@@ -40,4 +41,3 @@ public class AttendanceUpdateDto {
                 .build();
     }
 }
-
