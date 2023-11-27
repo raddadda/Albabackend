@@ -1,6 +1,8 @@
 package com.jobstore.jobstore.service;
 
 import com.jobstore.jobstore.dto.PaymentAdminDto;
+import com.jobstore.jobstore.dto.PaymentDto;
+import com.jobstore.jobstore.dto.request.payment.PaymentPagenationDto;
 import com.jobstore.jobstore.entity.Member;
 import com.jobstore.jobstore.entity.Payment;
 import com.jobstore.jobstore.entity.PaymentAdmin;
@@ -8,6 +10,9 @@ import com.jobstore.jobstore.repository.MemberRepository;
 import com.jobstore.jobstore.repository.PaymentAdminRepository;
 import com.jobstore.jobstore.repository.PaymentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
@@ -16,7 +21,10 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class PaymentService {
@@ -24,7 +32,6 @@ public class PaymentService {
     private PaymentRepository paymentRepository;
     @Autowired
     private MemberRepository memberRepository;
-
     @Autowired
     private PaymentAdminRepository paymentAdminRepository;
 
@@ -36,7 +43,6 @@ public class PaymentService {
         if (member != null) {
             Payment newPayment = new Payment();
             newPayment.setPay(pay);
-
             newPayment.setMonth(localDateTimeToMonth(register));
             newPayment.setRegister(register);
             newPayment.setMember(member);
@@ -46,6 +52,7 @@ public class PaymentService {
             return null;
         }
     }
+    //어드민 이번달 총 지출액
     public Long addPaymentForAdmin(String memberid,long month){
         PaymentAdmin paymentAdmin=new PaymentAdmin();
         String Role=memberRepository.findByMemberidToRole(memberid);
@@ -81,29 +88,10 @@ public class PaymentService {
 //        }
 //        return result;
 //    }
-    public List<PaymentAdminDto> findByMemberidAdmin(String memberid){
-        List<PaymentAdmin> admindata=paymentAdminRepository.findBymemberid(memberid);
-        List<PaymentAdminDto> result=new ArrayList<>();
-        for(PaymentAdmin paydata:admindata){
-            PaymentAdminDto paymentAdminDto= PaymentAdminDto.builder()
-                    .memberid(paydata.getMemberid())
-                    .storeid(paydata.getStoreid())
-                    .sum(paydata.getSum())
-                    .month(paydata.getMonth())
-                    .build();
-            result.add(paymentAdminDto);
-        }
-        return result;
-    }
+    //어드민 전체 조회
+
     //전체 유저 조회 및 페이지네이션
-public List<Payment> findAll(){
-    return paymentRepository.findAll();
-}
 
-
-public List<Payment> findByCursor(String memberid,long cursor,int size) {
-    return paymentRepository.findByCursor(memberid, cursor, size);
-}
 
     /**
      월급 계산
@@ -184,10 +172,17 @@ public List<Payment> findByCursor(String memberid,long cursor,int size) {
     }
     //저번달 대비 이번달 퍼센테이지 반환 서비스
     public double last_recentpercentage(String memberid,long month){
-        long recent=paymentRepository.findeByMemberidAndMonth(memberid,month);
-        long last=paymentRepository.findeByMemberidAndMonth(memberid,month-1);
-        System.out.println("AAAAAAAAAAAAAA:     "+recent+"BBBBBBBBBBBBBB:   " +last);
-        return calculatePercentageChange(recent,last);
+        List<Long> recent=paymentRepository.findeByMemberidAndMonth(memberid,month);
+        List<Long> last=paymentRepository.findeByMemberidAndMonth(memberid,month-1);
+        long recentSum=0;
+        long lastSum=0;
+        for(Long payment:recent){
+            recentSum+=payment;
+        }
+        for (Long lastPayment:last){
+            lastSum+=lastPayment;
+        }
+        return calculatePercentageChange(recentSum,lastSum);
     }
     public double calculatePercentageChange(long recent, long last) {
         // 증감율 계산
@@ -198,10 +193,59 @@ public List<Payment> findByCursor(String memberid,long cursor,int size) {
             percentageChange = 100.0;
         }
 
-//        if (percentageChange < 0) {
-//            percentageChange = -percentageChange;
-//        }
-
         return percentageChange;
+    }
+    //달마다 리스트 반환(유저측 페이지 네이션)
+    public Map<Long,Long> userAllLists(String memberid,long month){
+        Map<Long,Long> userlistmap=new HashMap<>();
+        for (int i = 0; month - i > 0; i++) {
+            long currentMonth = month - i;
+            List<Long> payments = paymentRepository.findeByMemberidAndMonth(memberid, currentMonth);
+            long totalPayment = 0;
+            for (Long payment : payments) {
+                totalPayment += payment;
+            }
+            userlistmap.put(currentMonth, totalPayment);
+        }
+        return userlistmap ;
+    }
+    public PaymentPagenationDto findByMemberidUser(String memberid ,Integer page){
+        Integer size=10;
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.DESC, "month");
+        Page<Payment> paymentPage = paymentRepository.findByMemberid(memberid, pageRequest);
+
+        List<PaymentDto> paymentDtoList = new ArrayList<>();
+
+        for (Payment payment : paymentPage.getContent()) {
+            Map<Long, Long> userlistmap = userAllLists(memberid, payment.getMonth());
+            PaymentDto paymentDto = new PaymentDto(payment.getPayid(), payment.getPay(), payment.getMonth(),payment.getRegister(),userlistmap);
+            paymentDto.setUserListMap(userlistmap);
+            paymentDtoList.add(paymentDto);
+        }
+
+        PaymentPagenationDto dto = new PaymentPagenationDto(
+                paymentDtoList,
+                paymentPage.getContent().size(),
+                paymentPage.getNumber(),
+                paymentPage.getTotalPages(),
+                paymentPage.hasNext()
+        );
+        return dto;
+    }
+
+    //어드민 달마다 페이지 네이션
+    public PaymentPagenationDto findByMemberidAdmin(String memberid ,Integer page){
+        Integer size=10;
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.DESC, "month");
+        Page<PaymentAdmin> paymentAdmins=paymentAdminRepository.findBymemberid(memberid,pageRequest);
+        Page<PaymentAdminDto> toMap=paymentAdmins.map(m->new PaymentAdminDto(m.getMemberid(),m.getStoreid(),m.getMonth(),m.getSum()));
+        PaymentPagenationDto dto=new PaymentPagenationDto(
+                toMap.getContent(),
+                toMap.getContent().size(),
+                toMap.getNumber(),
+                toMap.getTotalPages(),
+                toMap.hasNext()
+        );
+        return dto;
     }
 }

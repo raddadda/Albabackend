@@ -1,7 +1,6 @@
 package com.jobstore.jobstore.controller;
 
 import com.jobstore.jobstore.config.PrincipalDetails;
-import com.jobstore.jobstore.dto.PaymentAdminDto;
 import com.jobstore.jobstore.dto.request.payment.*;
 import com.jobstore.jobstore.dto.response.ResultDto;
 import com.jobstore.jobstore.entity.Payment;
@@ -9,6 +8,7 @@ import com.jobstore.jobstore.repository.MemberRepository;
 import com.jobstore.jobstore.service.MemberService;
 import com.jobstore.jobstore.service.PaymentService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -17,8 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 
 @Controller
@@ -70,13 +68,20 @@ public class PaymentController {
 //        }
 //        return ResponseEntity.ok(ResultDto.of("resultcode","조회실패",null));
 //    }
-@PostMapping("/admin/findall")
+@GetMapping("/admin/findall/{memberid}/{page}")
 @Operation(summary = "Payment api", description = "admin전체 조회 api")
+@Parameter(name = "memberid", description = "memberid", required = true)
+@Parameter(name = "page", description = "페이지 번호 0부터 시작", required = true)
 @ResponseBody
-public ResponseEntity<ResultDto<List<PaymentAdminDto>>> findAdminAllpayment(
-        @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "요청파라미터", required = true,
-                content = @Content(schema=@Schema(implementation = PaymentAdminFindAllDto.class)))@RequestBody PaymentAdminFindAllDto paymentAdminFindAllDto){
-    return ResponseEntity.ok(ResultDto.of("resultcode","전체조회 완료",paymentService.findByMemberidAdmin(paymentAdminFindAllDto.getMemberid())));
+public ResponseEntity<ResultDto<PaymentPagenationDto>> findAdminAllpayment(@PathVariable String memberid, @PathVariable Integer page){
+    return ResponseEntity.ok(ResultDto.of("200","성공",paymentService.findByMemberidAdmin(memberid,page)));
+}
+@GetMapping("/user/findall/{memberid}/{page}")
+@Operation(summary = "Payment api", description = "User전체 조회 api")
+@Parameter(name = "memberid", description = "memberid", required = true)
+@Parameter(name = "page", description = "페이지 번호 0부터 시작", required = true)
+public ResponseEntity<ResultDto<PaymentPagenationDto>> findAllmember(@PathVariable String memberid,@PathVariable Integer page){
+    return ResponseEntity.ok(ResultDto.of("200","성공",paymentService.findByMemberidUser(memberid,page)));
 }
 
     @PostMapping("/allpayment")
@@ -123,29 +128,6 @@ public ResponseEntity<ResultDto<List<PaymentAdminDto>>> findAdminAllpayment(
 
     }
 
-    @GetMapping("/allpayment/{memberid}/{cursor}")
-    public  ResponseEntity<ResultDto<Object>> getUserById(@PathVariable String memberid
-            ,@PathVariable(required = false) Long cursor
-    ) {
-        //maxcursor와 조회 리스트를 담은 Dto 객체 생성
-        PaymentHistoryDto paymentHistoryDto = new PaymentHistoryDto();
-        //한페이지당 보여줄 리스트 수
-        int size = 3;
-        //페이지 커서의 최대 개수
-        int maxcursor;
-        cursor= cursor*3;
-        int max = paymentService.findAll().size();
-        if(max%size>0){
-            maxcursor = max/size +1;
-        }else {
-            maxcursor = max/size;
-        }
-        List<Payment> list =  paymentService.findByCursor(memberid,cursor,size);
-
-        paymentHistoryDto.setPayments(list);
-        paymentHistoryDto.setMaxcursor(maxcursor);
-        return ResponseEntity.ok(ResultDto.of("성공","두번째부터",paymentHistoryDto));
-    }
     @PostMapping("/admin/allpayment")
     @ResponseBody
     public ResponseEntity<ResultDto<Long>> adminAllPay(

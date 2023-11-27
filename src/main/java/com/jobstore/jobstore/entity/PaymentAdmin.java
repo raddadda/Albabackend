@@ -1,9 +1,6 @@
 package com.jobstore.jobstore.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,6 +10,9 @@ import lombok.Setter;
 @Setter
 public class PaymentAdmin {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long paymentid;
+    @Column
     private String memberid;
     @Column
     private long storeid;
