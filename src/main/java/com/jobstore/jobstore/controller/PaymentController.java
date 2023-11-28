@@ -85,7 +85,11 @@ public ResponseEntity<ResultDto<PaymentPagenationDto>> findAdminAllpayment(@Path
 public ResponseEntity<ResultDto<PaymentPagenationDto>> findAllmember(@PathVariable String memberid,@PathVariable Integer page){
     return ResponseEntity.ok(ResultDto.of("200","성공",paymentService.findByMemberidUser(memberid,page)));
 }
-
+@GetMapping("/user/findAll/{memberid}/{month}")
+@Operation(summary = "Payment api", description = "User전체 조회 api(데이터 그래프에서 사용)")
+public ResponseEntity<ResultDto<Map<Long,Long>>> findAllmember(@PathVariable String memberid,@PathVariable long month){
+        return ResponseEntity.ok(ResultDto.of("200","성공",paymentService.userAllLists(memberid,month)));
+    }
     @PostMapping("/allpayment")
     @Operation(summary = "Payment api", description = "payment api입니다.(User에 관한 월급과 주급 반환)")
     @ResponseBody
