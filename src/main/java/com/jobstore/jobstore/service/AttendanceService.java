@@ -2,6 +2,7 @@ package com.jobstore.jobstore.service;
 
 import com.jobstore.jobstore.dto.request.attendance.AttendanceDto;
 import com.jobstore.jobstore.dto.request.attendance.AttendanceUpdateDto;
+import com.jobstore.jobstore.dto.request.attendance.AttendancefindDto;
 import com.jobstore.jobstore.dto.response.attendance.AttendanceHistoryDto;
 import com.jobstore.jobstore.entity.Attendance;
 import com.jobstore.jobstore.entity.Member;
@@ -260,9 +261,9 @@ public class AttendanceService {
             Page<Attendance> attendances =  attendanceRepository.findByWorker(memberid, pageRequest);
             System.out.println("attendances"+attendances.isEmpty());
             //work를 DTO로 변환
-            Page<AttendanceDto> toMap = attendances.map(m -> new AttendanceDto(
+            Page<AttendancefindDto> toMap = attendances.map(m -> new AttendancefindDto(
                     m.getMember().getMemberid(),
-                    m.getStoreid(),
+                    m.getStoreid(),m.getAttendid(),
                     m.getStart(), m.getEnd(),
                     m.getGowork(),m.getLeavework(),
                     m.getWage(),m.getWorker(),
@@ -282,9 +283,9 @@ public class AttendanceService {
 
             System.out.println("attendances"+attendances.isEmpty());
             //work를 DTO로 변환
-            Page<AttendanceDto> toMap = attendances.map(m -> new AttendanceDto(
+            Page<AttendancefindDto> toMap = attendances.map(m -> new AttendancefindDto(
                     m.getMember().getMemberid(),
-                    m.getStoreid(),
+                    m.getStoreid(), m.getAttendid(),
                     m.getStart(), m.getEnd(),
                     m.getGowork(),m.getLeavework(),
                     m.getWage(),m.getWorker(),
