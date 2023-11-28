@@ -88,7 +88,6 @@ public class AuthController {
 
     @PostMapping("/login")
     @Operation(summary = "로그인", description = "user, admin 공통 로그인")
-
     public ResponseEntity<ResultDto<LoginResponseDto>> login(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "요청파라미터", required = true,
                     content = @Content(schema=@Schema(implementation = LoginDto.class)))
