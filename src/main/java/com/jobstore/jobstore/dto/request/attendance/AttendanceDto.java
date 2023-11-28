@@ -25,6 +25,7 @@ public class AttendanceDto {
     private LocalDateTime leavework;
     private long wage;
     private String worker;
+    private int confirm;
     //private String registertime;
     //private LocalDateTime registertime;
 
@@ -38,6 +39,7 @@ public class AttendanceDto {
                 .leavework(this.leavework)
                 .wage(this.wage)
                 .worker(this.worker)
+                .confirm(this.confirm)
                 .build();
     }
 }

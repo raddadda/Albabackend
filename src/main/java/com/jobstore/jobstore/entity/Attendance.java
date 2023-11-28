@@ -32,6 +32,8 @@ public class Attendance {
     private String worker;
     @Column(length = 255,nullable = true)
     private long wage;
+    @Column(length = 255,nullable = true)
+    private int confirm;
     //@Column(length = 255,nullable = false)
     //private LocalDateTime registertime;
 

@@ -42,6 +42,8 @@ public class AttendanceService {
             Attendance attendance = attendanceDto.toEntity();
             attendance.setMember(member);
             attendance.setStoreid(storeid);
+            System.out.println("confirm:"+attendance.getConfirm());
+            System.out.println("confirm:"+attendance.getEnd());
             attendanceRepository.save(attendance);
 
             return true;
@@ -93,6 +95,21 @@ public class AttendanceService {
         }
         return false;
     }
+
+    public boolean confirmAttendance(AttendanceUpdateDto attendanceUpdateDto) {
+        Attendance attendance = attendanceRepository.findByWorkderAndAttendid(attendanceUpdateDto.getWorker(), attendanceUpdateDto.getAttendid());
+        Member member = memberRepository.findByMemberid2(attendanceUpdateDto.getMemberid());
+        if (attendance != null) {
+            if (member != null) {
+                if(attendanceUpdateDto.getConfirm() == 1){
+                    attendance.setConfirm(attendanceUpdateDto.getConfirm());
+                    attendanceRepository.save(attendance);
+                }
+                return true;
+            }
+        }
+        return false;
+    }
     public boolean deleteAttendance(AttendanceUpdateDto attendanceUpdateDto){
         Attendance attendance = attendanceRepository.findByWorkderAndAttendid(attendanceUpdateDto.getWorker(),attendanceUpdateDto.getAttendid());
         //Optional<Attendance> optionalAttendance = attendanceRepository.findById(attendanceDto.getAttendid());
@@ -125,8 +142,10 @@ public class AttendanceService {
                 Duration duration2 = Duration.between(go, leave); // 두 시간의 차이 계산
                 long hours = duration2.toHours(); // 시간 단위로 시간 차이 구하기
                 long minutes = duration2.toMinutes(); // 분 단위로 시간 차이 구하기
-
-                result = minutes*attendanceUpdateDto.getWage();
+                System.out.println("minutes"+minutes);
+                System.out.println("hours"+hours);
+                System.out.println("attendanceUpdateDto.getWage()"+attendanceUpdateDto.getWage());
+                result = hours*attendanceUpdateDto.getWage();
 
                 return result;
             }
@@ -225,13 +244,11 @@ public class AttendanceService {
 
                         Duration duration = Duration.between(go, leave); // 두 시간의 차이 계산
                         result += duration.toMinutes(); // 분 단위로 시간 차이 구하기
-
                 }
             }
         }
         return result;
     }
-
     /**
      * Attendance History 조회
      */
@@ -248,7 +265,8 @@ public class AttendanceService {
                     m.getStoreid(),
                     m.getStart(), m.getEnd(),
                     m.getGowork(),m.getLeavework(),
-                    m.getWage(),m.getWorker()
+                    m.getWage(),m.getWorker(),
+                    m.getConfirm()
             ));
 
             AttendanceHistoryDto dto = new AttendanceHistoryDto(
@@ -269,7 +287,8 @@ public class AttendanceService {
                     m.getStoreid(),
                     m.getStart(), m.getEnd(),
                     m.getGowork(),m.getLeavework(),
-                    m.getWage(),m.getWorker()
+                    m.getWage(),m.getWorker(),
+                    m.getConfirm()
             ));
 
             AttendanceHistoryDto dto = new AttendanceHistoryDto(
@@ -281,7 +300,6 @@ public class AttendanceService {
             );
             return dto;
         }
-
         return null;
 
     }
