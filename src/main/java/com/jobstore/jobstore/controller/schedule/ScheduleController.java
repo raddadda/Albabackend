@@ -26,7 +26,7 @@ public class ScheduleController {
     private ScheduleService scheduleService;
 
     @GetMapping("/admin/schedule/{memberid}/{storeid}/{month}")
-    @Operation(summary = "admin history", description = "admin 스케줄 조회")
+    @Operation(summary = "admin schedule", description = "admin 스케줄 조회")
     @Parameter(name = "memberid", description = "memberid", required = true)
     @Parameter(name = "storeid", description = "storeid", required = true)
     @Parameter(name = "month", description = "이번달 month", required = false)
@@ -45,7 +45,7 @@ public class ScheduleController {
     }
 
     @GetMapping("/user/schedule/{memberid}/{storeid}/{month}")
-    @Operation(summary = "admin history", description = "user 스케줄 조회")
+    @Operation(summary = "user schedule", description = "user 스케줄 조회")
     @Parameter(name = "memberid", description = "memberid", required = true)
     @Parameter(name = "storeid", description = "storeid", required = true)
     @Parameter(name = "time", description = "이번달 month", required = false)
