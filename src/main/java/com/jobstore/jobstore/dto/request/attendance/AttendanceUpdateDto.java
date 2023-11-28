@@ -25,8 +25,7 @@ public class AttendanceUpdateDto {
     private LocalDateTime leavework;
     private long wage;
     private String worker;
-
-
+    private int confirm;
 
     public Attendance toEntity(){
         return Attendance.builder()
@@ -37,6 +36,7 @@ public class AttendanceUpdateDto {
                 .leavework(this.leavework)
                 .wage(this.wage)
                 .worker(this.worker)
+                .confirm(this.confirm)
                 .build();
     }
 }
