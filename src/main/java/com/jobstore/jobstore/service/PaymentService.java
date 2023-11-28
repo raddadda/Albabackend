@@ -56,6 +56,7 @@ public class PaymentService {
     public Long addPaymentForAdmin(String memberid,long month){
         PaymentAdmin paymentAdmin=new PaymentAdmin();
         String Role=memberRepository.findByMemberidToRole(memberid);
+        boolean existAdmin= paymentAdminRepository.existsByMemberidAndMonth(memberid,month);
         long sum = 0;
         if(Role.equals("ADMIN")){
             //        System.out.println("페이먼츠 서비스 입니다");
@@ -66,11 +67,13 @@ public class PaymentService {
             for (Long payment : lists) { // 리스트 안의 각 Long 값을 가져와 더합니다.
                 sum += payment;
             }
-            paymentAdmin.setMemberid(memberid);
-            paymentAdmin.setStoreid(storeid);
-            paymentAdmin.setMonth(month);
-            paymentAdmin.setSum(sum);
-            paymentAdminRepository.save(paymentAdmin);
+            if(!existAdmin) {
+                paymentAdmin.setMemberid(memberid);
+                paymentAdmin.setStoreid(storeid);
+                paymentAdmin.setMonth(month);
+                paymentAdmin.setSum(sum);
+                paymentAdminRepository.save(paymentAdmin);
+            }
 //        System.out.println("123123123123123123123123123123"+sum);
             return sum;
         }
