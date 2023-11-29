@@ -11,16 +11,20 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.security.core.parameters.P;
+import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 public interface AttendanceRepository extends JpaRepository<Attendance,Long> {
     Attendance findByAttendid(Long attendid);
   //  Optional<Member> findByMemberid(String memberid);
 
-
+    @Query("SELECT a FROM Attendance a WHERE a.member.memberid =:memberid")
+    List<String> findByMemberid(@Param("memberid") String memberid);
 
     @Query("SELECT a FROM Attendance a WHERE a.worker = :worker AND a.attendid = :attendid")
     Attendance findByWorkderAndAttendid(@Param("worker") String worker,@Param("attendid") long attendid);
@@ -35,9 +39,15 @@ public interface AttendanceRepository extends JpaRepository<Attendance,Long> {
     Page<Attendance> findByMemberMemberid(String memberid, Pageable pageable);
 
     List<Attendance> findByMemberMemberid(String memberid);
+//    @Query("SELECT a FROM Attendance a WHERE a.member.memberid =:memberid")
+//    findByWorker(String memberid);
+
     Page<Attendance> findByWorker(String memberid, Pageable pageable);
     @Query("SELECT a FROM Attendance a WHERE a.worker = :worker")
     List<Attendance> findByWorker(@Param("worker") String worker);
+
+//    @Query("SELECT a FROM Attendance a WHERE a.memberid = :memberid ")
+//    List<Attendance> findByWorker2(@Param("worker") String worker);
     @Query("SELECT a FROM Attendance a WHERE a.leavework = :leavework")
     List<Attendance> findByMemberMemberid(@Param("leavework") LocalDateTime leavework);
 
