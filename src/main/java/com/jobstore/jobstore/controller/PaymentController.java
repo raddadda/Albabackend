@@ -139,7 +139,8 @@ public ResponseEntity<ResultDto<Map<Long,Long>>> findAllmember(@PathVariable Str
     public ResponseEntity<ResultDto<Double>> last_recentAdminPercentage(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "요청파라미터", required = true,
             content = @Content(schema=@Schema(implementation = PaymentPercentageDto.class)))@RequestBody PaymentPercentageDto paymentPercentageDto){
-            return ResponseEntity.ok(ResultDto.of("200","성공",paymentService.last_recentAdminPercentage(paymentPercentageDto.getMemberid(),paymentPercentageDto.getMonth())));
+        double percent=paymentService.last_recentAdminPercentage(paymentPercentageDto.getMemberid(),paymentPercentageDto.getMonth());
+            return ResponseEntity.ok(ResultDto.of("200","성공",percent));
     }
 
     @PostMapping("/admin/allpayment")
