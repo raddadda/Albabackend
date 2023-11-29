@@ -49,6 +49,7 @@ public class AttendanceController {
             @PathVariable(value = "storeid", required = true) Long storeid,
             @PathVariable(value = "page", required = false) Integer page
     ) {
+        System.out.println("-----------------getHistoryAdmin-----------------");
         if (!memberService.findByMemberidToRole(memberid).equals("ADMIN")) {  //권한 확인
             return ResponseEntity.ok(ResultDto.of("실패", "권한이 맞지 않습니다.", null));
         }
@@ -65,6 +66,7 @@ public class AttendanceController {
             @PathVariable(value = "storeid", required = true) Long storeid,
             @PathVariable(value = "page", required = false) Integer page
     ) {
+        System.out.println("-----------------getHistoryUser-----------------");
         if (!memberService.findByMemberidToRole(memberid).equals("USER")) {   //권한 확인
             return ResponseEntity.ok(ResultDto.of("실패", "권한이 맞지 않습니다.", null));
         }
@@ -83,6 +85,7 @@ public class AttendanceController {
             @PathVariable(value = "memberid", required = true) String memberid,
             @PathVariable(value = "storeid", required = true) Long storeid
     ) {
+        System.out.println("-----------------getUserData-----------------");
         if (!memberService.findByMemberidToRole(memberid).equals("ADMIN")) {  //권한 확인
             return ResponseEntity.ok(ResultDto.of("실패", "권한이 맞지 않습니다.", null));
         }
@@ -93,6 +96,28 @@ public class AttendanceController {
             return ResponseEntity.ok(ResultDto.of("null", "user지표가 null값입니다.", getAttendData));
         }
         return ResponseEntity.ok(ResultDto.of("성공", "조회성공", getAttendData));
+    }
+
+    @GetMapping("/admin/attendance/workerlist/{memberid}/{storeid}")
+    @Operation(summary = "worker리스트 조회", description = "admin의 worker리스트 조회")
+    @Parameter(name = "memberid", description = "memberid", required = true)
+    @Parameter(name = "storeid", description = "storeid", required = true)
+    @ResponseBody
+    public ResponseEntity<ResultDto<HashMap<String,String>>> getWorkerList(
+            @PathVariable(value = "memberid", required = true) String memberid,
+            @PathVariable(value = "storeid", required = true) Long storeid
+    ) {
+        System.out.println("-----------------getUserData-----------------");
+        if (!memberService.findByMemberidToRole(memberid).equals("ADMIN")) {  //권한 확인
+            return ResponseEntity.ok(ResultDto.of("실패", "권한이 맞지 않습니다.", null));
+        }
+//        System.out.println("-----------------1-----------------");
+        HashMap<String,String> result  = attendanceService.workerList(memberid);
+//        System.out.println("-----------------2-----------------");
+        if(result == null){
+            return ResponseEntity.ok(ResultDto.of("null", "worker리스트가 null값입니다.", result));
+        }
+        return ResponseEntity.ok(ResultDto.of("성공", "조회성공", result));
     }
 
 
@@ -106,6 +131,7 @@ public class AttendanceController {
     public ResponseEntity<ResultDto<Long>> getWeek(
             @PathVariable(value = "memberid", required = true) String memberid,
             @PathVariable(value = "storeid", required = true) Long storeid) {
+        System.out.println("-----------------getWeekuser-----------------");
         if (!memberService.findByMemberidToRole(memberid).equals("USER")) {   //권한 확인
             return ResponseEntity.ok(ResultDto.of("실패", "권한이 맞지 않습니다.", null));
         }
@@ -115,7 +141,7 @@ public class AttendanceController {
         return ResponseEntity.ok(ResultDto.of("성공", "주급 월급 조회성공", month));
     }
     @GetMapping("/admin/attendance/month/{memberid}/{storeid}/{worker}")
-    @Operation(summary = "user 이번달 일한시간", description = "user가 이번달에 일한시간을 조회")
+    @Operation(summary = "admin 월 지표", description = "admin이 해당 wokrer가 이번달에 일한시간을 조회")
     @Parameter(name = "memberid", description = "memberid", required = true)
     @Parameter(name = "storeid", description = "storeid", required = true)
     @Parameter(name = "worker", description = "worker", required = true)
@@ -123,6 +149,7 @@ public class AttendanceController {
             @PathVariable(value = "memberid", required = true) String memberid,
             @PathVariable(value = "storeid", required = true) Long storeid,
             @PathVariable(value = "worker", required = true) String worker) {
+        System.out.println("-----------------getWeekadmin-----------------");
         if (!memberService.findByMemberidToRole(memberid).equals("ADMIN")) {   //권한 확인
             return ResponseEntity.ok(ResultDto.of("실패", "권한이 맞지 않습니다.", null));
         }
@@ -142,7 +169,7 @@ public class AttendanceController {
     public ResponseEntity<ResultDto<Long>> getMonth(
             @PathVariable(value = "memberid", required = true) String memberid,
             @PathVariable(value = "storeid", required = true) Long storeid) {
-
+        System.out.println("-----------------getMonth-----------------");
         if (!memberService.findByMemberidToRole(memberid).equals("USER")) {         //권한 확인
             return ResponseEntity.ok(ResultDto.of("실패", "권한이 맞지 않습니다.", null));
         }
@@ -151,7 +178,7 @@ public class AttendanceController {
         return ResponseEntity.ok(ResultDto.of("성공", "주급 월급 조회성공", localDateTimeToWeek));
     }
     @GetMapping("/admin/attendance/week/{memberid}/{storeid}/{worker}")
-    @Operation(summary = "user 이번주 일한시간", description = "user가 이번주에 일한시간을 조회")
+    @Operation(summary = "admin 주간 지표", description = "admin이 해당 worker의 이번주에 일한시간을 조회")
     @Parameter(name = "memberid", description = "memberid", required = true)
     @Parameter(name = "storeid", description = "storeid", required = true)
     @Parameter(name = "worker", description = "worker", required = true)
@@ -160,6 +187,7 @@ public class AttendanceController {
             @PathVariable(value = "storeid", required = true) Long storeid,
              @PathVariable(value = "worker", required = true) String worker
     ) {
+        System.out.println("-----------------getMonthAdmin-----------------");
         if (!memberService.findByMemberidToRole(memberid).equals("ADMIN")) {         //권한 확인
             return ResponseEntity.ok(ResultDto.of("실패", "권한이 맞지 않습니다.", null));
         }
@@ -177,6 +205,7 @@ public class AttendanceController {
     public ResponseEntity<ResultDto<Double>> getPercent(
             @PathVariable(value = "memberid", required = true) String memberid,
             @PathVariable(value = "storeid", required = true) Long storeid) {
+        System.out.println("-----------------getPercent-----------------");
         if (!memberService.findByMemberidToRole(memberid).equals("USER")) {   //권한 확인
             return ResponseEntity.ok(ResultDto.of("실패", "권한이 맞지 않습니다.", null));
         }
@@ -187,7 +216,7 @@ public class AttendanceController {
         return ResponseEntity.ok(ResultDto.of("실패", "퍼센트 조회실패", null));
     }
     @GetMapping("/admin/attendance/percent/{memberid}/{storeid}/{worker}")
-    @Operation(summary = "user percent조회", description = "user의 저번달과 이번달간의 일한 시간 차이를 계산하는 percent조회")
+    @Operation(summary = "admin percent조회", description = "admin이 해당 worker의 저번달과 이번달간의 일한 시간 차이를 percent로 조회")
     @Parameter(name = "memberid", description = "memberid", required = true)
     @Parameter(name = "storeid", description = "storeid", required = true)
     @Parameter(name = "worker", description = "worker", required = true)
@@ -195,7 +224,7 @@ public class AttendanceController {
             @PathVariable(value = "memberid", required = true) String memberid,
             @PathVariable(value = "storeid", required = true) Long storeid,
             @PathVariable(value = "worker", required = true) String worker) {
-
+        System.out.println("-----------------getPercentAdmin-----------------");
         if (!memberService.findByMemberidToRole(memberid).equals("ADMIN")) {   //권한 확인
             return ResponseEntity.ok(ResultDto.of("실패", "권한이 맞지 않습니다.", null));
         }
@@ -217,6 +246,7 @@ public class AttendanceController {
             @RequestBody AttendanceDto attendanceDto
             //, @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
+        System.out.println("-----------------createAttendance-----------------");
         String role = memberService.findByMemberidToRole(attendanceDto.getMemberid()); //권한 확인
         if (!role.equals("ADMIN")) {
             return ResponseEntity.ok(ResultDto.of("실패", "admin 권한이 아닙니다.", null));
@@ -238,8 +268,10 @@ public class AttendanceController {
 
             @RequestBody AttendanceUpdateDto attendanceUpdateDto
     ) {
+        System.out.println("-----------------goworkAttendance-----------------");
         //권한 확인
         String role = memberService.findByMemberidToRole(attendanceUpdateDto.getWorker());
+
         if (!role.equals("USER")) {
             return ResponseEntity.ok(ResultDto.of("실패", "user권한이 아닙니다.", null));
         }
@@ -259,6 +291,7 @@ public class AttendanceController {
 
             @RequestBody AttendanceUpdateDto attendanceUpdateDto
     ) {
+        System.out.println("-----------------leaveworkAttendance-----------------");
         String role = memberService.findByMemberidToRole(attendanceUpdateDto.getWorker());
         //권한 확인
         if (!role.equals("USER")) {
@@ -281,6 +314,7 @@ public class AttendanceController {
                     content = @Content(schema = @Schema(implementation = AttendanceDto.class)))
             @RequestBody AttendanceDto attendanceDto
     ) {
+        System.out.println("-----------------findAllAttendance-----------------");
         String role = memberService.findByMemberidToRole(attendanceDto.getMemberid());
         if (role.equals("ADMIN")) {
             List<Attendance> attendance = attendanceService.findAllAttendance();
@@ -297,6 +331,7 @@ public class AttendanceController {
                     content = @Content(schema = @Schema(implementation = AttendanceUpdateDto.class)))
             @RequestBody AttendanceUpdateDto attendanceUpdateDto
     ) {
+        System.out.println("-----------------updateAttendance-----------------");
         String role = memberService.findByMemberidToRole(attendanceUpdateDto.getMemberid());
         if (role.equals("ADMIN")) {
             boolean result = attendanceService.updateAttendance(attendanceUpdateDto);
@@ -318,6 +353,7 @@ public class AttendanceController {
                     content = @Content(schema = @Schema(implementation = AttendanceUpdateDto.class)))
             @RequestBody AttendanceUpdateDto attendanceUpdateDto
     ) {
+        System.out.println("-----------------deleteAttendance-----------------");
         String role = memberService.findByMemberidToRole(attendanceUpdateDto.getMemberid());
         if (role.equals("ADMIN")) {
             boolean result = attendanceService.deleteAttendance(attendanceUpdateDto);
@@ -338,6 +374,7 @@ public class AttendanceController {
                     content = @Content(schema = @Schema(implementation = AttendanceUpdateDto.class)))
             @RequestBody AttendanceUpdateDto attendanceUpdateDto
     ) {
+        System.out.println("-----------------confirmAttendance-----------------");
         String role = memberService.findByMemberidToRole(attendanceUpdateDto.getMemberid());
         System.out.println("0");
         if (role.equals("ADMIN")) {

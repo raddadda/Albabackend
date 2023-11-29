@@ -48,10 +48,7 @@ public class AttendanceService {
             Attendance attendance = attendanceDto.toEntity();
             attendance.setMember(member);
             attendance.setStoreid(storeid);
-            System.out.println("confirm:"+attendance.getConfirm());
-            System.out.println("confirm:"+attendance.getEnd());
             attendanceRepository.save(attendance);
-
             return true;
         }
         return false;
@@ -133,6 +130,27 @@ public class AttendanceService {
             }
         }
         return false;
+    }
+    //어드민 전체worker 조회
+    public HashMap workerList(String memberid){
+        Member member = memberRepository.findByMemberid2(memberid);
+//        System.out.println("-----------------3-----------------");
+        if(member != null){
+            List<Attendance> attendances = attendanceRepository.findByMemberMemberid(memberid);
+//            System.out.println("-----------------4-----------------");
+            HashMap<String,String> workerList = new HashMap<>();
+            List<String> result = new ArrayList<>();
+            for(Attendance attendList : attendances){
+//                System.out.println("-----------------5-----------------");
+                String key = attendList.getWorker();
+                Member worker = memberRepository.findByWorker(attendList.getWorker());
+                String value=worker.getName();
+                workerList.put(key,value);
+            }
+            return workerList;
+        }
+        return null;
+
     }
     /**
      * Attendance 급여계산
