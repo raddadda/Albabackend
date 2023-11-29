@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class Attendance {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long attendid;
     @Column(nullable = false)
     private long storeid;
