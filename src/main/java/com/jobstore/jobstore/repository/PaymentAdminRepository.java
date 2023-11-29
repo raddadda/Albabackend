@@ -16,7 +16,7 @@ public interface PaymentAdminRepository extends JpaRepository<PaymentAdmin,Strin
     Page<PaymentAdmin> findBymemberid(@Param("memberid") String memberid, Pageable pageable);
 
     @Query("SELECT p.sum FROM PaymentAdmin p WHERE p.memberid=:memberid AND p.month=:month")
-    long findBymemberidForAdminPay(@Param("memberid") String memberid,@Param("month") long month);
+    Long findBymemberidForAdminPay(@Param("memberid") String memberid,@Param("month") long month);
 
     boolean existsByMemberidAndMonth(String memberid,long month);
 }

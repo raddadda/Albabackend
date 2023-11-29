@@ -177,20 +177,31 @@ public class PaymentService {
     public double last_recentpercentage(String memberid,long month){
         List<Long> recent=paymentRepository.findeByMemberidAndMonth(memberid,month);
         List<Long> last=paymentRepository.findeByMemberidAndMonth(memberid,month-1);
-        long recentSum=0;
-        long lastSum=0;
-        for(Long payment:recent){
-            recentSum+=payment;
+        if(recent!=null && last!=null) {
+            long recentSum = 0;
+            long lastSum = 0;
+            for (Long payment : recent) {
+                recentSum += payment;
+            }
+            for (Long lastPayment : last) {
+                lastSum += lastPayment;
+            }
+            return calculatePercentageChange(recentSum,lastSum);
         }
-        for (Long lastPayment:last){
-            lastSum+=lastPayment;
-        }
-        return calculatePercentageChange(recentSum,lastSum);
+        return 0.0;
     }
     public double last_recentAdminPercentage(String memberid,long month){
-        long recent=paymentAdminRepository.findBymemberidForAdminPay(memberid,month);
-        long last=paymentAdminRepository.findBymemberidForAdminPay(memberid,month-1);
-        return calculatePercentageChange(recent,last);
+        Long recent = paymentAdminRepository.findBymemberidForAdminPay(memberid, month);
+        Long last = paymentAdminRepository.findBymemberidForAdminPay(memberid, month - 1);
+
+        // null 체크 후 0으로 초기화
+        if (recent == null) {
+            recent = 0L;
+        }
+        if (last == null) {
+            last = 0L;
+        }
+        return calculatePercentageChange(recent, last);
     }
     public double calculatePercentageChange(long recent, long last) {
         // 증감율 계산
