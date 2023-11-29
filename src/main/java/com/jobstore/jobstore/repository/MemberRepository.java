@@ -42,4 +42,10 @@ public interface MemberRepository extends JpaRepository<Member,String> {
 
     @Query("SELECT m.store.storeid From Member m WHERE m.memberid=:memberid")
     long findeByMemberidForStoreid(@Param("memberid") String memberid);
+
+
+    @Query("SELECT m From Member m WHERE m.store.storeid=:storeid")
+    List findeByMemberidForStoreid2(@Param("storeid") long storeid);
+//    @Query("SELECT m FROM Member m WHERE m.memberid = :memberid")
+//    Member findByWorkername(@Param("member") String member);
 }

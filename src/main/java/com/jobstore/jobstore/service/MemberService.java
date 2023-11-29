@@ -234,6 +234,23 @@ public class MemberService  {
         return memberRepository.findByMemberidToRole(memberid);
     }
 
+    public HashMap findByWorker(long storeid){
 
+        List<Member> member = memberRepository.findeByMemberidForStoreid2(storeid);
+        HashMap<String,String> hashMap = new HashMap<>();
+        if(member!=null){
+            for(Member list : member){
+                if(list.getRole().equals("USER")){
+                    String key = list.getMemberid();
+                    String value = list.getName();
+                    hashMap.put(key,value);
+                }
+            }
+
+           return hashMap;
+
+        }
+        return null;
+    }
 
 }
