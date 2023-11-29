@@ -38,6 +38,9 @@ public interface AttendanceRepository extends JpaRepository<Attendance,Long> {
     Page<Attendance> findByWorker(String memberid, Pageable pageable);
     @Query("SELECT a FROM Attendance a WHERE a.worker = :worker")
     List<Attendance> findByWorker(@Param("worker") String worker);
+
+//    @Query("SELECT a FROM Attendance a WHERE a.memberid = :memberid ")
+//    List<Attendance> findByWorker2(@Param("worker") String worker);
     @Query("SELECT a FROM Attendance a WHERE a.leavework = :leavework")
     List<Attendance> findByMemberMemberid(@Param("leavework") LocalDateTime leavework);
 

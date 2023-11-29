@@ -20,6 +20,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 @Controller
@@ -70,6 +72,31 @@ public class AttendanceController {
     }
 
     /**
+     * admin의 user 지표 조회
+     */
+    @GetMapping("/admin/attendance/data/{memberid}/{storeid}")
+    @Operation(summary = "출결 조회 데이터", description = "admin 알바생 출결 조회")
+    @Parameter(name = "memberid", description = "memberid", required = true)
+    @Parameter(name = "storeid", description = "storeid", required = true)
+    @ResponseBody
+    public ResponseEntity<ResultDto<HashMap<String,Long>>> getUserData(
+            @PathVariable(value = "memberid", required = true) String memberid,
+            @PathVariable(value = "storeid", required = true) Long storeid
+    ) {
+        if (!memberService.findByMemberidToRole(memberid).equals("ADMIN")) {  //권한 확인
+            return ResponseEntity.ok(ResultDto.of("실패", "권한이 맞지 않습니다.", null));
+        }
+
+        HashMap<String,Long> getAttendData = attendanceService.getAttendData(memberid);
+
+        if(getAttendData == null){
+            return ResponseEntity.ok(ResultDto.of("null", "user지표가 null값입니다.", getAttendData));
+        }
+        return ResponseEntity.ok(ResultDto.of("성공", "조회성공", getAttendData));
+    }
+
+
+    /**
      * 이번달 일한 시간
      */
     @GetMapping("/user/attendance/month/{memberid}/{storeid}")
@@ -84,6 +111,23 @@ public class AttendanceController {
         }
         long nowmonth = attendanceService.localDateTimeToMonth(LocalDateTime.now());
         long month = attendanceService.workMonth(nowmonth, memberid);
+
+        return ResponseEntity.ok(ResultDto.of("성공", "주급 월급 조회성공", month));
+    }
+    @GetMapping("/admin/attendance/month/{memberid}/{storeid}/{worker}")
+    @Operation(summary = "user 이번달 일한시간", description = "user가 이번달에 일한시간을 조회")
+    @Parameter(name = "memberid", description = "memberid", required = true)
+    @Parameter(name = "storeid", description = "storeid", required = true)
+    @Parameter(name = "worker", description = "worker", required = true)
+    public ResponseEntity<ResultDto<Long>> getWeek(
+            @PathVariable(value = "memberid", required = true) String memberid,
+            @PathVariable(value = "storeid", required = true) Long storeid,
+            @PathVariable(value = "worker", required = true) String worker) {
+        if (!memberService.findByMemberidToRole(memberid).equals("ADMIN")) {   //권한 확인
+            return ResponseEntity.ok(ResultDto.of("실패", "권한이 맞지 않습니다.", null));
+        }
+        long nowmonth = attendanceService.localDateTimeToMonth(LocalDateTime.now());
+        long month = attendanceService.workMonth(nowmonth, worker);
 
         return ResponseEntity.ok(ResultDto.of("성공", "주급 월급 조회성공", month));
     }
@@ -106,7 +150,23 @@ public class AttendanceController {
 
         return ResponseEntity.ok(ResultDto.of("성공", "주급 월급 조회성공", localDateTimeToWeek));
     }
+    @GetMapping("/admin/attendance/week/{memberid}/{storeid}/{worker}")
+    @Operation(summary = "user 이번주 일한시간", description = "user가 이번주에 일한시간을 조회")
+    @Parameter(name = "memberid", description = "memberid", required = true)
+    @Parameter(name = "storeid", description = "storeid", required = true)
+    @Parameter(name = "worker", description = "worker", required = true)
+    public ResponseEntity<ResultDto<Long>> getMonthAdmin(
+            @PathVariable(value = "memberid", required = true) String memberid,
+            @PathVariable(value = "storeid", required = true) Long storeid,
+             @PathVariable(value = "worker", required = true) String worker
+    ) {
+        if (!memberService.findByMemberidToRole(memberid).equals("ADMIN")) {         //권한 확인
+            return ResponseEntity.ok(ResultDto.of("실패", "권한이 맞지 않습니다.", null));
+        }
+        long localDateTimeToWeek = attendanceService.localDateTimeToWeek(worker);
 
+        return ResponseEntity.ok(ResultDto.of("성공", "주급 월급 조회성공", localDateTimeToWeek));
+    }
     /**
      * 이번달과 저번달간의 일한시간 퍼센트 지표
      */
@@ -121,6 +181,25 @@ public class AttendanceController {
             return ResponseEntity.ok(ResultDto.of("실패", "권한이 맞지 않습니다.", null));
         }
         double result = attendanceService.workPercent(memberid);
+        if (result != -1) {
+            return ResponseEntity.ok(ResultDto.of("성공", "퍼센트 조회성공", result));
+        }
+        return ResponseEntity.ok(ResultDto.of("실패", "퍼센트 조회실패", null));
+    }
+    @GetMapping("/admin/attendance/percent/{memberid}/{storeid}/{worker}")
+    @Operation(summary = "user percent조회", description = "user의 저번달과 이번달간의 일한 시간 차이를 계산하는 percent조회")
+    @Parameter(name = "memberid", description = "memberid", required = true)
+    @Parameter(name = "storeid", description = "storeid", required = true)
+    @Parameter(name = "worker", description = "worker", required = true)
+    public ResponseEntity<ResultDto<Double>> getPercentAdmin(
+            @PathVariable(value = "memberid", required = true) String memberid,
+            @PathVariable(value = "storeid", required = true) Long storeid,
+            @PathVariable(value = "worker", required = true) String worker) {
+
+        if (!memberService.findByMemberidToRole(memberid).equals("ADMIN")) {   //권한 확인
+            return ResponseEntity.ok(ResultDto.of("실패", "권한이 맞지 않습니다.", null));
+        }
+        double result = attendanceService.workPercent(worker);
         if (result != -1) {
             return ResponseEntity.ok(ResultDto.of("성공", "퍼센트 조회성공", result));
         }
