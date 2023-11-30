@@ -18,10 +18,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 
 @Service
@@ -286,7 +283,43 @@ public class AttendanceService {
         return localDateTime.getMonthValue();
     }
 
+//    public List<LocalDateTime> getLocalDateTimesInFiveMonths(LocalDateTime baseDateTime) {
+//        List<LocalDateTime> dateTimeList = new ArrayList<>();
+//
+//        // 입력된 기준 날짜로부터 5달간의 LocalDateTime 값 추가
+//        for (int i = 0; i < 5; i++) {
+//            LocalDateTime dateTime = baseDateTime.plusMonths(i);
+//            dateTimeList.add(dateTime);
+//        }
+//    }
 
+        public Map getUserMonthData(String memberid){
+        LocalDateTime localDateTime = LocalDateTime.now().plusMonths(4);
+        //localDateTime.getMonthValue()
+
+        //System.out.println("monthValue"+monthValue);
+        Map<Long,Long> result = new LinkedHashMap();
+        for(int i=0; i<5; i++){
+
+            LocalDateTime dateTime = localDateTime.minusMonths(i);
+            long monthValue = dateTime.getMonthValue();
+            long yearValue = dateTime.getYear();
+            String month = String.valueOf(dateTime.getMonthValue());
+            String year = String.valueOf(dateTime.getYear());
+            String combinedString = year+month;
+            long date = Integer.parseInt(combinedString);
+            result.put(date,workMonth(monthValue,memberid));
+//            result.put(monthValue,workMonth(monthValue,memberid));
+//            if(monthValue==1){
+//                monthValue=12;
+//            }else {
+//                monthValue--;
+//            }
+
+        }
+        return result;
+
+    }
 
     /**
      * Attendance admin 그래프 통계
