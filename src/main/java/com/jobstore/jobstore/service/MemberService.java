@@ -50,9 +50,10 @@ public class MemberService  {
 
         Member memberEntity = adminjoinDto.toEntity(passwordEncoder.encode(adminjoinDto.getPassword()));
         memberEntity.setStore(storeEntity); // Store와의 연관 설정
-        memberRepository.save(memberEntity);
+
         if(!existCompanynumber) {
             storeRepository.save(storeEntity);
+            memberRepository.save(memberEntity);
             return true;
         }else{
             return false;
