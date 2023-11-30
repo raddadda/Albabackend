@@ -57,8 +57,11 @@ public class AuthController {
     ) {
         //ID 중복체크
         if(!memberService.duplicateMemberid(adminjoinDto.getMemberid())) {
-            memberService.joinAdmin(adminjoinDto);
-            return ResponseEntity.ok(ResultDto.of("resultCode","회원가입이 성공했습니다.", adminjoinDto));
+            boolean joinAdmin = memberService.joinAdmin(adminjoinDto);
+            if(joinAdmin){
+                return ResponseEntity.ok(ResultDto.of("resultCode","회원가입이 성공했습니다.", adminjoinDto));
+            }
+            return ResponseEntity.ok(ResultDto.of("resultCode","사업자 등록번호가 이미 존재합니다.", null));
         }
         return ResponseEntity.ok(ResultDto.of("resultCode","회원가입이 실패했습니다.", null));
     }
