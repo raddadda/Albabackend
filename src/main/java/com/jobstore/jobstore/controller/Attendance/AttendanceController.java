@@ -23,6 +23,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @Tag(name = "Attendance", description = "Attendance CRUD")
@@ -213,6 +214,26 @@ public class AttendanceController {
             return ResponseEntity.ok(ResultDto.of("성공", "퍼센트 조회성공", result));
         }
         return ResponseEntity.ok(ResultDto.of("실패", "퍼센트 조회실패", null));
+    }
+
+    @GetMapping("/user/attendance/data/{memberid}/{storeid}")
+    @Operation(summary = "user 월간 그래프", description = "이번달을 기준으로 최근 5달의 일한시간의 합을 값을 조회한다.")
+    @Parameter(name = "memberid", description = "memberid", required = true)
+    @Parameter(name = "storeid", description = "storeid", required = true)
+    public ResponseEntity<ResultDto<Map<Long,Long>>> getUserMonthData(
+            @PathVariable(value = "memberid", required = true) String memberid,
+            @PathVariable(value = "storeid", required = true) Long storeid) {
+        System.out.println("-----------------getUserMonthData-----------------");
+        if (!memberService.findByMemberidToRole(memberid).equals("USER")) {   //권한 확인
+            return ResponseEntity.ok(ResultDto.of("실패", "권한이 맞지 않습니다.", null));
+        }
+
+        Map<Long,Long> result = attendanceService.getUserMonthData(memberid);
+        if (result != null) {
+            return ResponseEntity.ok(ResultDto.of("성공", "5달 데이터 조회 성공", result));
+        }
+        return ResponseEntity.ok(ResultDto.of("null", "조회가 null값입니다.", result));
+
     }
 
     /**
