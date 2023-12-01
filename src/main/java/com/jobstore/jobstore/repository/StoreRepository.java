@@ -34,4 +34,6 @@ public interface StoreRepository extends JpaRepository<Store,Long> {
    @Modifying // 조회 x
    @Query("DELETE FROM Store s WHERE s.storeid = :storeid")
    int deleteByStoreid(@Param("storeid") long storeid);
+
+    boolean existsByCompanynumber(String companynumber);
 }

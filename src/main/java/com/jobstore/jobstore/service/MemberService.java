@@ -48,16 +48,25 @@ public class MemberService  {
      */
     //admin
 
-    public void joinAdmin(AdminjoinDto adminjoinDto){
+    public boolean joinAdmin(AdminjoinDto adminjoinDto){
         Store storeEntity = new Store();
+        boolean existCompanynumber=storeRepository.existsByCompanynumber(adminjoinDto.getCompanynumber());
         storeEntity.setCompanyname(adminjoinDto.getCompanyname());
         storeEntity.setCeo(adminjoinDto.getCeo());
         storeEntity.setCompanynumber(adminjoinDto.getCompanynumber());
-        storeRepository.save(storeEntity);
 
         Member memberEntity = adminjoinDto.toEntity(passwordEncoder.encode(adminjoinDto.getPassword()));
         memberEntity.setStore(storeEntity); // Store와의 연관 설정
-        memberRepository.save(memberEntity);
+
+
+        if(!existCompanynumber) {
+            storeRepository.save(storeEntity);
+            memberRepository.save(memberEntity);
+            return true;
+        }else{
+            return false;
+        }
+
     }
     //join
     public boolean joinUser(UserjoinDto userjoinDto){
