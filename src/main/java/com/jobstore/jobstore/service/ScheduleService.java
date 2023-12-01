@@ -68,4 +68,41 @@ public class ScheduleService {
 
         return null;
     }
+
+
+
+    public List userFindAllSchedule(LocalDateTime time, String memberid, String role){
+        Member member = memberRepository.findByMemberid2(memberid);
+        System.out.println("1");
+        if (member != null) {
+            List<Attendance> attendance = attendanceRepository.findByWorker(member.getMemberid());
+          //  attendance = attendanceRepository.findByWorker(member.getMemberid());
+            List<Attendance> result = new ArrayList<>();
+            System.out.println("2");
+            LocalDateTime startOfLastMonth = time.minusMonths(1).withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
+            LocalDateTime endOfLastMonth = time.withDayOfMonth(1).minusDays(1).withHour(23).withMinute(59).withSecond(59);
+            System.out.println("3");
+            LocalDateTime startOfNextMonth = time.plusMonths(1).withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
+            LocalDateTime endOfNextMonth = time.plusMonths(1).withDayOfMonth(1).plusMonths(1).minusDays(1).withHour(23).withMinute(59).withSecond(59);
+            System.out.println("4");
+            for (Attendance attendlist : attendance) {
+                LocalDateTime startTime = attendlist.getStart(); // 출근 정보의 시작 시간
+                System.out.println("5");
+                // 출근 정보의 시작 시간이 이전 달, 현재 달, 다음 달의 범위 내에 있는지 확인
+                if ((startTime.isAfter(startOfLastMonth) && startTime.isBefore(endOfLastMonth))
+                        || (startTime.isAfter(time.withDayOfMonth(1)) && startTime.isBefore(time.plusMonths(1).withDayOfMonth(1)))
+                        || (startTime.isAfter(startOfNextMonth) && startTime.isBefore(endOfNextMonth))) {
+                    // 원하는 조건을 충족하는 경우 결과 리스트에 추가
+                    System.out.println("6");
+                    result.add(attendlist);
+                }
+            }
+
+            return result;
+
+
+        }
+
+        return null;
+    }
 }

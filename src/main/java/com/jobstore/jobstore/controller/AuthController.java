@@ -1,6 +1,7 @@
 package com.jobstore.jobstore.controller;
 
 import com.jobstore.jobstore.dto.LoginDto;
+import com.jobstore.jobstore.dto.TokenDto;
 import com.jobstore.jobstore.dto.request.member.AdminjoinDto;
 import com.jobstore.jobstore.dto.request.member.DoubleCheckDto;
 import com.jobstore.jobstore.dto.request.member.UserjoinDto;
@@ -12,15 +13,16 @@ import com.jobstore.jobstore.repository.MemberRepository;
 import com.jobstore.jobstore.repository.StoreRepository;
 import com.jobstore.jobstore.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
 
 @RestController
 @RequiredArgsConstructor
@@ -44,8 +46,6 @@ public class AuthController {
         }
         return  ResponseEntity.ok(ResultDto.of("resultcode","아이디가 중복이 됩니다",null));
     }
-
-
 
     //admin
     @PostMapping("/admin/join")
@@ -96,27 +96,71 @@ public class AuthController {
                     content = @Content(schema=@Schema(implementation = LoginDto.class)))
             @RequestBody LoginDto loginDto) {
 
-        Member member = memberService.login(loginDto);
-
-        // 로그인 아이디나 비밀번호가 틀린 경우 global error return
-        if (member == null) {
-            return ResponseEntity.ok(ResultDto.of("403", "로그인 아이디 또는 비밀번호가 틀렸습니다.", null));
+        if(loginDto.getRole().equals("ADMIN")){
+            Member member = memberService.login(loginDto);
+            String id = member.getMemberid();
+            if (!memberService.findByMemberidToRole(id).equals("ADMIN")) {
+                return ResponseEntity.ok(ResultDto.of("resultCode","사업자에 해당 아이디가 존재하지 않습니다.", null));
+            }
+            if (member == null) {
+                return ResponseEntity.ok(ResultDto.of("403", "로그인 아이디 또는 비밀번호가 틀렸습니다.", null));
+            }
+            LoginResponseDto response = memberService.loginToken(member);
+            if(response == null){
+                return ResponseEntity.ok(ResultDto.of("403", "이미 로그인이 되어있는 아이디입니다", null));
+            }
+            return ResponseEntity.ok(ResultDto.of("200", "로그인 성공.", response));
+        }else if(loginDto.getRole().equals("USER")){
+            Member member = memberService.login(loginDto);
+            String id = member.getMemberid();
+            if (!memberService.findByMemberidToRole(id).equals("USER")) {
+                return ResponseEntity.ok(ResultDto.of("resultCode","구직자에 해당 아이디가 존재하지 않습니다.", null));
+            }
+            if (member == null) {
+                return ResponseEntity.ok(ResultDto.of("403", "로그인 아이디 또는 비밀번호가 틀렸습니다.", null));
+            }
+            LoginResponseDto response = memberService.loginToken(member);
+            if(response == null){
+                return ResponseEntity.ok(ResultDto.of("403", "이미 로그인이 되어있는 아이디입니다", null));
+            }
+            return ResponseEntity.ok(ResultDto.of("200", "로그인 성공.", response));
         }
-
-        // 로그인 성공 => Jwt Token 발급
-        String secretKey = "my-secret-key-123123";
-        long expireTimeMs = 1000 * 60 * 60;     // Token 유효 시간 = 60분
-        String jwtToken = JwtTokenUtil.createToken(member.getMemberid(), secretKey, expireTimeMs);
-
-        LoginResponseDto reposonse = new LoginResponseDto();
-        reposonse.setToken(jwtToken);
-        reposonse.setMemberid(member.getMemberid());
-        reposonse.setStoreid(member.getStore().getStoreid());
-
-        return ResponseEntity.ok(ResultDto.of("200", "로그인 성공.", reposonse));
+        return ResponseEntity.ok(ResultDto.of("500", "해당 role이 존재하지 않음", null));
 
     }
 
+    @PostMapping("/refreshToken")
+    @Operation(summary = "토큰 재발급", description = "로그인상태에서 토큰을 재발급 합니다")
+    public ResponseEntity<ResultDto<Object>> refreshToken(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "요청파라미터", required = true,
+                    content = @Content(schema=@Schema(implementation = TokenDto.class)))
+            @RequestBody TokenDto tokenDto
+    ){
+
+        Member member = memberRepository.findByMemberid2(tokenDto.getMemberid());
+        if(member == null){
+            return  ResponseEntity.ok(ResultDto.of("resultcode","존재하지않는 멤버입니다.",null));
+        }
+        LoginResponseDto response = memberService.refreshToken(member,tokenDto.getToken());
+        if(response == null){
+            return  ResponseEntity.ok(ResultDto.of("resultcode","token재발급 실패",response));
+        }
+
+        return  ResponseEntity.ok(ResultDto.of("resultcode","token재발급 완료",response));
+    }
+
+    @PostMapping("/tokenValidation")
+    @Operation(summary = "토큰 재발급", description = "로그인상태에서 토큰을 재발급 합니다")
+    public ResponseEntity<ResultDto<Object>> validToken(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "요청파라미터", required = true,
+                    content = @Content(schema=@Schema(implementation = TokenDto.class)))
+            @RequestBody TokenDto tokenDto
+    ){
+        String token = tokenDto.getToken();
+        boolean valid = memberService.validToken(token);
+
+        return  ResponseEntity.ok(ResultDto.of("resultcode","token재발급 완료",valid));
+    }
 //    @GetMapping("/info")
 //    public String userInfo(Authentication auth) {
 //        User loginUser = userService.getLoginUserByLoginId(auth.getName());

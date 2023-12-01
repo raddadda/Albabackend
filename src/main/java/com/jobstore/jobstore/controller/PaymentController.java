@@ -18,6 +18,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 
 
@@ -94,15 +95,16 @@ public ResponseEntity<ResultDto<Map<Long,Long>>> findAllmember(@PathVariable Str
     @Operation(summary = "Payment api", description = "payment api입니다.(User에 관한 월급과 주급 반환)")
     @ResponseBody
     public ResponseEntity<ResultDto<PaymentMainDto>> paymentMain(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "요청파라미터", required = true,
-            content = @Content(schema=@Schema(implementation = PaymentinsertDto.class)))
+            content = @Content(schema=@Schema(implementation = PaymentAllPaymentDto.class)))
                                                            @RequestBody PaymentAllPaymentDto paymentAllPaymentDto){
-        //   2023-11-20T12:00:00
-        long month= paymentService.localDateTimeToMonth(paymentAllPaymentDto.getTime());
+
+        LocalDateTime time = LocalDateTime.now();
+        long month= paymentService.localDateTimeToMonth(time);
 
         //한달급여
-        Long payment = paymentService.paymentMain(month);
+        Long payment = paymentService.paymentMain(time.getMonthValue());
         //주급
-        long week = paymentService.localDateTimeToWeek(paymentAllPaymentDto.getTime(),paymentAllPaymentDto.getMemberid());
+        long week = paymentService.localDateTimeToWeek(time,paymentAllPaymentDto.getMemberid());
 
         PaymentMainDto paymentMainDto = new PaymentMainDto();
         return ResponseEntity.ok(ResultDto.of("200","조회성공",new PaymentMainDto(payment,week)));

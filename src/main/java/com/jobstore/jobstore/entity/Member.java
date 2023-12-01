@@ -29,6 +29,10 @@ public class Member {
     private String role;
     @Column(length = 255, nullable = true)
     private String memberimg;
+    @Column(length = 255, nullable = true)
+    private String refreshtoken;
+    @Column(length = 255, nullable = true)
+    private int islogin;
 
     @JsonIgnore
     @ManyToOne

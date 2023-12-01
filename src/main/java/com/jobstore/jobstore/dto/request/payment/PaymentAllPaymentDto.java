@@ -9,5 +9,4 @@ import java.time.LocalDateTime;
 @Setter
 public class PaymentAllPaymentDto {
     private String memberid;
-    private LocalDateTime time;
 }
