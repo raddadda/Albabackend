@@ -4,14 +4,20 @@ package com.jobstore.jobstore.service;
 import com.jobstore.jobstore.dto.LoginDto;
 import com.jobstore.jobstore.dto.request.member.*;
 import com.jobstore.jobstore.dto.MemberDto;
+import com.jobstore.jobstore.dto.response.auth.LoginResponseDto;
 import com.jobstore.jobstore.entity.Member;
 import com.jobstore.jobstore.entity.Payment;
 import com.jobstore.jobstore.entity.Store;
+import com.jobstore.jobstore.jwt.JwtTokenFilter;
+import com.jobstore.jobstore.jwt.JwtTokenUtil;
 import com.jobstore.jobstore.repository.MemberRepository;
 import com.jobstore.jobstore.repository.PaymentRepository;
 import com.jobstore.jobstore.repository.StoreRepository;
 import com.jobstore.jobstore.utill.AwsUtill;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -34,6 +40,7 @@ public class MemberService  {
     @Autowired
     private AwsUtill awsUtill;
 
+
     PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
     /**
@@ -51,7 +58,6 @@ public class MemberService  {
         Member memberEntity = adminjoinDto.toEntity(passwordEncoder.encode(adminjoinDto.getPassword()));
         memberEntity.setStore(storeEntity); // Store와의 연관 설정
         memberRepository.save(memberEntity);
-
     }
     //join
     public boolean joinUser(UserjoinDto userjoinDto){
@@ -251,6 +257,89 @@ public class MemberService  {
 
         }
         return null;
+    }
+
+
+    public LoginResponseDto loginToken(Member member){
+
+        // 로그인 성공 => Jwt Token 발급
+        System.out.println("11122");
+        String secretKey = "my-secret-key-123123";
+        long expireTimeMs = 1000 * 60 * 60;     // Token 유효 시간 = 60분
+
+        String jwtToken = JwtTokenUtil.createToken(member.getMemberid(), secretKey, expireTimeMs,member.getStore().getStoreid());
+        String refreshToken = JwtTokenUtil.refreshToken(member.getMemberid(), secretKey, expireTimeMs,member.getStore().getStoreid());
+        System.out.println("refreshToken"+refreshToken);
+        member.setRefreshtoken(refreshToken);
+        member.setIslogin(1);
+        memberRepository.save(member);
+
+        LoginResponseDto reposonse = new LoginResponseDto();
+        reposonse.setToken(jwtToken);
+        reposonse.setMemberid(member.getMemberid());
+        reposonse.setStoreid(member.getStore().getStoreid());
+
+        return reposonse;
+
+
+    }
+    public LoginResponseDto refreshToken(Member member,String token){
+        // 로그인 성공 => Jwt Token 발급
+        String secretKey = "my-secret-key-123123";
+        long expireTimeMs = 1000 * 60 * 60;     // Token 유효 시간 = 60분
+        String jwtToken = JwtTokenUtil.refreshToken(member.getMemberid(), secretKey, expireTimeMs,member.getStore().getStoreid());
+        if(member.getRefreshtoken().equals(token)){
+            member.setRefreshtoken(jwtToken);
+            memberRepository.save(member);
+
+            LoginResponseDto reposonse = new LoginResponseDto();
+            reposonse.setToken(jwtToken);
+            reposonse.setMemberid(member.getMemberid());
+            reposonse.setStoreid(member.getStore().getStoreid());
+
+            return reposonse;
+        }
+        return null;
+
+    }
+
+    public boolean validToken(String token){
+        String secretKey = "my-secret-key-123123";
+        //Jwt 디코딩
+
+        try {
+            Claims claims = Jwts.parser()
+                    .setSigningKey(secretKey)
+                    .parseClaimsJws(token)
+                    .getBody();
+            //Jwt 디코딩된 클레임
+            String username = claims.getSubject();
+
+            if(claims == null){
+                return false;
+            }
+            return true;
+
+        } catch (Exception e){
+            return false;
+        }
+
+
+        //if(token)
+        //Token 재발급
+//        public static String refreshToken(String loginId, String key, long expireTimeMs,long storeid){
+//            Claims claims = Jwts.claims();
+//            claims.put("memberid",loginId);
+//            claims.put("storeid",storeid);
+//            claims.put("isRefresh",true);
+//            return Jwts.builder()
+//                    .setClaims(claims)
+//                    .setIssuedAt(new Date(System.currentTimeMillis()))
+//                    .setExpiration(new Date(System.currentTimeMillis() + expireTimeMs))
+//                    .signWith(SignatureAlgorithm.HS256, key)
+//                    .compact();
+//
+//        }
     }
 
 }

@@ -56,7 +56,28 @@ public class ScheduleController {
             @PathVariable(value = "month", required = false) String time
     ) {
         LocalDateTime localDateTime =  LocalDateTime.parse(time);
-        List<Attendance> attendanceList = scheduleService.thisMonthSchedule(localDateTime,memberid,"ADMIN");
+        List<Attendance> attendanceList = scheduleService.thisMonthSchedule(localDateTime,memberid,"USER");
+        if(attendanceList== null){
+            return ResponseEntity.ok(ResultDto.of("null", "이번달 스케줄값이 null입니다", attendanceList));
+        }
+        return ResponseEntity.ok(ResultDto.of("성공", "이번달 스케줄 조회성공", attendanceList));
+    }
+
+
+
+    @GetMapping("/user/findAll/schedule/{memberid}/{storeid}/{month}")
+    @Operation(summary = "user schedule", description = "user 스케줄 조회")
+    @Parameter(name = "memberid", description = "memberid", required = true)
+    @Parameter(name = "storeid", description = "storeid", required = true)
+    @Parameter(name = "time", description = "이번달 month", required = false)
+    @ResponseBody
+    public ResponseEntity<ResultDto<List<Attendance>>> userFindAllSchedule(
+            @PathVariable(value = "memberid", required = true) String memberid,
+            @PathVariable(value = "storeid", required = true) Long storeid,
+            @PathVariable(value = "month", required = false) String time
+    ) {
+        LocalDateTime localDateTime =  LocalDateTime.parse(time);
+        List<Attendance> attendanceList = scheduleService.userFindAllSchedule(localDateTime,memberid,"USER");
         if(attendanceList== null){
             return ResponseEntity.ok(ResultDto.of("null", "이번달 스케줄값이 null입니다", attendanceList));
         }

@@ -9,4 +9,5 @@ import lombok.Setter;
     public class LoginDto {
         private String memberid;
         private String password;
+        private String role;
     }
