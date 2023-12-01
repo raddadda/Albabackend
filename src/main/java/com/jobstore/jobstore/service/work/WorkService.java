@@ -41,7 +41,7 @@ public class WorkService {
         Integer size = 10;
         PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.DESC, "workid");
 
-        String SearchLike = search + "%";
+        String SearchLike = "%" + search + "%";
         Page<Work> work =  workRepository.findByStoreidAndTitleLike(storeid, SearchLike, pageRequest);
         //work를 DTO로 변환
         Page<WorkDto> toMap = work.map(m -> new WorkDto(m.getWorkid(), m.getTitle(), m.getDate()));
