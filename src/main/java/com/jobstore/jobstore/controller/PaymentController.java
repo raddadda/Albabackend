@@ -171,7 +171,7 @@ public ResponseEntity<ResultDto<Map<Long,Long>>> findAllmember(@PathVariable Str
     public ResponseEntity<ResultDto<Map<String,Long>>> abcde(@PathVariable String memberid,@PathVariable long month){
         try {
             return ResponseEntity.ok(ResultDto.of("200","스토어에 속해있는 전체 멤버별 월급리스트맵 반환",paymentService.AdminfindEachMemberPay(memberid,month)));
-        }catch (Exception e){
+        } catch (Exception e){
             throw new RuntimeException("User별 월급반환실패(Admin)"+e.getMessage());
         }
     }
