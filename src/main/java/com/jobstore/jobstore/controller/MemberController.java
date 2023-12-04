@@ -81,9 +81,8 @@ public class MemberController {
         if(memberAndStoreDetailsDto!=null){
             return ResponseEntity.ok(ResultDto.of("resultcode","성공",memberService.findMemberDetails(doubleCheckDto.getMemberid())));
         }else{
-            ResponseEntity.ok(ResultDto.of("resultcode","실패",null));
+            return ResponseEntity.ok(ResultDto.of("resultcode","실패",null));
         }
-        return null;
     }
 
     @PatchMapping("/update")
