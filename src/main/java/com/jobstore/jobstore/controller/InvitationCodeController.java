@@ -33,10 +33,14 @@ public class InvitationCodeController {
             String invitationCode = invitationCodeService.generateInvitationCode(companynumber);
             //companynumber와 일치하면 초대코드 발급 일치안하면 Invitation code not found
             //밑에 로직도 프론트랑 연동시 교체
-            if (invitationCode != null) {
-                return ResponseEntity.ok(invitationCode);
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invitation code not found");
+            try{
+                if (invitationCode != null) {
+                    return ResponseEntity.ok(invitationCode);
+                } else {
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invitation code not found");
+                }
+            }catch (Exception e){
+                throw new RuntimeException(e.getMessage());
             }
         }
     }
