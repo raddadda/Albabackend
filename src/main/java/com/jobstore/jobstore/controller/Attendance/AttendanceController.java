@@ -1,5 +1,6 @@
 package com.jobstore.jobstore.controller.Attendance;
 
+import com.amazonaws.services.kms.model.NotFoundException;
 import com.jobstore.jobstore.dto.request.attendance.AttendanceDto;
 import com.jobstore.jobstore.dto.request.attendance.AttendanceUpdateDto;
 import com.jobstore.jobstore.dto.response.attendance.AttendanceHistoryDto;
@@ -16,9 +17,11 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -57,8 +60,18 @@ public class AttendanceController {
             if(member == null || !member.getRole().equals("ADMIN")){
                 return ResponseEntity.ok(ResultDto.of("실패", "권한이 맞지 않습니다.", null));
             }
-            return ResponseEntity.ok(ResultDto.of("성공", "조회성공", attendanceService.getAttendancesByMemberId("ADMIN", member.getMemberid(), storeid, page)));
-        }catch (Exception e){
+
+            return ResponseEntity.ok(ResultDto.of("성공", "조회성공", attendanceService.getAttendancesByMemberId("ADMIN", memberid, storeid, page)));
+        }catch (HttpClientErrorException.MethodNotAllowed e){
+            throw new HttpClientErrorException(HttpStatus.METHOD_NOT_ALLOWED,e.getMessage());
+        }
+        catch (HttpClientErrorException e){
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST,e.getMessage());
+        }
+        catch (NotFoundException e){
+            throw new NotFoundException(e.getMessage());
+        }
+        catch (Exception e){
             throw new RuntimeException(e.getMessage());
         }
     }
@@ -79,8 +92,18 @@ public class AttendanceController {
             if(member == null || !member.getRole().equals("USER")){
                 return ResponseEntity.ok(ResultDto.of("실패", "권한이 맞지 않습니다.", null));
             }
-            return ResponseEntity.ok(ResultDto.of("성공", "조회성공", attendanceService.getAttendancesByMemberId("USER", member.getMemberid(), storeid, page)));
-        }catch (Exception e){
+
+            return ResponseEntity.ok(ResultDto.of("성공", "조회성공", attendanceService.getAttendancesByMemberId("USER", memberid, storeid, page)));
+        }catch (HttpClientErrorException.MethodNotAllowed e){
+            throw new HttpClientErrorException(HttpStatus.METHOD_NOT_ALLOWED,e.getMessage());
+        }
+        catch (HttpClientErrorException e){
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST,e.getMessage());
+        }
+        catch (NotFoundException e){
+            throw new NotFoundException(e.getMessage());
+        }
+        catch (Exception e){
             throw new RuntimeException(e.getMessage());
         }
     }
@@ -108,7 +131,16 @@ public class AttendanceController {
                 return ResponseEntity.ok(ResultDto.of("null", "user지표가 null값입니다.", getAttendData));
             }
             return ResponseEntity.ok(ResultDto.of("성공", "조회성공", getAttendData));
-        }catch (Exception e){
+        }catch (HttpClientErrorException.MethodNotAllowed e){
+            throw new HttpClientErrorException(HttpStatus.METHOD_NOT_ALLOWED,e.getMessage());
+        }
+        catch (HttpClientErrorException e){
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST,e.getMessage());
+        }
+        catch (NotFoundException e){
+            throw new NotFoundException(e.getMessage());
+        }
+        catch (Exception e){
             throw new RuntimeException(e.getMessage());
         }
     }
@@ -133,7 +165,16 @@ public class AttendanceController {
             long month = attendanceService.workMonth(nowmonth, member.getMemberid());
 
             return ResponseEntity.ok(ResultDto.of("성공", "주급 월급 조회성공", month));
-        }catch (Exception e){
+        }catch (HttpClientErrorException.MethodNotAllowed e){
+            throw new HttpClientErrorException(HttpStatus.METHOD_NOT_ALLOWED,e.getMessage());
+        }
+        catch (HttpClientErrorException e){
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST,e.getMessage());
+        }
+        catch (NotFoundException e){
+            throw new NotFoundException(e.getMessage());
+        }
+        catch (Exception e){
             throw new RuntimeException(e.getMessage());
         }
     }
@@ -157,7 +198,16 @@ public class AttendanceController {
             long month = attendanceService.workMonth(nowmonth, worker);
 
             return ResponseEntity.ok(ResultDto.of("성공", "주급 월급 조회성공", month));
-        }catch (Exception e){
+        }catch (HttpClientErrorException.MethodNotAllowed e){
+            throw new HttpClientErrorException(HttpStatus.METHOD_NOT_ALLOWED,e.getMessage());
+        }
+        catch (HttpClientErrorException e){
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST,e.getMessage());
+        }
+        catch (NotFoundException e){
+            throw new NotFoundException(e.getMessage());
+        }
+        catch (Exception e){
             throw new RuntimeException(e.getMessage());
         }
     }
@@ -180,8 +230,19 @@ public class AttendanceController {
             }
             long localDateTimeToWeek = attendanceService.localDateTimeToWeek(member.getMemberid());
 
-            return ResponseEntity.ok(ResultDto.of("성공", "조회성공", localDateTimeToWeek));
-        }catch (Exception e){
+
+            return ResponseEntity.ok(ResultDto.of("성공", "주급 월급 조회성공", localDateTimeToWeek));
+        }catch (HttpClientErrorException.MethodNotAllowed e){
+            throw new HttpClientErrorException(HttpStatus.METHOD_NOT_ALLOWED,e.getMessage());
+        }
+        catch (HttpClientErrorException e){
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST,e.getMessage());
+        }
+        catch (NotFoundException e){
+            throw new NotFoundException(e.getMessage());
+        }
+        catch (Exception e){
+
             throw new RuntimeException(e.getMessage());
         }
     }
@@ -202,7 +263,16 @@ public class AttendanceController {
             }
             long localDateTimeToWeek = attendanceService.localDateTimeToWeek(worker);
             return ResponseEntity.ok(ResultDto.of("성공", "주급 월급 조회성공", localDateTimeToWeek));
-        }catch (Exception e){
+        }catch (HttpClientErrorException.MethodNotAllowed e){
+            throw new HttpClientErrorException(HttpStatus.METHOD_NOT_ALLOWED,e.getMessage());
+        }
+        catch (HttpClientErrorException e){
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST,e.getMessage());
+        }
+        catch (NotFoundException e){
+            throw new NotFoundException(e.getMessage());
+        }
+        catch (Exception e){
             throw new RuntimeException(e.getMessage());
         }
     }
@@ -227,7 +297,16 @@ public class AttendanceController {
                 return ResponseEntity.ok(ResultDto.of("성공", "퍼센트 조회성공", result));
             }
             return ResponseEntity.ok(ResultDto.of("실패", "퍼센트 조회실패", null));
-        }catch (Exception e){
+        }catch (HttpClientErrorException.MethodNotAllowed e){
+            throw new HttpClientErrorException(HttpStatus.METHOD_NOT_ALLOWED,e.getMessage());
+        }
+        catch (HttpClientErrorException e){
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST,e.getMessage());
+        }
+        catch (NotFoundException e){
+            throw new NotFoundException(e.getMessage());
+        }
+        catch (Exception e){
             throw new RuntimeException(e.getMessage());
         }
     }
@@ -250,7 +329,16 @@ public class AttendanceController {
                 return ResponseEntity.ok(ResultDto.of("성공", "퍼센트 조회성공", result));
             }
             return ResponseEntity.ok(ResultDto.of("실패", "퍼센트 조회실패", null));
-        }catch (Exception e){
+        }catch (HttpClientErrorException.MethodNotAllowed e){
+            throw new HttpClientErrorException(HttpStatus.METHOD_NOT_ALLOWED,e.getMessage());
+        }
+        catch (HttpClientErrorException e){
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST,e.getMessage());
+        }
+        catch (NotFoundException e){
+            throw new NotFoundException(e.getMessage());
+        }
+        catch (Exception e){
             throw new RuntimeException(e.getMessage());
         }
     }
@@ -273,7 +361,16 @@ public class AttendanceController {
                 return ResponseEntity.ok(ResultDto.of("성공", "5달 데이터 조회 성공", result));
             }
             return ResponseEntity.ok(ResultDto.of("null", "조회가 null값입니다.", result));
-        }catch (Exception e){
+        }catch (HttpClientErrorException.MethodNotAllowed e){
+            throw new HttpClientErrorException(HttpStatus.METHOD_NOT_ALLOWED,e.getMessage());
+        }
+        catch (HttpClientErrorException e){
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST,e.getMessage());
+        }
+        catch (NotFoundException e){
+            throw new NotFoundException(e.getMessage());
+        }
+        catch (Exception e){
             throw new RuntimeException(e.getMessage());
         }
 
@@ -302,7 +399,16 @@ public class AttendanceController {
                 return ResponseEntity.ok(ResultDto.of("실패", "result를 가져오는데 실패했습니다.", null));
             }
             return ResponseEntity.ok(ResultDto.of("성공", "근태추가", attendanceDto));
-        }catch (Exception e){
+        }catch (HttpClientErrorException.MethodNotAllowed e){
+            throw new HttpClientErrorException(HttpStatus.METHOD_NOT_ALLOWED,e.getMessage());
+        }
+        catch (HttpClientErrorException e){
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST,e.getMessage());
+        }
+        catch (NotFoundException e){
+            throw new NotFoundException(e.getMessage());
+        }
+        catch (Exception e){
             throw new RuntimeException(e.getMessage());
         }
 
@@ -330,7 +436,16 @@ public class AttendanceController {
                 return ResponseEntity.ok(ResultDto.of("실패", "result를 가져오는데 실패했습니다.", null));
             }
             return ResponseEntity.ok(ResultDto.of("성공", "출근", attendanceUpdateDto));
-        }catch (Exception e){
+        }catch (HttpClientErrorException.MethodNotAllowed e){
+            throw new HttpClientErrorException(HttpStatus.METHOD_NOT_ALLOWED,e.getMessage());
+        }
+        catch (HttpClientErrorException e){
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST,e.getMessage());
+        }
+        catch (NotFoundException e){
+            throw new NotFoundException(e.getMessage());
+        }
+        catch (Exception e){
             throw new RuntimeException(e.getMessage());
         }
     }
@@ -358,7 +473,16 @@ public class AttendanceController {
             }
 
             return ResponseEntity.ok(ResultDto.of("성공", "퇴근 및 오늘 급여수당 추가 성공", null));
-        }catch (Exception e){
+        }catch (HttpClientErrorException.MethodNotAllowed e){
+            throw new HttpClientErrorException(HttpStatus.METHOD_NOT_ALLOWED,e.getMessage());
+        }
+        catch (HttpClientErrorException e){
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST,e.getMessage());
+        }
+        catch (NotFoundException e){
+            throw new NotFoundException(e.getMessage());
+        }
+        catch (Exception e){
             throw new RuntimeException(e.getMessage());
         }
     }
@@ -379,7 +503,16 @@ public class AttendanceController {
                 return ResponseEntity.ok(ResultDto.of("성공", "admin 근태 조회", attendance));
             }
             return ResponseEntity.ok(ResultDto.of("실패", "admin 권한이 아닙니다.", null));
-        }catch (Exception e){
+        }catch (HttpClientErrorException.MethodNotAllowed e){
+            throw new HttpClientErrorException(HttpStatus.METHOD_NOT_ALLOWED,e.getMessage());
+        }
+        catch (HttpClientErrorException e){
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST,e.getMessage());
+        }
+        catch (NotFoundException e){
+            throw new NotFoundException(e.getMessage());
+        }
+        catch (Exception e){
             throw new RuntimeException(e.getMessage());
         }
     }
@@ -405,7 +538,16 @@ public class AttendanceController {
                 return ResponseEntity.ok(ResultDto.of("성공", "admin 근태 업데이트", attendanceUpdateDto));
             }
             return ResponseEntity.ok(ResultDto.of("실패", "admin권한이 아닙니다.", null));
-        }catch (Exception e){
+        }catch (HttpClientErrorException.MethodNotAllowed e){
+            throw new HttpClientErrorException(HttpStatus.METHOD_NOT_ALLOWED,e.getMessage());
+        }
+        catch (HttpClientErrorException e){
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST,e.getMessage());
+        }
+        catch (NotFoundException e){
+            throw new NotFoundException(e.getMessage());
+        }
+        catch (Exception e){
             throw new RuntimeException(e.getMessage());
         }
     }
@@ -430,7 +572,16 @@ public class AttendanceController {
                 return ResponseEntity.ok(ResultDto.of("성공", "근태 삭제 성공", null));
             }
             return ResponseEntity.ok(ResultDto.of("실패", "admin권한이 아닙니다.", null));
-        }catch (Exception e){
+        }catch (HttpClientErrorException.MethodNotAllowed e){
+            throw new HttpClientErrorException(HttpStatus.METHOD_NOT_ALLOWED,e.getMessage());
+        }
+        catch (HttpClientErrorException e){
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST,e.getMessage());
+        }
+        catch (NotFoundException e){
+            throw new NotFoundException(e.getMessage());
+        }
+        catch (Exception e){
             throw  new RuntimeException(e.getMessage());
         }
     }
@@ -468,12 +619,18 @@ public class AttendanceController {
                 return ResponseEntity.ok(ResultDto.of("성공", "근태 승인 및 급여 추가 성공", null));
             }
             return ResponseEntity.ok(ResultDto.of("실패", "admin권한이 아닙니다.", null));
+        }catch (HttpClientErrorException.MethodNotAllowed e){
+            throw new HttpClientErrorException(HttpStatus.METHOD_NOT_ALLOWED,e.getMessage());
+        }
+        catch (HttpClientErrorException e){
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST,e.getMessage());
+        }
+        catch (NotFoundException e){
+            throw new NotFoundException(e.getMessage());
         }
         catch (Exception e){
             throw new RuntimeException(e.getMessage());
         }
     }
-
-
 
 }
