@@ -39,26 +39,6 @@ public class MemberController {
     @Autowired
     MemberService memberService;
 
-    //회원가입
-//    @GetMapping("/join")
-//    public String joinMember(Model model){
-//        model.addAttribute("memberDto",new MemberDto());
-//        return "join";
-//    }
-//    @PostMapping("/join")
-//    @ResponseBody
-//    public MemberDto createMember(@RequestBody MemberDto memberDto){
-//        memberService.join(memberDto);
-//        System.out.println("컨트롤러");
-//        return memberDto;
-//    }
-    //로그인
-//    @GetMapping("/login")
-//    public String loginMember(Model model){
-//        // model.addAttribute("loginDto",new loginDto());
-//        return "login";
-//    }
-
     @PostMapping("/all")
     @Operation(summary = "전체유저조회", description = "전체유저정보가 list형식으로 반환됩니다.")
     @ResponseBody
@@ -76,7 +56,6 @@ public class MemberController {
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "요청파라미터", required = true,
                     content = @Content(schema=@Schema(implementation = DoubleCheckDto.class)))
             @RequestBody DoubleCheckDto doubleCheckDto){
-        // System.out.println("asdadadsadsaasdsada"+doubleCheckDto.getMemberid());
         MemberAndStoreDetailsDto memberAndStoreDetailsDto=memberService.findMemberDetails(doubleCheckDto.getMemberid());
         if(memberAndStoreDetailsDto!=null){
             return ResponseEntity.ok(ResultDto.of("resultcode","성공",memberAndStoreDetailsDto));
@@ -163,12 +142,12 @@ public class MemberController {
             @PathVariable(value = "storeid", required = true) Long storeid
     ) {
         System.out.println("-----------------getUserData-----------------");
-        if (!memberService.findByMemberidToRole(memberid).equals("ADMIN")) {  //권한 확인
+        Member member = memberService.findMemberid(memberid);
+        if(member == null || !member.getRole().equals("ADMIN")){
             return ResponseEntity.ok(ResultDto.of("실패", "권한이 맞지 않습니다.", null));
         }
-//        System.out.println("-----------------1-----------------");
         HashMap<String,String> result  = memberService.findByWorker(storeid);
-//        System.out.println("-----------------2-----------------");
+        System.out.println("@@@");
         if(result == null){
             return ResponseEntity.ok(ResultDto.of("null", "worker리스트가 null값입니다.", result));
         }

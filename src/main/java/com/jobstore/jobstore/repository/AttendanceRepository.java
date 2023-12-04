@@ -23,6 +23,9 @@ public interface AttendanceRepository extends JpaRepository<Attendance,Long> {
     Attendance findByAttendid(Long attendid);
   //  Optional<Member> findByMemberid(String memberid);
 
+    @Query("SELECT a.worker FROM Attendance a WHERE a.member.memberid =:memberid")
+    List<String> findByMemberidToWorker(@Param("memberid") String memberid);
+
     @Query("SELECT a FROM Attendance a WHERE a.member.memberid =:memberid")
     List<String> findByMemberid(@Param("memberid") String memberid);
 

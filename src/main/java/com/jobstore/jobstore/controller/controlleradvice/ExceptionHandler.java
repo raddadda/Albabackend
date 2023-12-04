@@ -11,8 +11,8 @@ public class ExceptionHandler {
     //유효성검사
     @org.springframework.web.bind.annotation.ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ResultDto<String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        String errorMessage = "Validation failed: " + ex.getMessage();
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResultDto.of("404",errorMessage,null));
+        String errorMessage = ex.getMessage();
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(ResultDto.of("405",errorMessage,null));
     }
     @org.springframework.web.bind.annotation.ExceptionHandler(Exception.class)
     public ResponseEntity<ResultDto<String>> handleOtherExceptions(Exception ex) {

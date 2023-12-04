@@ -16,6 +16,7 @@ public class UserjoinDto {
     private String password;
     private String phonenumber;
     private String name;
+    private String email;
     private String invitecode;
 
     public Member toEntity(String encodedPassword){
@@ -24,6 +25,7 @@ public class UserjoinDto {
                 .password(encodedPassword)
                 .phonenumber(this.phonenumber)
                 .name(this.name)
+                .email(this.email)
                 .role("USER").build();
     }
 }

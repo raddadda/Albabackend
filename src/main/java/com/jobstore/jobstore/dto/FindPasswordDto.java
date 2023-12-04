@@ -11,5 +11,4 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class FindPasswordDto {
     private String memberid;
-    private String email;
 }
