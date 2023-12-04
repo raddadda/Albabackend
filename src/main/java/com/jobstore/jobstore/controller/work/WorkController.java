@@ -37,8 +37,12 @@ public class WorkController {
     public ResponseEntity<ResultDto<WorkPagenationDto>> findAllWorkBoard(@PathVariable(value = "storeid", required = true) long storeid,
                                                                          @PathVariable(value = "page" , required = true) Integer page) {
 
-        return ResponseEntity.ok(ResultDto.of("200","조회 완료",
-                workService.findPagenation(storeid, page)));
+        try {
+            return ResponseEntity.ok(ResultDto.of("200","조회 완료",
+                    workService.findPagenation(storeid, page)));
+        }catch (Exception e){
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     @GetMapping("/boards/{storeid}/{search}/{page}")
@@ -51,8 +55,12 @@ public class WorkController {
                                                                         @PathVariable(value = "search", required = true) String search,
                                                                          @PathVariable(value = "page" , required = true) Integer page) {
 
-        return ResponseEntity.ok(ResultDto.of("200","조회 완료",
-                workService.searchPagenation(storeid, search, page)));
+            try {
+                return ResponseEntity.ok(ResultDto.of("200","조회 완료",
+                        workService.searchPagenation(storeid, search, page)));
+            }catch (Exception e){
+                throw new RuntimeException(e.getMessage());
+            }
     }
 
 
@@ -61,18 +69,18 @@ public class WorkController {
     @Parameter(name = "workid", description = "workid", required = true)
     @ResponseBody
     public ResponseEntity<ResultDto<WorkDetailDto>> boardDetail(@PathVariable(value = "workid", required = true) long workid) {
+        try {
+            WorkDetailDto result = workService.boardDetail(workid);
 
-        WorkDetailDto result = workService.boardDetail(workid);
-
-        if (result == null) {
-            return ResponseEntity.ok(ResultDto.of("403","게시판 없음",
-                    null));
-        } else if ((Long)result.getWorkid() != null) {
-            return ResponseEntity.ok(ResultDto.of("200","조회 완료",
-                    result));
-        } else {
-            return ResponseEntity.ok(ResultDto.of("500","back error",
-                    null));
+            if (result == null) {
+                return ResponseEntity.ok(ResultDto.of("403","게시판 없음",
+                        null));
+            } else if ((Long)result.getWorkid() != null) {
+                return ResponseEntity.ok(ResultDto.of("200","조회 완료",
+                        result));
+            } return null;
+        }catch (Exception e){
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -85,21 +93,23 @@ public class WorkController {
                     content = @Content(schema=@Schema(implementation = WorkCreateDto.class)))
             @Valid @RequestBody WorkCreateDto workCreateDto
     ) {
+        try {
+            HashMap result = workService.createWorkBoard(workCreateDto);
 
-        HashMap result = workService.createWorkBoard(workCreateDto);
-
-        if (result.get("message").equals("success")) {
-            ObjectMapper objectMapper = new ObjectMapper();
-            Map<String, Object> map = objectMapper.convertValue(workCreateDto, Map.class);
-            map.put("workid", result.get("workid"));
-            return ResponseEntity.ok(ResultDto.of("200", "등록 완료", map));
-        } else if ( result.get("message").equals("noMember") ) {
-            return ResponseEntity.ok(ResultDto.of("403", "등록 되지 않은 아이디", null));
-        } else if (result.get("message").equals("noAuth")) {
-            return ResponseEntity.ok(ResultDto.of("401", "허용 되지 않는 권한", null));
-        } else {
-            return ResponseEntity.ok(ResultDto.of("500", "back error", null));
+            if (result.get("message").equals("success")) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                Map<String, Object> map = objectMapper.convertValue(workCreateDto, Map.class);
+                map.put("workid", result.get("workid"));
+                return ResponseEntity.ok(ResultDto.of("200", "등록 완료", map));
+            } else if ( result.get("message").equals("noMember") ) {
+                return ResponseEntity.ok(ResultDto.of("403", "등록 되지 않은 아이디", null));
+            } else if (result.get("message").equals("noAuth")) {
+                return ResponseEntity.ok(ResultDto.of("401", "허용 되지 않는 권한", null));
+            } return null;
+        }catch (Exception e){
+            throw new RuntimeException(e.getMessage());
         }
+
     }
 
     @PatchMapping("/board/update")
@@ -110,16 +120,18 @@ public class WorkController {
                     content = @Content(schema=@Schema(implementation = WorkUpdateDto.class)))
             @Valid @RequestBody WorkUpdateDto workUpdateDto
     ) {
+        try {
+            String result = workService.updateWorkBoard(workUpdateDto);
 
-        String result = workService.updateWorkBoard(workUpdateDto);
-
-        if (result.equals("success")) {
-            return ResponseEntity.ok(ResultDto.of("200", "수정 완료", workUpdateDto));
-        } else if (result.equals("nodata")) {
-            return ResponseEntity.ok(ResultDto.of("403", "없는 게시물입니다.", null));
-        } else {
-            return ResponseEntity.ok(ResultDto.of("500", "back error", null));
+            if (result.equals("success")) {
+                return ResponseEntity.ok(ResultDto.of("200", "수정 완료", workUpdateDto));
+            } else if (result.equals("nodata")) {
+                return ResponseEntity.ok(ResultDto.of("403", "없는 게시물입니다.", null));
+            } return null;
+        }catch (Exception e){
+            throw new RuntimeException(e.getMessage());
         }
+
     }
 
     @DeleteMapping("/board/delete/{workid}")
@@ -128,16 +140,17 @@ public class WorkController {
     @ResponseBody
     public ResponseEntity<ResultDto<Object>> deleteWorkBoard(@PathVariable("workid") int workid) {
 
-        int result = workService.deleteWorkBoard(workid);
-        if (result == 1) {
-            return ResponseEntity.ok(ResultDto.of("200", "삭제 완료", null));
-        } else if (result == 0) {
-            return ResponseEntity.ok(ResultDto.of("100", "삭제 실패.", null));
-        } else if (result == 3){
-            return ResponseEntity.ok(ResultDto.of("403", "없는 게시판.", null));
-        }else {
-            return ResponseEntity.ok(ResultDto.of("500", "back error", null));
-        }
-
+       try {
+           int result = workService.deleteWorkBoard(workid);
+           if (result == 1) {
+               return ResponseEntity.ok(ResultDto.of("200", "삭제 완료", null));
+           } else if (result == 0) {
+               return ResponseEntity.ok(ResultDto.of("100", "삭제 실패.", null));
+           } else if (result == 3){
+               return ResponseEntity.ok(ResultDto.of("403", "없는 게시판.", null));
+           }return null;
+       }catch (Exception e){
+           throw new RuntimeException(e.getMessage());
+       }
     }
 }

@@ -36,19 +36,20 @@ public class ContentController {
                     content = @Content(schema=@Schema(implementation = ContentsCreateDto.class)))
             @Valid @RequestBody ContentsCreateDto contentCreateDto
     ) {
+        try {
+            HashMap result = contentService.createContent(contentCreateDto);
+            if (result.get("message").equals("success")) {
 
-        HashMap result = contentService.createContent(contentCreateDto);
-        if (result.get("message").equals("success")) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                Map<String, Object> map = objectMapper.convertValue(contentCreateDto, Map.class);
+                map.put("contentsid", result.get("contentsid"));
 
-            ObjectMapper objectMapper = new ObjectMapper();
-            Map<String, Object> map = objectMapper.convertValue(contentCreateDto, Map.class);
-            map.put("contentsid", result.get("contentsid"));
-
-            return ResponseEntity.ok(ResultDto.of("200", "등록 완료", map));
-        } else if (result.get("message").equals("nodata")) {
-            return ResponseEntity.ok(ResultDto.of("403", "등록 되지 않은 work 게시판", null));
-        } else {
-            return ResponseEntity.ok(ResultDto.of("500", "back error", null));
+                return ResponseEntity.ok(ResultDto.of("200", "등록 완료", map));
+            } else if (result.get("message").equals("nodata")) {
+                return ResponseEntity.ok(ResultDto.of("403", "등록 되지 않은 work 게시판", null));
+            } return null;
+        }catch (Exception e){
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -61,14 +62,15 @@ public class ContentController {
                     content = @Content(schema=@Schema(implementation = ContentsUpdateDto.class)))
             @Valid @RequestBody ContentsUpdateDto contentsUpdateDto
     ) {
-
-        String result = contentService.updateContent(contentsUpdateDto);
-        if (result.equals("success")) {
-            return ResponseEntity.ok(ResultDto.of("200", "수정 완료", contentsUpdateDto));
-        } else if (result.equals("nodata")) {
-            return ResponseEntity.ok(ResultDto.of("403", "등록 되지 않은 컨텐츠", null));
-        } else {
-            return ResponseEntity.ok(ResultDto.of("500", "back error", null));
+        try {
+            String result = contentService.updateContent(contentsUpdateDto);
+            if (result.equals("success")) {
+                return ResponseEntity.ok(ResultDto.of("200", "수정 완료", contentsUpdateDto));
+            } else if (result.equals("nodata")) {
+                return ResponseEntity.ok(ResultDto.of("403", "등록 되지 않은 컨텐츠", null));
+            } return null;
+        }catch (Exception e){
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -80,18 +82,21 @@ public class ContentController {
     public ResponseEntity<ResultDto<ContentsUpdateDto>> deleteContent (
         @PathVariable("contensid") int contensid
     ) {
+        try {
+            int result = contentService.deleteContent(contensid);
 
-        int result = contentService.deleteContent(contensid);
+            if (result == 1) {
+                return ResponseEntity.ok(ResultDto.of("200", "삭제 완료", null));
+            } else if (result == 0) {
+                return ResponseEntity.ok(ResultDto.of("100", "삭제 실패.", null));
+            } else if (result == 3){
+                return ResponseEntity.ok(ResultDto.of("403", "없는 컨텐츠.", null));
+            } return null;
 
-        if (result == 1) {
-            return ResponseEntity.ok(ResultDto.of("200", "삭제 완료", null));
-        } else if (result == 0) {
-            return ResponseEntity.ok(ResultDto.of("100", "삭제 실패.", null));
-        } else if (result == 3){
-            return ResponseEntity.ok(ResultDto.of("403", "없는 컨텐츠.", null));
-        } else {
-            return ResponseEntity.ok(ResultDto.of("500", "back error", null));
+        }catch (Exception e){
+            throw new RuntimeException(e.getMessage());
         }
+
     }
 
 
@@ -103,17 +108,19 @@ public class ContentController {
                     content = @Content(schema=@Schema(implementation = ContentsCheckedDto.class)))
             @Valid @RequestBody ContentsCheckedDto contentsCheckedDto
     ) {
-
-        String result = contentService.checkedContent(contentsCheckedDto);
-        if (result.equals("success")) {
-            return ResponseEntity.ok(ResultDto.of("200", "등록 완료", contentsCheckedDto));
-        } else if (result.equals("noMember")) {
-            return ResponseEntity.ok(ResultDto.of("403", "등록 되지 않은 아이디", null));
-        } else if (result.equals("nodata")) {
-            return ResponseEntity.ok(ResultDto.of("403", "등록 되지 않은 contents", null));
-        } else {
-            return ResponseEntity.ok(ResultDto.of("500", "back error", null));
+        try {
+            String result = contentService.checkedContent(contentsCheckedDto);
+            if (result.equals("success")) {
+                return ResponseEntity.ok(ResultDto.of("200", "등록 완료", contentsCheckedDto));
+            } else if (result.equals("noMember")) {
+                return ResponseEntity.ok(ResultDto.of("403", "등록 되지 않은 아이디", null));
+            } else if (result.equals("nodata")) {
+                return ResponseEntity.ok(ResultDto.of("403", "등록 되지 않은 contents", null));
+            } return null;
+        }catch (Exception e){
+            throw new RuntimeException(e.getMessage());
         }
+
     }
 
 }

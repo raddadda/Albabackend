@@ -37,18 +37,21 @@ public class CommentController {
             @Valid @RequestBody CommentCreateDto commentCreateDto
     ) {
 
-        HashMap result = commentService.createComment(commentCreateDto);
-        if (result.get("message").equals("success")) {
-            ObjectMapper objectMapper = new ObjectMapper();
-            Map<String, Object> map = objectMapper.convertValue(commentCreateDto, Map.class);
-            map.put("commentid", result.get("commentid"));
-            return ResponseEntity.ok(ResultDto.of("200", "등록 완료", map));
-        } else if (result.get("message").equals("nodata")) {
-            return ResponseEntity.ok(ResultDto.of("403", "등록 되지 work 게시판", null));
-        } else if (result.get("message").equals("noMember")) {
-            return ResponseEntity.ok(ResultDto.of("403", "등록 되지 않은 아이디", null));
-        } else {
-            return ResponseEntity.ok(ResultDto.of("500", "back error", null));
+        try {
+            HashMap result = commentService.createComment(commentCreateDto);
+            if (result.get("message").equals("success")) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                Map<String, Object> map = objectMapper.convertValue(commentCreateDto, Map.class);
+                map.put("commentid", result.get("commentid"));
+                return ResponseEntity.ok(ResultDto.of("200", "등록 완료", map));
+            } else if (result.get("message").equals("nodata")) {
+                return ResponseEntity.ok(ResultDto.of("403", "등록 되지 work 게시판", null));
+            } else if (result.get("message").equals("noMember")) {
+                return ResponseEntity.ok(ResultDto.of("403", "등록 되지 않은 아이디", null));
+            }
+            return null;
+        }catch (Exception e){
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -61,15 +64,18 @@ public class CommentController {
                     content = @Content(schema=@Schema(implementation = CommentUpdateDto.class)))
             @Valid @RequestBody CommentUpdateDto commentUpdateDto
     ) {
-
-        String result = commentService.updateComment(commentUpdateDto);
-        if (result.equals("success")) {
-            return ResponseEntity.ok(ResultDto.of("200", "수정 완료", commentUpdateDto));
-        } else if (result.equals("nodata")) {
-            return ResponseEntity.ok(ResultDto.of("403", "등록 되지 않은 댓글", null));
-        } else {
-            return ResponseEntity.ok(ResultDto.of("500", "back error", null));
+        try {
+            String result = commentService.updateComment(commentUpdateDto);
+            if (result.equals("success")) {
+                return ResponseEntity.ok(ResultDto.of("200", "수정 완료", commentUpdateDto));
+            } else if (result.equals("nodata")) {
+                return ResponseEntity.ok(ResultDto.of("403", "등록 되지 않은 댓글", null));
+            }
+            return null;
+        }catch (Exception e){
+            throw new RuntimeException(e.getMessage());
         }
+
     }
 
 
@@ -80,17 +86,18 @@ public class CommentController {
     public ResponseEntity<ResultDto<Object>> deleteContent (
             @PathVariable("commentid") int commentid
     ) {
+        try {
+            int result = commentService.deleteComment(commentid);
 
-        int result = commentService.deleteComment(commentid);
-
-        if (result == 1) {
-            return ResponseEntity.ok(ResultDto.of("200", "삭제 완료", null));
-        } else if (result == 0) {
-            return ResponseEntity.ok(ResultDto.of("100", "삭제 실패.", null));
-        } else if (result == 3){
-            return ResponseEntity.ok(ResultDto.of("403", "등록 되지 않은 댓글.", null));
-        } else {
-            return ResponseEntity.ok(ResultDto.of("500", "back error", null));
+            if (result == 1) {
+                return ResponseEntity.ok(ResultDto.of("200", "삭제 완료", null));
+            } else if (result == 0) {
+                return ResponseEntity.ok(ResultDto.of("100", "삭제 실패.", null));
+            } else if (result == 3){
+                return ResponseEntity.ok(ResultDto.of("403", "등록 되지 않은 댓글.", null));
+            } return null;
+        }catch (Exception e){
+            throw new RuntimeException(e.getMessage());
         }
     }
 }
