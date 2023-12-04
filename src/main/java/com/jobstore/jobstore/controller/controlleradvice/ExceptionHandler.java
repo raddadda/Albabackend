@@ -11,6 +11,7 @@ import org.springframework.web.client.HttpClientErrorException;
 @ControllerAdvice
 public class ExceptionHandler {
     //유효성검사
+
     @org.springframework.web.bind.annotation.ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ResultDto<String>> handlenotFound(NotFoundException ex){
         String em="NotFound:"+ex.getMessage();

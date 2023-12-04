@@ -229,7 +229,7 @@ public class PaymentService {
         return userlistmap ;
     }
     public PaymentPagenationDto findByMemberidUser(String memberid ,Integer page){
-        Integer size=10;
+        Integer size=5;
         PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.DESC, "month");
         Page<Payment> paymentPage = paymentRepository.findByMemberid(memberid, pageRequest);
 
@@ -254,7 +254,7 @@ public class PaymentService {
 
     //어드민 달마다 페이지 네이션
     public PaymentPagenationDto findByMemberidAdmin(String memberid ,Integer page){
-        Integer size=10;
+        Integer size=5;
         PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.DESC, "month");
         Page<PaymentAdmin> paymentAdmins=paymentAdminRepository.findBymemberid(memberid,pageRequest);
         Page<PaymentAdminDto> toMap=paymentAdmins.map(m->new PaymentAdminDto(m.getMemberid(),m.getStoreid(),m.getMonth(),m.getSum()));

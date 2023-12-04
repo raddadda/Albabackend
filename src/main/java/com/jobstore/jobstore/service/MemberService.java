@@ -131,11 +131,8 @@ public class MemberService  {
      */
     //한명에대한 조회
     public MemberAndStoreDetailsDto findMemberDetails(String memberid){
-        // System.out.println("asdsadasdasdas:       "+memberid);
         Member member=memberRepository.findByMemberid2(memberid);
         long storeidletsgo=memberRepository.findeByMemberidForStoreid(memberid);
-
-        // System.out.println("sadadasdasdasdasd:     "+storeidletsgo);
         Store store=storeRepository.findByStoreid2(storeidletsgo);
         return new MemberAndStoreDetailsDto(member,store);
     }
@@ -169,6 +166,7 @@ public class MemberService  {
         existingMember.setPassword(passwordEncoder.encode(memberDto.getPassword()));
         existingMember.setPhonenumber(memberDto.getPhonenumber());
         existingMember.setName(memberDto.getName());
+        existingMember.setEmail(memberDto.getEmail());
         return memberRepository.save(existingMember);
     }
 
@@ -276,22 +274,18 @@ public class MemberService  {
 
 
     public HashMap findByWorker(long storeid){
-
-        List<Member> member = memberRepository.findeByMemberidForStoreid2(storeid);
+        List<Member> memberList = memberRepository.findeByMemberidForStoreid2(storeid);
         HashMap<String,String> hashMap = new HashMap<>();
-        if(member!=null){
-            for(Member list : member){
-                if(list.getRole().equals("USER")){
-                    String key = list.getMemberid();
-                    String value = list.getName();
-                    hashMap.put(key,value);
-                }
+
+        for(Member list : memberList){
+            if(list.getRole().equals("USER")){
+                String key = list.getMemberid();
+                String value = list.getName();
+                hashMap.put(key,value);
             }
-
-           return hashMap;
-
         }
-        return null;
+
+        return hashMap;
     }
 
 
@@ -407,44 +401,32 @@ public class MemberService  {
             return false;
         }
         String tempPassword = setPassword(7);
-//gCQ33M8
-        //member.setPassword(tempPassword);
         updateMemberPassword(member.getMemberid(),tempPassword);
         String content = "";
-        System.out.println("before:"+member.getPassword());
-        System.out.println("after:"+tempPassword);
-        //if(member.getPassword().equals(tempPassword)){
-            content = tempPassword;
-        //}
-        String subject = "test 메일";
+        content = tempPassword;
+        String subject = "[albaon] 임시비밀번호 발급";
         String from = "cyc123m@naver.com";
-        String to = findPasswordDto.getEmail();
-                //"받는이 아이디@도메인주소";
-        //if(!duplicateMemberid(member.getMemberid())){
-            //String password = memberRepository
-        System.out.println("@@@@@@");
-            try {
-                System.out.println("1");
-                MimeMessage mail = javaMailSender.createMimeMessage();
-                MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mail,true,"UTF-8");
-                System.out.println("2");
-                mimeMessageHelper.setFrom(from);
-                mimeMessageHelper.setTo(to);
-                mimeMessageHelper.setSubject(subject);
-                mimeMessageHelper.setText(content, true);
-                System.out.println("3");
-                if(mimeMessageHelper == null){
-                    return false;
-                }
-                javaMailSender.send(mail);
-                return true;
-            }catch (MessagingException e){
-                e.printStackTrace();
+        String to = member.getEmail();
+        try {
+            MimeMessage mail = javaMailSender.createMimeMessage();
+            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mail,true,"UTF-8");
+            mimeMessageHelper.setFrom(from);
+            mimeMessageHelper.setTo(to);
+            mimeMessageHelper.setSubject(subject);
+            mimeMessageHelper.setText(content, true);
+            if(mimeMessageHelper == null){
+                return false;
             }
-
-
-        //}
+            javaMailSender.send(mail);
+            return true;
+        }catch (MessagingException e){
+            e.printStackTrace();
+        }
         return false;
+    }
+
+    public Member findMemberid(String memberid){
+        return memberRepository.findByMemberid(memberid).get();
     }
 
 //    public boolean findId(FindIdDto findIdDto){

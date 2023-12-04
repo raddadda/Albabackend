@@ -198,32 +198,28 @@ public class AttendanceService {
 
     //이번달 일한 시간
     public Long workMonth(long month,String memberid){
-        Member member = memberRepository.findByMemberid2(memberid);
         long result = 0;
-        if(member != null){
-            //해당 memberid의 attendance목록 불러오기
-            List<Attendance> attendance= attendanceRepository.findByWorker(member.getMemberid());
-            if(attendance != null){
-                for(Attendance attendlist : attendance){
-                    long time = attendlist.getLeavework().getMonthValue();
+        //해당 memberid의 attendance목록 불러오기
+        List<Attendance> attendance= attendanceRepository.findByWorker(memberid);
+        if(attendance != null){
+            for(Attendance attendlist : attendance){
+                long time = attendlist.getLeavework().getMonthValue();
 
-                    if(time == month){
-                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                if(time == month){
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-                        LocalDateTime leave = attendlist.getLeavework();
-                        String formatLeave = leave.format(formatter);
-                        LocalDateTime go = attendlist.getGowork();
-                        String formatGo = go.format(formatter);
+                    LocalDateTime leave = attendlist.getLeavework();
+                    String formatLeave = leave.format(formatter);
+                    LocalDateTime go = attendlist.getGowork();
+                    String formatGo = go.format(formatter);
 
-                        Duration duration = Duration.between(go, leave); // 두 시간의 차이 계산
-                        long minutes = duration.toMinutes(); // 분 단위로 시간 차이 구하기
-                        result += minutes;
-                    }
+                    Duration duration = Duration.between(go, leave); // 두 시간의 차이 계산
+                    long minutes = duration.toMinutes(); // 분 단위로 시간 차이 구하기
+                    result += minutes;
                 }
             }
-            return result;
         }
-        return (long)-1;
+        return result;
     }
 
     //이번주 일한 시간
@@ -253,7 +249,6 @@ public class AttendanceService {
 
     //저번달과 이번달 비교 퍼센트
     public double workPercent(String memberid){
-
         LocalDateTime time = LocalDateTime.now();
         long thisMonth = localDateTimeToMonth(time);
         if(thisMonth == 1){
@@ -296,12 +291,11 @@ public class AttendanceService {
 //        }
 //    }
 
-        public Map getUserMonthData(String memberid){
+        public Map getUserMonthData(Member member){
         LocalDateTime localDateTime = LocalDateTime.now().plusMonths(4);
 
         Map<Long,Long> result = new LinkedHashMap();
         for(int i=0; i<5; i++){
-
             LocalDateTime dateTime = localDateTime.minusMonths(i);
             long monthValue = dateTime.getMonthValue();
             long yearValue = dateTime.getYear();
@@ -309,7 +303,7 @@ public class AttendanceService {
             String year = String.valueOf(dateTime.getYear());
             String combinedString = year+month;
             long date = Integer.parseInt(combinedString);
-            result.put(date,workMonth(monthValue,memberid));
+            result.put(date,workMonth(monthValue,member.getMemberid()));
 
         }
         return result;
@@ -369,12 +363,15 @@ public class AttendanceService {
      */
     public AttendanceHistoryDto getAttendancesByMemberId (String role,String memberid,long storeid,Integer page){
         //한페이지당 사이즈
-        Integer size = 3;
+        Integer size = 5;
+        System.out.println("getAttendancesByMemberId333333");
         PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.DESC, "attendid");
         Page<Attendance> attendances;
         if(role.equals("USER")){
+            System.out.println("getAttendancesByMemberId1");
             attendances =  attendanceRepository.findByWorker(memberid, pageRequest);
         }else if(role.equals("ADMIN")){
+            System.out.println("getAttendancesByMemberId2");
             attendances =  attendanceRepository.findByMemberMemberid(memberid, pageRequest);
         }else{
             return null;

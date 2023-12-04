@@ -6,6 +6,7 @@ import com.jobstore.jobstore.dto.request.attendance.AttendanceUpdateDto;
 import com.jobstore.jobstore.dto.response.attendance.AttendanceHistoryDto;
 import com.jobstore.jobstore.dto.response.ResultDto;
 import com.jobstore.jobstore.entity.Attendance;
+import com.jobstore.jobstore.entity.Member;
 import com.jobstore.jobstore.entity.Payment;
 import com.jobstore.jobstore.service.AttendanceService;
 import com.jobstore.jobstore.service.MemberService;
@@ -55,9 +56,11 @@ public class AttendanceController {
     ) {
         try{
             System.out.println("-----------------getHistoryAdmin-----------------");
-            if (!memberService.findByMemberidToRole(memberid).equals("ADMIN")) {  //권한 확인
+            Member member = memberService.findMemberid(memberid);
+            if(member == null || !member.getRole().equals("ADMIN")){
                 return ResponseEntity.ok(ResultDto.of("실패", "권한이 맞지 않습니다.", null));
             }
+
             return ResponseEntity.ok(ResultDto.of("성공", "조회성공", attendanceService.getAttendancesByMemberId("ADMIN", memberid, storeid, page)));
         }catch (HttpClientErrorException.MethodNotAllowed e){
             throw new HttpClientErrorException(HttpStatus.METHOD_NOT_ALLOWED,e.getMessage());
@@ -85,9 +88,11 @@ public class AttendanceController {
     ) {
         try {
             System.out.println("-----------------getHistoryUser-----------------");
-            if (!memberService.findByMemberidToRole(memberid).equals("USER")) {   //권한 확인
+            Member member = memberService.findMemberid(memberid);
+            if(member == null || !member.getRole().equals("USER")){
                 return ResponseEntity.ok(ResultDto.of("실패", "권한이 맞지 않습니다.", null));
             }
+
             return ResponseEntity.ok(ResultDto.of("성공", "조회성공", attendanceService.getAttendancesByMemberId("USER", memberid, storeid, page)));
         }catch (HttpClientErrorException.MethodNotAllowed e){
             throw new HttpClientErrorException(HttpStatus.METHOD_NOT_ALLOWED,e.getMessage());
@@ -117,12 +122,11 @@ public class AttendanceController {
     ) {
         try {
             System.out.println("-----------------getUserData-----------------");
-            if (!memberService.findByMemberidToRole(memberid).equals("ADMIN")) {  //권한 확인
+            Member member = memberService.findMemberid(memberid);
+            if(member == null || !member.getRole().equals("ADMIN")){
                 return ResponseEntity.ok(ResultDto.of("실패", "권한이 맞지 않습니다.", null));
             }
-
-            HashMap<String,Long> getAttendData = attendanceService.getAttendData(memberid);
-
+            HashMap<String,Long> getAttendData = attendanceService.getAttendData(member.getMemberid());
             if(getAttendData == null){
                 return ResponseEntity.ok(ResultDto.of("null", "user지표가 null값입니다.", getAttendData));
             }
@@ -153,11 +157,12 @@ public class AttendanceController {
             @PathVariable(value = "storeid", required = true) Long storeid) {
         try {
             System.out.println("-----------------getWeekuser-----------------");
-            if (!memberService.findByMemberidToRole(memberid).equals("USER")) {   //권한 확인
+            Member member = memberService.findMemberid(memberid);
+            if(member == null || !member.getRole().equals("USER")){
                 return ResponseEntity.ok(ResultDto.of("실패", "권한이 맞지 않습니다.", null));
             }
             long nowmonth = attendanceService.localDateTimeToMonth(LocalDateTime.now());
-            long month = attendanceService.workMonth(nowmonth, memberid);
+            long month = attendanceService.workMonth(nowmonth, member.getMemberid());
 
             return ResponseEntity.ok(ResultDto.of("성공", "주급 월급 조회성공", month));
         }catch (HttpClientErrorException.MethodNotAllowed e){
@@ -184,9 +189,11 @@ public class AttendanceController {
             @PathVariable(value = "worker", required = true) String worker) {
         try {
             System.out.println("-----------------getWeekadmin-----------------");
-            if (!memberService.findByMemberidToRole(memberid).equals("ADMIN")) {   //권한 확인
+            Member member = memberService.findMemberid(memberid);
+            if(member == null || !member.getRole().equals("ADMIN")){
                 return ResponseEntity.ok(ResultDto.of("실패", "권한이 맞지 않습니다.", null));
             }
+
             long nowmonth = attendanceService.localDateTimeToMonth(LocalDateTime.now());
             long month = attendanceService.workMonth(nowmonth, worker);
 
@@ -217,10 +224,12 @@ public class AttendanceController {
             @PathVariable(value = "storeid", required = true) Long storeid) {
         try {
             System.out.println("-----------------getMonth-----------------");
-            if (!memberService.findByMemberidToRole(memberid).equals("USER")) {         //권한 확인
+            Member member = memberService.findMemberid(memberid);
+            if(member == null || !member.getRole().equals("USER")){
                 return ResponseEntity.ok(ResultDto.of("실패", "권한이 맞지 않습니다.", null));
             }
-            long localDateTimeToWeek = attendanceService.localDateTimeToWeek(memberid);
+            long localDateTimeToWeek = attendanceService.localDateTimeToWeek(member.getMemberid());
+
 
             return ResponseEntity.ok(ResultDto.of("성공", "주급 월급 조회성공", localDateTimeToWeek));
         }catch (HttpClientErrorException.MethodNotAllowed e){
@@ -233,6 +242,7 @@ public class AttendanceController {
             throw new NotFoundException(e.getMessage());
         }
         catch (Exception e){
+
             throw new RuntimeException(e.getMessage());
         }
     }
@@ -252,7 +262,6 @@ public class AttendanceController {
                 return ResponseEntity.ok(ResultDto.of("실패", "권한이 맞지 않습니다.", null));
             }
             long localDateTimeToWeek = attendanceService.localDateTimeToWeek(worker);
-
             return ResponseEntity.ok(ResultDto.of("성공", "주급 월급 조회성공", localDateTimeToWeek));
         }catch (HttpClientErrorException.MethodNotAllowed e){
             throw new HttpClientErrorException(HttpStatus.METHOD_NOT_ALLOWED,e.getMessage());
@@ -279,10 +288,11 @@ public class AttendanceController {
             @PathVariable(value = "storeid", required = true) Long storeid) {
         try {
             System.out.println("-----------------getPercent-----------------");
-            if (!memberService.findByMemberidToRole(memberid).equals("USER")) {   //권한 확인
+            Member member = memberService.findMemberid(memberid);
+            if(member == null || !member.getRole().equals("USER")){
                 return ResponseEntity.ok(ResultDto.of("실패", "권한이 맞지 않습니다.", null));
             }
-            double result = attendanceService.workPercent(memberid);
+            double result = attendanceService.workPercent(member.getMemberid());
             if (result != -1) {
                 return ResponseEntity.ok(ResultDto.of("성공", "퍼센트 조회성공", result));
             }
@@ -340,14 +350,13 @@ public class AttendanceController {
     public ResponseEntity<ResultDto<Map<Long,Long>>> getUserMonthData(
             @PathVariable(value = "memberid", required = true) String memberid,
             @PathVariable(value = "storeid", required = true) Long storeid) {
-
         try {
             System.out.println("-----------------getUserMonthData-----------------");
-            if (!memberService.findByMemberidToRole(memberid).equals("USER")) {   //권한 확인
+            Member member = memberService.findMemberid(memberid);
+            if(member == null || !member.getRole().equals("USER")){
                 return ResponseEntity.ok(ResultDto.of("실패", "권한이 맞지 않습니다.", null));
             }
-
-            Map<Long,Long> result = attendanceService.getUserMonthData(memberid);
+            Map<Long,Long> result = attendanceService.getUserMonthData(member);
             if (result != null) {
                 return ResponseEntity.ok(ResultDto.of("성공", "5달 데이터 조회 성공", result));
             }

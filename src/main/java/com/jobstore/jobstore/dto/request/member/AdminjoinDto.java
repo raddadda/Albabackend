@@ -16,6 +16,7 @@ public class AdminjoinDto {
     private String password;
     private String phonenumber;
     private String name;
+    private String email;
     private String role;
     private String companyname;
     private String ceo;
@@ -28,6 +29,7 @@ public class AdminjoinDto {
                 .password(encodedPassword)
                 .phonenumber(this.phonenumber)
                 .name(this.name)
+                .email(this.email)
                 .role("ADMIN").build();
     }
 }
