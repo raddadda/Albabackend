@@ -41,10 +41,14 @@ public class AuthController {
     @Operation(summary = "memberid 중복확인검사", description = "admin 전용 회원가입입니다.")
     public ResponseEntity<ResultDto<Object>> doublecheck(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "요청파라미터", required = true,
             content = @Content(schema=@Schema(implementation = DoubleCheckDto.class)))@RequestBody DoubleCheckDto doubleCheckDto){
-        if(!memberService.duplicateMemberid(doubleCheckDto.getMemberid())){
-            return ResponseEntity.ok(ResultDto.of("resultcode","사용가능한 아이디입니다.",doubleCheckDto));
+        try{
+            if(!memberService.duplicateMemberid(doubleCheckDto.getMemberid())){
+                return ResponseEntity.ok(ResultDto.of("resultcode","사용가능한 아이디입니다.",doubleCheckDto));
+            }
+            return  ResponseEntity.ok(ResultDto.of("resultcode","아이디가 중복이 됩니다",null));
+        }catch (Exception e){
+            throw new RuntimeException(e.getMessage());
         }
-        return  ResponseEntity.ok(ResultDto.of("resultcode","아이디가 중복이 됩니다",null));
     }
 
     //admin
@@ -55,15 +59,19 @@ public class AuthController {
             content = @Content(schema=@Schema(implementation = AdminjoinDto.class)))
         @RequestBody AdminjoinDto adminjoinDto
     ) {
-        //ID 중복체크
-        if(!memberService.duplicateMemberid(adminjoinDto.getMemberid())) {
-            boolean joinAdmin = memberService.joinAdmin(adminjoinDto);
-            if(joinAdmin){
-                return ResponseEntity.ok(ResultDto.of("resultCode","회원가입이 성공했습니다.", adminjoinDto));
+        try{
+            //ID 중복체크
+            if(!memberService.duplicateMemberid(adminjoinDto.getMemberid())) {
+                boolean joinAdmin = memberService.joinAdmin(adminjoinDto);
+                if(joinAdmin){
+                    return ResponseEntity.ok(ResultDto.of("resultCode","회원가입이 성공했습니다.", adminjoinDto));
+                }
+                return ResponseEntity.ok(ResultDto.of("resultCode","사업자 등록번호가 이미 존재합니다.", null));
             }
-            return ResponseEntity.ok(ResultDto.of("resultCode","사업자 등록번호가 이미 존재합니다.", null));
+            return ResponseEntity.ok(ResultDto.of("resultCode","회원가입이 실패했습니다.", null));
+        }catch (Exception e){
+            throw new RuntimeException(e.getMessage());
         }
-        return ResponseEntity.ok(ResultDto.of("resultCode","회원가입이 실패했습니다.", null));
     }
     //user
     @PostMapping("/user/join")
@@ -73,16 +81,20 @@ public class AuthController {
                     content = @Content(schema=@Schema(implementation = UserjoinDto.class)))
             @RequestBody UserjoinDto userjoinDto
     ) {
-        //ID 중복체크
-        if(!memberService.duplicateMemberid(userjoinDto.getMemberid())) {
-            if(memberService.joinUser(userjoinDto)){
-                return ResponseEntity.ok(ResultDto.of("resultCode","회원가입이 성공했습니다.", userjoinDto));
-            }else {
-                return ResponseEntity.ok(ResultDto.of("resultCode2","회원가입이 실패(초대코드 인증 실패)", null));
-            }
+        try {
+            //ID 중복체크
+            if(!memberService.duplicateMemberid(userjoinDto.getMemberid())) {
+                if(memberService.joinUser(userjoinDto)){
+                    return ResponseEntity.ok(ResultDto.of("resultCode","회원가입이 성공했습니다.", userjoinDto));
+                }else {
+                    return ResponseEntity.ok(ResultDto.of("resultCode2","회원가입이 실패(초대코드 인증 실패)", null));
+                }
 
+            }
+            return ResponseEntity.ok(ResultDto.of("resultCode","회원가입이 실패했습니다.", null));
+        }catch (Exception e){
+            throw new RuntimeException(e.getMessage());
         }
-        return ResponseEntity.ok(ResultDto.of("resultCode","회원가입이 실패했습니다.", null));
     }
 
     /**
@@ -95,38 +107,40 @@ public class AuthController {
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "요청파라미터", required = true,
                     content = @Content(schema=@Schema(implementation = LoginDto.class)))
             @RequestBody LoginDto loginDto) {
-
-        if(loginDto.getRole().equals("ADMIN")){
-            Member member = memberService.login(loginDto);
-            String id = member.getMemberid();
-            if (!memberService.findByMemberidToRole(id).equals("ADMIN")) {
-                return ResponseEntity.ok(ResultDto.of("resultCode","사업자에 해당 아이디가 존재하지 않습니다.", null));
+        try{
+            if(loginDto.getRole().equals("ADMIN")){
+                Member member = memberService.login(loginDto);
+                String id = member.getMemberid();
+                if (!memberService.findByMemberidToRole(id).equals("ADMIN")) {
+                    return ResponseEntity.ok(ResultDto.of("resultCode","사업자에 해당 아이디가 존재하지 않습니다.", null));
+                }
+                if (member == null) {
+                    return ResponseEntity.ok(ResultDto.of("403", "로그인 아이디 또는 비밀번호가 틀렸습니다.", null));
+                }
+                LoginResponseDto response = memberService.loginToken(member);
+                if(response == null){
+                    return ResponseEntity.ok(ResultDto.of("403", "이미 로그인이 되어있는 아이디입니다", null));
+                }
+                return ResponseEntity.ok(ResultDto.of("200", "로그인 성공.", response));
+            }else if(loginDto.getRole().equals("USER")){
+                Member member = memberService.login(loginDto);
+                String id = member.getMemberid();
+                if (!memberService.findByMemberidToRole(id).equals("USER")) {
+                    return ResponseEntity.ok(ResultDto.of("resultCode","구직자에 해당 아이디가 존재하지 않습니다.", null));
+                }
+                if (member == null) {
+                    return ResponseEntity.ok(ResultDto.of("403", "로그인 아이디 또는 비밀번호가 틀렸습니다.", null));
+                }
+                LoginResponseDto response = memberService.loginToken(member);
+                if(response == null){
+                    return ResponseEntity.ok(ResultDto.of("403", "이미 로그인이 되어있는 아이디입니다", null));
+                }
+                return ResponseEntity.ok(ResultDto.of("200", "로그인 성공.", response));
             }
-            if (member == null) {
-                return ResponseEntity.ok(ResultDto.of("403", "로그인 아이디 또는 비밀번호가 틀렸습니다.", null));
-            }
-            LoginResponseDto response = memberService.loginToken(member);
-            if(response == null){
-                return ResponseEntity.ok(ResultDto.of("403", "이미 로그인이 되어있는 아이디입니다", null));
-            }
-            return ResponseEntity.ok(ResultDto.of("200", "로그인 성공.", response));
-        }else if(loginDto.getRole().equals("USER")){
-            Member member = memberService.login(loginDto);
-            String id = member.getMemberid();
-            if (!memberService.findByMemberidToRole(id).equals("USER")) {
-                return ResponseEntity.ok(ResultDto.of("resultCode","구직자에 해당 아이디가 존재하지 않습니다.", null));
-            }
-            if (member == null) {
-                return ResponseEntity.ok(ResultDto.of("403", "로그인 아이디 또는 비밀번호가 틀렸습니다.", null));
-            }
-            LoginResponseDto response = memberService.loginToken(member);
-            if(response == null){
-                return ResponseEntity.ok(ResultDto.of("403", "이미 로그인이 되어있는 아이디입니다", null));
-            }
-            return ResponseEntity.ok(ResultDto.of("200", "로그인 성공.", response));
+            return ResponseEntity.ok(ResultDto.of("404", "해당 role이 존재하지 않음", null));
+        }catch (Exception e){
+            throw new RuntimeException(e.getMessage());
         }
-        return ResponseEntity.ok(ResultDto.of("500", "해당 role이 존재하지 않음", null));
-
     }
 
     @PostMapping("/refreshToken")
@@ -136,17 +150,20 @@ public class AuthController {
                     content = @Content(schema=@Schema(implementation = TokenDto.class)))
             @RequestBody TokenDto tokenDto
     ){
+        try {
+            Member member = memberRepository.findByMemberid2(tokenDto.getMemberid());
+            if(member == null){
+                return  ResponseEntity.ok(ResultDto.of("resultcode","존재하지않는 멤버입니다.",null));
+            }
+            LoginResponseDto response = memberService.refreshToken(member,tokenDto.getToken());
+            if(response == null){
+                return  ResponseEntity.ok(ResultDto.of("resultcode","token재발급 실패",response));
+            }
 
-        Member member = memberRepository.findByMemberid2(tokenDto.getMemberid());
-        if(member == null){
-            return  ResponseEntity.ok(ResultDto.of("resultcode","존재하지않는 멤버입니다.",null));
+            return  ResponseEntity.ok(ResultDto.of("resultcode","token재발급 완료",response));
+        }catch (Exception e){
+            throw new RuntimeException(e.getMessage());
         }
-        LoginResponseDto response = memberService.refreshToken(member,tokenDto.getToken());
-        if(response == null){
-            return  ResponseEntity.ok(ResultDto.of("resultcode","token재발급 실패",response));
-        }
-
-        return  ResponseEntity.ok(ResultDto.of("resultcode","token재발급 완료",response));
     }
 
     @PostMapping("/tokenValidation")
@@ -156,10 +173,15 @@ public class AuthController {
                     content = @Content(schema=@Schema(implementation = TokenDto.class)))
             @RequestBody TokenDto tokenDto
     ){
-        String token = tokenDto.getToken();
-        boolean valid = memberService.validToken(token);
+        try {
+            String token = tokenDto.getToken();
+            boolean valid = memberService.validToken(token);
 
-        return  ResponseEntity.ok(ResultDto.of("resultcode","token재발급 완료",valid));
+            return  ResponseEntity.ok(ResultDto.of("resultcode","token재발급 완료",valid));
+        }catch (Exception e){
+            throw new RuntimeException(e.getMessage());
+        }
+
     }
 //    @GetMapping("/info")
 //    public String userInfo(Authentication auth) {
