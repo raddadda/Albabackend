@@ -99,9 +99,6 @@ public class AttendanceController {
         return ResponseEntity.ok(ResultDto.of("성공", "조회성공", getAttendData));
     }
 
-
-
-
     /**
      * 이번달 일한 시간
      */
@@ -227,11 +224,12 @@ public class AttendanceController {
         if (!memberService.findByMemberidToRole(memberid).equals("USER")) {   //권한 확인
             return ResponseEntity.ok(ResultDto.of("실패", "권한이 맞지 않습니다.", null));
         }
-
+        System.out.println("-----------------getUserMonthData2-----------------");
         Map<Long,Long> result = attendanceService.getUserMonthData(memberid);
         if (result != null) {
             return ResponseEntity.ok(ResultDto.of("성공", "5달 데이터 조회 성공", result));
         }
+        System.out.println("-----------------getUserMonthData3-----------------");
         return ResponseEntity.ok(ResultDto.of("null", "조회가 null값입니다.", result));
 
     }
@@ -400,4 +398,7 @@ public class AttendanceController {
         }
         return ResponseEntity.ok(ResultDto.of("실패", "admin권한이 아닙니다.", null));
     }
+
+
+
 }

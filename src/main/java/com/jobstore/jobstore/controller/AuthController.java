@@ -1,7 +1,9 @@
 package com.jobstore.jobstore.controller;
 
+import com.jobstore.jobstore.dto.FindPasswordDto;
 import com.jobstore.jobstore.dto.LoginDto;
 import com.jobstore.jobstore.dto.TokenDto;
+import com.jobstore.jobstore.dto.request.attendance.AttendanceDto;
 import com.jobstore.jobstore.dto.request.member.AdminjoinDto;
 import com.jobstore.jobstore.dto.request.member.DoubleCheckDto;
 import com.jobstore.jobstore.dto.request.member.UserjoinDto;
@@ -160,6 +162,25 @@ public class AuthController {
         boolean valid = memberService.validToken(token);
 
         return  ResponseEntity.ok(ResultDto.of("resultcode","token재발급 완료",valid));
+    }
+    /**
+     비밀번호 찾기
+     */
+    @PostMapping("/findPassword")
+    @Operation(summary = "password 찾기폼", description = "password찾기")
+    public ResponseEntity<ResultDto<Object>> createAttendance(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "요청파라미터", required = true,
+                    content = @Content(schema = @Schema(implementation = FindPasswordDto.class)))
+            @RequestBody FindPasswordDto findPasswordDto
+            //, @AuthenticationPrincipal PrincipalDetails principalDetails
+    ) {
+        System.out.println("-----------------findPasswordDto-----------------");
+        boolean result = memberService.findPassword(findPasswordDto);
+        if(!result){
+            return ResponseEntity.ok(ResultDto.of("실패", "비밀번호 찾기에 실패", result));
+        }
+        return ResponseEntity.ok(ResultDto.of("성공", "비밀번호 찾기에 성공", result));
+
     }
 //    @GetMapping("/info")
 //    public String userInfo(Authentication auth) {
