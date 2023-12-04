@@ -12,10 +12,12 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -97,17 +99,21 @@ public ResponseEntity<ResultDto<Map<Long,Long>>> findAllmember(@PathVariable Str
     public ResponseEntity<ResultDto<PaymentMainDto>> paymentMain(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "요청파라미터", required = true,
             content = @Content(schema=@Schema(implementation = PaymentAllPaymentDto.class)))
                                                            @RequestBody PaymentAllPaymentDto paymentAllPaymentDto){
+        try {
+            LocalDateTime time = LocalDateTime.now();
+            long month= paymentService.localDateTimeToMonth(time);
 
-        LocalDateTime time = LocalDateTime.now();
-        long month= paymentService.localDateTimeToMonth(time);
+            //한달급여
+            Long payment = paymentService.paymentMain(time.getMonthValue());
+            //주급
+            long week = paymentService.localDateTimeToWeek(time,paymentAllPaymentDto.getMemberid());
 
-        //한달급여
-        Long payment = paymentService.paymentMain(time.getMonthValue());
-        //주급
-        long week = paymentService.localDateTimeToWeek(time,paymentAllPaymentDto.getMemberid());
+            PaymentMainDto paymentMainDto = new PaymentMainDto();
+            return ResponseEntity.ok(ResultDto.of("200","조회성공",new PaymentMainDto(payment,week)));
 
-        PaymentMainDto paymentMainDto = new PaymentMainDto();
-        return ResponseEntity.ok(ResultDto.of("200","조회성공",new PaymentMainDto(payment,week)));
+        }catch (Exception e){
+            throw new RuntimeException("PaymentMain 처리 중 오류 발생: " + e.getMessage());
+        }
     }
 
 //    @PostMapping("/payment")
@@ -141,8 +147,13 @@ public ResponseEntity<ResultDto<Map<Long,Long>>> findAllmember(@PathVariable Str
     public ResponseEntity<ResultDto<Double>> last_recentAdminPercentage(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "요청파라미터", required = true,
             content = @Content(schema=@Schema(implementation = PaymentPercentageDto.class)))@RequestBody PaymentPercentageDto paymentPercentageDto){
-        double percent=paymentService.last_recentAdminPercentage(paymentPercentageDto.getMemberid(),paymentPercentageDto.getMonth());
+        try {
+            double percent=paymentService.last_recentAdminPercentage(paymentPercentageDto.getMemberid(),paymentPercentageDto.getMonth());
             return ResponseEntity.ok(ResultDto.of("200","성공",percent));
+        }catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+
     }
 
     @PostMapping("/admin/allpayment")
