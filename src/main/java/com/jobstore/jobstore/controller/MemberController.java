@@ -79,7 +79,7 @@ public class MemberController {
         // System.out.println("asdadadsadsaasdsada"+doubleCheckDto.getMemberid());
         MemberAndStoreDetailsDto memberAndStoreDetailsDto=memberService.findMemberDetails(doubleCheckDto.getMemberid());
         if(memberAndStoreDetailsDto!=null){
-            return ResponseEntity.ok(ResultDto.of("resultcode","성공",memberService.findMemberDetails(doubleCheckDto.getMemberid())));
+            return ResponseEntity.ok(ResultDto.of("resultcode","성공",memberAndStoreDetailsDto));
         }else{
             return ResponseEntity.ok(ResultDto.of("resultcode","실패",null));
         }

@@ -1,6 +1,8 @@
 package com.jobstore.jobstore.service;
 
 
+import com.jobstore.jobstore.dto.FindIdDto;
+import com.jobstore.jobstore.dto.FindPasswordDto;
 import com.jobstore.jobstore.dto.LoginDto;
 import com.jobstore.jobstore.dto.request.member.*;
 import com.jobstore.jobstore.dto.MemberDto;
@@ -18,13 +20,20 @@ import com.jobstore.jobstore.utill.AwsUtill;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.mail.javamail.MimeMessageHelper;
 
+import javax.tools.JavaFileManager;
 import java.util.*;
 
 @Service
@@ -39,7 +48,12 @@ public class MemberService  {
     private PaymentRepository paymentRepository;
     @Autowired
     private AwsUtill awsUtill;
+    @Autowired
+    private JavaMailSender javaMailSender;
 
+    @Value("${spring.mail.username}")
+    private String from;
+    //MailBodyUtil mailBodyUtil = new MailBodyUtil();
 
     PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
@@ -120,6 +134,7 @@ public class MemberService  {
         // System.out.println("asdsadasdasdas:       "+memberid);
         Member member=memberRepository.findByMemberid2(memberid);
         long storeidletsgo=memberRepository.findeByMemberidForStoreid(memberid);
+
         // System.out.println("sadadasdasdasdasd:     "+storeidletsgo);
         Store store=storeRepository.findByStoreid2(storeidletsgo);
         return new MemberAndStoreDetailsDto(member,store);
@@ -154,6 +169,16 @@ public class MemberService  {
         existingMember.setPassword(passwordEncoder.encode(memberDto.getPassword()));
         existingMember.setPhonenumber(memberDto.getPhonenumber());
         existingMember.setName(memberDto.getName());
+        return memberRepository.save(existingMember);
+    }
+
+    /**
+     * 비밀번호로 수정
+     */
+    public Member updateMemberPassword(String memberid,String password){
+        Member existingMember = memberRepository.findByMemberid(memberid)
+                .orElseThrow(() -> new RuntimeException("해당 멤버아이디는 존재하지 않는 멤버 아이디입니다"));
+        existingMember.setPassword(passwordEncoder.encode(password));
         return memberRepository.save(existingMember);
     }
     //아이디가 존재하면 행의갯수는 0보다크니까 삭제성공
@@ -248,6 +273,7 @@ public class MemberService  {
     public String findByMemberidToRole(String memberid){
         return memberRepository.findByMemberidToRole(memberid);
     }
+
 
     public HashMap findByWorker(long storeid){
 
@@ -350,5 +376,122 @@ public class MemberService  {
 //
 //        }
     }
+
+    public String setPassword(int length) {
+        int index = 0;
+        char[] charArr = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+                'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L',
+                'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y',
+                'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l',
+                'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
+                'w', 'x', 'y', 'z' };
+
+        StringBuffer sb = new StringBuffer();
+
+        for (int i = 0; i < length; i++) {
+            index = (int) (charArr.length * Math.random());
+            sb.append(charArr[index]);
+        }
+
+        return sb.toString();
+    }
+
+
+
+
+
+
+    public boolean findPassword(FindPasswordDto findPasswordDto){
+        Member member = memberRepository.findByMemberid2(findPasswordDto.getMemberid());
+        if(member == null){
+            return false;
+        }
+        String tempPassword = setPassword(7);
+//gCQ33M8
+        //member.setPassword(tempPassword);
+        updateMemberPassword(member.getMemberid(),tempPassword);
+        String content = "";
+        System.out.println("before:"+member.getPassword());
+        System.out.println("after:"+tempPassword);
+        //if(member.getPassword().equals(tempPassword)){
+            content = tempPassword;
+        //}
+        String subject = "test 메일";
+        String from = "cyc123m@naver.com";
+        String to = findPasswordDto.getEmail();
+                //"받는이 아이디@도메인주소";
+        //if(!duplicateMemberid(member.getMemberid())){
+            //String password = memberRepository
+        System.out.println("@@@@@@");
+            try {
+                System.out.println("1");
+                MimeMessage mail = javaMailSender.createMimeMessage();
+                MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mail,true,"UTF-8");
+                System.out.println("2");
+                mimeMessageHelper.setFrom(from);
+                mimeMessageHelper.setTo(to);
+                mimeMessageHelper.setSubject(subject);
+                mimeMessageHelper.setText(content, true);
+                System.out.println("3");
+                if(mimeMessageHelper == null){
+                    return false;
+                }
+                javaMailSender.send(mail);
+                return true;
+            }catch (MessagingException e){
+                e.printStackTrace();
+            }
+
+
+        //}
+        return false;
+    }
+
+//    public boolean findId(FindIdDto findIdDto){
+//        Member member = memberRepository.existsByName(findIdDto.getMemberid());
+//        if(member == null){
+//            return false;
+//        }
+//        String tempPassword = setPassword(7);
+////gCQ33M8
+//        //member.setPassword(tempPassword);
+//        updateMemberPassword(member.getMemberid(),tempPassword);
+//        String content = "";
+//        System.out.println("before:"+member.getPassword());
+//        System.out.println("after:"+tempPassword);
+//        //if(member.getPassword().equals(tempPassword)){
+//        content = tempPassword;
+//        //}
+//        String subject = "test 메일";
+//        String from = "cyc123m@naver.com";
+//        String to = findIdDto.getEmail();
+//        //"받는이 아이디@도메인주소";
+//        //if(!duplicateMemberid(member.getMemberid())){
+//        //String password = memberRepository
+//        System.out.println("@@@@@@");
+//        try {
+//            System.out.println("1");
+//            MimeMessage mail = javaMailSender.createMimeMessage();
+//            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mail,true,"UTF-8");
+//            System.out.println("2");
+//            mimeMessageHelper.setFrom(from);
+//            mimeMessageHelper.setTo(to);
+//            mimeMessageHelper.setSubject(subject);
+//            mimeMessageHelper.setText(content, true);
+//            System.out.println("3");
+//            if(mimeMessageHelper == null){
+//                return false;
+//            }
+//            javaMailSender.send(mail);
+//            return true;
+//        }catch (MessagingException e){
+//            e.printStackTrace();
+//        }
+//
+//
+//        //}
+//        return false;
+//    }
+
 
 }

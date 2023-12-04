@@ -120,7 +120,10 @@ public class AttendanceService {
         if (attendance != null) {
             if (member != null) {
                 if(attendanceUpdateDto.getConfirm() == 1){
-                    attendance.setConfirm(attendanceUpdateDto.getConfirm());
+                    if(attendance.getLeavework() != null){
+                        attendance.setConfirm(attendanceUpdateDto.getConfirm());
+                    }
+
                     attendanceRepository.save(attendance);
                 }
                 return true;
@@ -295,9 +298,7 @@ public class AttendanceService {
 
         public Map getUserMonthData(String memberid){
         LocalDateTime localDateTime = LocalDateTime.now().plusMonths(4);
-        //localDateTime.getMonthValue()
 
-        //System.out.println("monthValue"+monthValue);
         Map<Long,Long> result = new LinkedHashMap();
         for(int i=0; i<5; i++){
 
@@ -309,12 +310,6 @@ public class AttendanceService {
             String combinedString = year+month;
             long date = Integer.parseInt(combinedString);
             result.put(date,workMonth(monthValue,memberid));
-//            result.put(monthValue,workMonth(monthValue,memberid));
-//            if(monthValue==1){
-//                monthValue=12;
-//            }else {
-//                monthValue--;
-//            }
 
         }
         return result;

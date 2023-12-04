@@ -111,9 +111,6 @@ public class AttendanceController {
         }
     }
 
-
-
-
     /**
      * 이번달 일한 시간
      */
@@ -259,6 +256,7 @@ public class AttendanceController {
     public ResponseEntity<ResultDto<Map<Long,Long>>> getUserMonthData(
             @PathVariable(value = "memberid", required = true) String memberid,
             @PathVariable(value = "storeid", required = true) Long storeid) {
+
         try {
             System.out.println("-----------------getUserMonthData-----------------");
             if (!memberService.findByMemberidToRole(memberid).equals("USER")) {   //권한 확인
@@ -273,6 +271,7 @@ public class AttendanceController {
         }catch (Exception e){
             throw new RuntimeException(e.getMessage());
         }
+
 
     }
 
@@ -469,4 +468,7 @@ public class AttendanceController {
             throw new RuntimeException(e.getMessage());
         }
     }
+
+
+
 }
