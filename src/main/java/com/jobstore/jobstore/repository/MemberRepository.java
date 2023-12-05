@@ -19,7 +19,8 @@ public interface MemberRepository extends JpaRepository<Member,String> {
     @Query("SELECT m FROM Member m WHERE m.memberid = :memberid")
     List<Member> findByMemberidList(@Param("memberid") String memberid);
 
-
+    @Query("SELECT m FROM Member m WHERE m.memberid = :memberid AND m.store.storeid = :storeid")
+    boolean existsByMemberidAndStoreid(String memberid,String storeid);
 
     @Query("SELECT m FROM Member m WHERE m.memberid = :memberid")
     Member findByMemberid2(@Param("memberid") String memberid);

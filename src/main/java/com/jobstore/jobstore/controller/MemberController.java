@@ -147,7 +147,6 @@ public class MemberController {
             return ResponseEntity.ok(ResultDto.of("실패", "권한이 맞지 않습니다.", null));
         }
         HashMap<String,String> result  = memberService.findByWorker(storeid);
-        System.out.println("@@@");
         if(result == null){
             return ResponseEntity.ok(ResultDto.of("null", "worker리스트가 null값입니다.", result));
         }

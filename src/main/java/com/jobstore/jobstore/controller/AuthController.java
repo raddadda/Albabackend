@@ -38,7 +38,6 @@ public class AuthController {
     /**
      회원가입
      */
-
     @PostMapping("/doublecheck")
     @Operation(summary = "memberid 중복확인검사", description = "admin 전용 회원가입입니다.")
     public ResponseEntity<ResultDto<Object>> doublecheck(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "요청파라미터", required = true,
@@ -111,6 +110,7 @@ public class AuthController {
             @RequestBody LoginDto loginDto) {
         try{
             if(loginDto.getRole().equals("ADMIN")){
+                //memberRepository.existsByMemberidAndStoreid(loginDto.getMemberid())){
                 Member member = memberService.login(loginDto);
                 String id = member.getMemberid();
                 if (!memberService.findByMemberidToRole(id).equals("ADMIN")) {
@@ -167,7 +167,6 @@ public class AuthController {
             throw new RuntimeException(e.getMessage());
         }
     }
-
     @PostMapping("/tokenValidation")
     @Operation(summary = "토큰 재발급", description = "로그인상태에서 토큰을 재발급 합니다")
     public ResponseEntity<ResultDto<Object>> validToken(
@@ -178,7 +177,6 @@ public class AuthController {
         try {
             String token = tokenDto.getToken();
             boolean valid = memberService.validToken(token);
-
             return  ResponseEntity.ok(ResultDto.of("resultcode","token재발급 완료",valid));
         }catch (Exception e){
             throw new RuntimeException(e.getMessage());
@@ -194,7 +192,6 @@ public class AuthController {
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "요청파라미터", required = true,
                     content = @Content(schema = @Schema(implementation = FindPasswordDto.class)))
             @RequestBody FindPasswordDto findPasswordDto
-            //, @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
         System.out.println("-----------------findPasswordDto-----------------");
         boolean result = memberService.findPassword(findPasswordDto);
@@ -204,16 +201,4 @@ public class AuthController {
         return ResponseEntity.ok(ResultDto.of("성공", "비밀번호 찾기에 성공", result));
 
     }
-//    @GetMapping("/info")
-//    public String userInfo(Authentication auth) {
-//        User loginUser = userService.getLoginUserByLoginId(auth.getName());
-//
-//        return String.format("loginId : %s\nnickname : %s\nrole : %s",
-//                loginUser.getLoginId(), loginUser.getNickname(), loginUser.getRole().name());
-//    }
-//
-//    @GetMapping("/admin")
-//    public String adminPage() {
-//        return "관리자 페이지 접근 성공";
-//    }
 }

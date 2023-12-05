@@ -193,7 +193,6 @@ public class AttendanceController {
             if(member == null || !member.getRole().equals("ADMIN")){
                 return ResponseEntity.ok(ResultDto.of("실패", "권한이 맞지 않습니다.", null));
             }
-
             long nowmonth = attendanceService.localDateTimeToMonth(LocalDateTime.now());
             long month = attendanceService.workMonth(nowmonth, worker);
 
@@ -229,7 +228,6 @@ public class AttendanceController {
                 return ResponseEntity.ok(ResultDto.of("실패", "권한이 맞지 않습니다.", null));
             }
             long localDateTimeToWeek = attendanceService.localDateTimeToWeek(member.getMemberid());
-
 
             return ResponseEntity.ok(ResultDto.of("성공", "주급 월급 조회성공", localDateTimeToWeek));
         }catch (HttpClientErrorException.MethodNotAllowed e){
@@ -585,6 +583,29 @@ public class AttendanceController {
             throw  new RuntimeException(e.getMessage());
         }
     }
+
+
+//    @GetMapping("/admin/attendance/workerlist/{memberid}/{storeid}")
+//    @Operation(summary = "worker리스트 조회", description = "admin의 worker리스트 조회")
+//    @Parameter(name = "memberid", description = "memberid", required = true)
+//    @Parameter(name = "storeid", description = "storeid", required = true)
+//    @ResponseBody
+//    public ResponseEntity<ResultDto<HashMap<String,String>>> getWorkerList(
+//            @PathVariable(value = "memberid", required = true) String memberid,
+//            @PathVariable(value = "storeid", required = true) Long storeid
+//    ) {
+//        System.out.println("-----------------getUserData-----------------");
+//        Member member = memberService.findMemberid(memberid);
+//        if(member == null || !member.getRole().equals("ADMIN")){
+//            return ResponseEntity.ok(ResultDto.of("실패", "권한이 맞지 않습니다.", null));
+//        }
+//        HashMap<String,String> result  = memberService.findByWorker(storeid);
+//        System.out.println("@@@");
+//        if(result == null){
+//            return ResponseEntity.ok(ResultDto.of("null", "worker리스트가 null값입니다.", result));
+//        }
+//        return ResponseEntity.ok(ResultDto.of("성공", "조회성공", result));
+//    }
 
     @PatchMapping("/admin/attendance/confirm")
     @Operation(summary = "admin 근태승인", description = "admin이 근태를 승인하는 곳이며 급여가 반영됩니다.")
