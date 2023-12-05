@@ -20,6 +20,7 @@ public class Member {
     @Column(length = 255, nullable = false)
     private String memberid;
     @Column(length = 255, nullable = false)
+    @JsonIgnore
     private String password;
     @Column(length = 255, nullable = false)
     private String phonenumber;
