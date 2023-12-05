@@ -164,6 +164,7 @@ public class AttendanceService {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
                 LocalDateTime leave = attendance.getLeavework();
+                System.out.println("leave : "+leave);
                 String formatLeave = leave.format(formatter);
                 LocalDateTime go = attendance.getGowork();
                 String formatGo = go.format(formatter);
@@ -171,8 +172,9 @@ public class AttendanceService {
                 Duration duration2 = Duration.between(go, leave); // 두 시간의 차이 계산
                 long hours = duration2.toHours(); // 시간 단위로 시간 차이 구하기
                 long minutes = duration2.toMinutes(); // 분 단위로 시간 차이 구하기
+                System.out.println("--------attendanceUpdateDto 급여------- "+attendanceUpdateDto.getWage());
                 result = hours*attendanceUpdateDto.getWage();
-
+                System.out.println("result : "+result);
                 return result;
             }
         }
