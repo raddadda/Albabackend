@@ -45,6 +45,7 @@ public class AttendanceService {
             Attendance attendance = attendanceDto.toEntity();
             attendance.setMember(member);
             attendance.setStoreid(storeid);
+
             attendanceRepository.save(attendance);
             return true;
         }
@@ -202,20 +203,23 @@ public class AttendanceService {
         List<Attendance> attendance= attendanceRepository.findByWorker(memberid);
         if(attendance != null){
             for(Attendance attendlist : attendance){
-                long time = attendlist.getLeavework().getMonthValue();
+                if(attendlist.getConfirm()==1){
+                    long time = attendlist.getLeavework().getMonthValue();
 
-                if(time == month){
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                    if(time == month){
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-                    LocalDateTime leave = attendlist.getLeavework();
-                    String formatLeave = leave.format(formatter);
-                    LocalDateTime go = attendlist.getGowork();
-                    String formatGo = go.format(formatter);
+                        LocalDateTime leave = attendlist.getLeavework();
+                        String formatLeave = leave.format(formatter);
+                        LocalDateTime go = attendlist.getGowork();
+                        String formatGo = go.format(formatter);
 
-                    Duration duration = Duration.between(go, leave); // 두 시간의 차이 계산
-                    long minutes = duration.toMinutes(); // 분 단위로 시간 차이 구하기
-                    result += minutes;
+                        Duration duration = Duration.between(go, leave); // 두 시간의 차이 계산
+                        long minutes = duration.toMinutes(); // 분 단위로 시간 차이 구하기
+                        result += minutes;
+                    }
                 }
+
             }
         }
         return result;
@@ -224,24 +228,27 @@ public class AttendanceService {
     //이번주 일한 시간
     public long localDateTimeToWeek(String memberid){
         LocalDateTime now = LocalDateTime.now(); // 현재 날짜와 시간
-        LocalDateTime startOfWeek = now.with(TemporalAdjusters.previousOrSame(java.time.DayOfWeek.MONDAY)); // 이번 주 시작일
+        LocalDateTime startOfWeek = now.with(TemporalAdjusters.previousOrSame(java.time.DayOfWeek.MONDAY)).withHour(0).withMinute(0).withSecond(0); // 이번 주 시작일
         LocalDateTime endOfWeek = now.with(TemporalAdjusters.nextOrSame(java.time.DayOfWeek.SUNDAY)).withHour(23).withMinute(59).withSecond(59); // 이번 주 마지막 일시
         List<Attendance> attendances= attendanceRepository.findByWorker(memberid);
         long result =0;
         for(Attendance attendance : attendances){
-            if(paymentService.checkLocaltime(startOfWeek,attendance.getLeavework())){
-                if(paymentService.checkLocaltime(attendance.getLeavework(),endOfWeek)){
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            if(attendance.getConfirm()==1){
+                if(paymentService.checkLocaltime(startOfWeek,attendance.getLeavework())){
+                    if(paymentService.checkLocaltime(attendance.getLeavework(),endOfWeek)){
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-                    LocalDateTime leave = attendance.getLeavework();
-                    String formatLeave = leave.format(formatter);
-                    LocalDateTime go = attendance.getGowork();
-                    String formatGo = go.format(formatter);
+                        LocalDateTime leave = attendance.getLeavework();
+                        String formatLeave = leave.format(formatter);
+                        LocalDateTime go = attendance.getGowork();
+                        String formatGo = go.format(formatter);
 
-                    Duration duration = Duration.between(go, leave); // 두 시간의 차이 계산
-                    result += duration.toMinutes(); // 분 단위로 시간 차이 구하기
+                        Duration duration = Duration.between(go, leave); // 두 시간의 차이 계산
+                        result += duration.toMinutes(); // 분 단위로 시간 차이 구하기
+                    }
                 }
             }
+
         }
         return result;
     }
