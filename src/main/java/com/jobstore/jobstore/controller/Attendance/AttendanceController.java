@@ -621,19 +621,18 @@ public class AttendanceController {
             System.out.println("0");
             if (role.equals("ADMIN")) {
                 System.out.println("1");
-                boolean result = attendanceService.confirmAttendance(attendanceUpdateDto);
-                if (!result) {
+                AttendanceUpdateDto result = attendanceService.confirmAttendance(attendanceUpdateDto);
+                if (result ==null) {
                     return ResponseEntity.ok(ResultDto.of("실패", "result를 받아오는데 실패했습니다.", null));
                 }
                 System.out.println("2");
-                long payCalculate = attendanceService.payCalculate(attendanceUpdateDto);
+                long payCalculate = attendanceService.payCalculate(result);
                 System.out.println("payCalculate"+payCalculate);
                 if (payCalculate == -1) {
                     return ResponseEntity.ok(ResultDto.of("실패", "급여 계산에 실패했습니다.", null));
                 }
-
                 System.out.println(" attendanceUpdateDto.getLeavework():"+ attendanceUpdateDto.getLeavework());
-                Payment payment = paymentService.addPaymentForMember(attendanceUpdateDto.getMemberid(), attendanceUpdateDto.getLeavework(), payCalculate);
+                Payment payment = paymentService.addPaymentForMember(result.getMemberid(), result.getLeavework(), payCalculate);
                 if(payment == null){
                     return ResponseEntity.ok(ResultDto.of("실패", "급여 추가에 실패했습니다.", null));
                 }

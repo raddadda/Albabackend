@@ -114,7 +114,7 @@ public class AttendanceService {
         return false;
     }
     //어드민 승인
-    public boolean confirmAttendance(AttendanceUpdateDto attendanceUpdateDto) {
+    public AttendanceUpdateDto confirmAttendance(AttendanceUpdateDto attendanceUpdateDto) {
         Attendance attendance = attendanceRepository.findByWorkderAndAttendid(attendanceUpdateDto.getWorker(), attendanceUpdateDto.getAttendid());
         Member member = memberRepository.findByMemberid2(attendanceUpdateDto.getMemberid());
         if (attendance != null) {
@@ -123,12 +123,13 @@ public class AttendanceService {
                     if(attendance.getLeavework() != null){
                         attendance.setConfirm(attendanceUpdateDto.getConfirm());
                         attendanceRepository.save(attendance);
-                        return true;
+                        return attendanceUpdateDto;
                     }
                 }
+                return null;
             }
         }
-        return false;
+        return null;
     }
     //어드민 전체worker 조회
     public HashMap workerList(String memberid){
