@@ -390,11 +390,6 @@ public class MemberService  {
         return sb.toString();
     }
 
-
-
-
-
-
     public boolean findPassword(FindPasswordDto findPasswordDto){
         Member member = memberRepository.findByMemberid2(findPasswordDto.getMemberid());
         if(member == null){
@@ -428,52 +423,6 @@ public class MemberService  {
     public Member findMemberid(String memberid){
         return memberRepository.findByMemberid(memberid).get();
     }
-
-//    public boolean findId(FindIdDto findIdDto){
-//        Member member = memberRepository.existsByName(findIdDto.getMemberid());
-//        if(member == null){
-//            return false;
-//        }
-//        String tempPassword = setPassword(7);
-////gCQ33M8
-//        //member.setPassword(tempPassword);
-//        updateMemberPassword(member.getMemberid(),tempPassword);
-//        String content = "";
-//        System.out.println("before:"+member.getPassword());
-//        System.out.println("after:"+tempPassword);
-//        //if(member.getPassword().equals(tempPassword)){
-//        content = tempPassword;
-//        //}
-//        String subject = "test 메일";
-//        String from = "cyc123m@naver.com";
-//        String to = findIdDto.getEmail();
-//        //"받는이 아이디@도메인주소";
-//        //if(!duplicateMemberid(member.getMemberid())){
-//        //String password = memberRepository
-//        System.out.println("@@@@@@");
-//        try {
-//            System.out.println("1");
-//            MimeMessage mail = javaMailSender.createMimeMessage();
-//            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mail,true,"UTF-8");
-//            System.out.println("2");
-//            mimeMessageHelper.setFrom(from);
-//            mimeMessageHelper.setTo(to);
-//            mimeMessageHelper.setSubject(subject);
-//            mimeMessageHelper.setText(content, true);
-//            System.out.println("3");
-//            if(mimeMessageHelper == null){
-//                return false;
-//            }
-//            javaMailSender.send(mail);
-//            return true;
-//        }catch (MessagingException e){
-//            e.printStackTrace();
-//        }
-//
-//
-//        //}
-//        return false;
-//    }
 
 
 }

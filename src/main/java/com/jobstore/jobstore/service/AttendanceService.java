@@ -122,11 +122,10 @@ public class AttendanceService {
                 if(attendanceUpdateDto.getConfirm() == 1){
                     if(attendance.getLeavework() != null){
                         attendance.setConfirm(attendanceUpdateDto.getConfirm());
+                        attendanceRepository.save(attendance);
+                        return true;
                     }
-
-                    attendanceRepository.save(attendance);
                 }
-                return true;
             }
         }
         return false;
@@ -171,9 +170,6 @@ public class AttendanceService {
                 Duration duration2 = Duration.between(go, leave); // 두 시간의 차이 계산
                 long hours = duration2.toHours(); // 시간 단위로 시간 차이 구하기
                 long minutes = duration2.toMinutes(); // 분 단위로 시간 차이 구하기
-                System.out.println("minutes"+minutes);
-                System.out.println("hours"+hours);
-                System.out.println("attendanceUpdateDto.getWage()"+attendanceUpdateDto.getWage());
                 result = hours*attendanceUpdateDto.getWage();
 
                 return result;
@@ -292,7 +288,7 @@ public class AttendanceService {
 //    }
 
         public Map getUserMonthData(Member member){
-        LocalDateTime localDateTime = LocalDateTime.now().plusMonths(4);
+        LocalDateTime localDateTime = LocalDateTime.now();
 
         Map<Long,Long> result = new LinkedHashMap();
         for(int i=0; i<5; i++){
