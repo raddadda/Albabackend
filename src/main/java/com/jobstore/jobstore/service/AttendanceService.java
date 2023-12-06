@@ -115,9 +115,9 @@ public class AttendanceService {
         return false;
     }
     //어드민 승인
-    public AttendanceUpdateDto confirmAttendance(AttendanceUpdateDto attendanceUpdateDto) {
+    public AttendanceUpdateDto confirmAttendance(AttendanceUpdateDto attendanceUpdateDto,Member member) {
         Attendance attendance = attendanceRepository.findByWorkderAndAttendid(attendanceUpdateDto.getWorker(), attendanceUpdateDto.getAttendid());
-        Member member = memberRepository.findByMemberid2(attendanceUpdateDto.getMemberid());
+     //   Member member = memberRepository.findByMemberid2(attendanceUpdateDto.getMemberid());
         if (attendance != null) {
             if (member != null) {
                 if(attendanceUpdateDto.getConfirm() == 1){
@@ -151,16 +151,18 @@ public class AttendanceService {
             return workerList;
         }
         return null;
-
     }
     /**
      * Attendance 급여계산
      */
-    public long payCalculate(AttendanceUpdateDto attendanceUpdateDto){
-        Member member = memberRepository.findByMemberid2(attendanceUpdateDto.getMemberid());
+    public Attendance findByWorkderAndAttendid(String worker,long attendid){
+        return attendanceRepository.findByWorkderAndAttendid(worker,attendid);
+    }
+    public long payCalculate(AttendanceUpdateDto attendanceUpdateDto,Member member,Attendance attendance){
+       //Member member = memberRepository.findByMemberid2(attendanceUpdateDto.getMemberid());
         long result;
         if(member != null){
-            Attendance attendance = attendanceRepository.findByWorkderAndAttendid(attendanceUpdateDto.getWorker(),attendanceUpdateDto.getAttendid());
+            //Attendance attendance = attendanceRepository.findByWorkderAndAttendid(attendanceUpdateDto.getWorker(),attendanceUpdateDto.getAttendid());
             if(attendance != null){
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -174,7 +176,7 @@ public class AttendanceService {
                 long hours = duration2.toHours(); // 시간 단위로 시간 차이 구하기
                 long minutes = duration2.toMinutes(); // 분 단위로 시간 차이 구하기
                 System.out.println("--------attendanceUpdateDto 급여------- "+attendanceUpdateDto.getWage());
-                result = hours*attendanceUpdateDto.getWage();
+                result = hours*attendance.getWage();
                 System.out.println("result : "+result);
                 return result;
             }
