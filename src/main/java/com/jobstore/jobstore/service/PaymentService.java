@@ -99,8 +99,8 @@ public class PaymentService {
             if (!existAdmin) {
                 long storeid = memberRepository.findeByMemberidForStoreid(memberid);
                 boolean existmember=paymentRepository.existsByMemberStoreStoreidAndMonth(storeid,month);
-                long sum = calculatePayment(memberid, month);
                 if(existmember) {
+                    long sum = calculatePayment(memberid, month);
                     PaymentAdmin paymentAdmin = new PaymentAdmin();
                     paymentAdmin.setMemberid(memberid);
                     paymentAdmin.setStoreid(storeid);
@@ -110,11 +110,11 @@ public class PaymentService {
                     paymentAdminRepository.save(paymentAdmin);
                     return sum;
                 }else{
-                    return 0L;
+                    return null;
                 }
             }
         }
-        return 0L;
+        return null;
     }
 //    public List<PaymentDto> findMemberid_ForAllPayment(String memberid){
 //        List<Payment> memberPaymentData=paymentRepository.findByMemberId(memberid);
