@@ -98,16 +98,20 @@ public class PaymentService {
             boolean existAdmin = paymentAdminRepository.existsByMemberidAndMonth(memberid, month);
             if (!existAdmin) {
                 long storeid = memberRepository.findeByMemberidForStoreid(memberid);
+                boolean existmember=paymentRepository.existsByMemberStoreStoreidAndMonth(storeid,month);
                 long sum = calculatePayment(memberid, month);
+                if(existmember) {
+                    PaymentAdmin paymentAdmin = new PaymentAdmin();
+                    paymentAdmin.setMemberid(memberid);
+                    paymentAdmin.setStoreid(storeid);
+                    paymentAdmin.setMonth(month);
+                    paymentAdmin.setSum(sum);
 
-                PaymentAdmin paymentAdmin = new PaymentAdmin();
-                paymentAdmin.setMemberid(memberid);
-                paymentAdmin.setStoreid(storeid);
-                paymentAdmin.setMonth(month);
-                paymentAdmin.setSum(sum);
-
-                paymentAdminRepository.save(paymentAdmin);
-                return sum;
+                    paymentAdminRepository.save(paymentAdmin);
+                    return sum;
+                }else{
+                    return 0L;
+                }
             }
         }
         return 0L;
