@@ -617,28 +617,34 @@ public class AttendanceController {
     ) {
         try {
             System.out.println("-----------------confirmAttendance-----------------");
-            String role = memberService.findByMemberidToRole(attendanceUpdateDto.getMemberid());
-            System.out.println("0");
-            if (role.equals("ADMIN")) {
-                System.out.println("1");
-                AttendanceUpdateDto result = attendanceService.confirmAttendance(attendanceUpdateDto);
-                if (result ==null) {
-                    return ResponseEntity.ok(ResultDto.of("실패", "result를 받아오는데 실패했습니다.", null));
-                }
-                System.out.println("2");
-                long payCalculate = attendanceService.payCalculate(result);
-                System.out.println("payCalculate"+payCalculate);
-                if (payCalculate == -1) {
-                    return ResponseEntity.ok(ResultDto.of("실패", "급여 계산에 실패했습니다.", null));
-                }
-                System.out.println(" attendanceUpdateDto.getLeavework():"+ result.getLeavework());
-                Payment payment = paymentService.addPaymentForMember(result.getWorker(), result.getLeavework(), payCalculate);
-                if(payment == null){
-                    return ResponseEntity.ok(ResultDto.of("실패", "급여 추가에 실패했습니다.", null));
-                }
-                return ResponseEntity.ok(ResultDto.of("성공", "근태 승인 및 급여 추가 성공", null));
+            Member member = memberService.findMemberid(attendanceUpdateDto.getMemberid());
+            if(member == null || !member.getRole().equals("ADMIN")){
+                return ResponseEntity.ok(ResultDto.of("실패", "권한이 맞지 않습니다.", null));
             }
-            return ResponseEntity.ok(ResultDto.of("실패", "admin권한이 아닙니다.", null));
+
+//            String role = memberService.findByMemberidToRole(attendanceUpdateDto.getMemberid());
+//            System.out.println("0");
+//            if (role.equals("ADMIN")) {
+            System.out.println("1");
+            AttendanceUpdateDto result = attendanceService.confirmAttendance(attendanceUpdateDto,member);
+            if (result ==null) {
+                return ResponseEntity.ok(ResultDto.of("실패", "result를 받아오는데 실패했습니다.", null));
+            }
+            System.out.println("2"+result.getWage());
+            Attendance attendance = attendanceService.findByWorkderAndAttendid(attendanceUpdateDto.getWorker(),attendanceUpdateDto.getAttendid());
+            long payCalculate = attendanceService.payCalculate(result,member,attendance);
+            System.out.println("payCalculate"+payCalculate);
+            if (payCalculate == -1) {
+                return ResponseEntity.ok(ResultDto.of("실패", "급여 계산에 실패했습니다.", null));
+            }
+            System.out.println(" attendanceUpdateDto.getLeavework():"+ result.getLeavework());
+            Payment payment = paymentService.addPaymentForMember(result.getWorker(), result.getLeavework(), payCalculate);
+            if(payment == null){
+                return ResponseEntity.ok(ResultDto.of("실패", "급여 추가에 실패했습니다.", null));
+            }
+            return ResponseEntity.ok(ResultDto.of("성공", "근태 승인 및 급여 추가 성공", null));
+//            }
+//            return ResponseEntity.ok(ResultDto.of("실패", "admin권한이 아닙니다.", null));
         }catch (HttpClientErrorException.MethodNotAllowed e){
             throw new HttpClientErrorException(HttpStatus.METHOD_NOT_ALLOWED,e.getMessage());
         }
