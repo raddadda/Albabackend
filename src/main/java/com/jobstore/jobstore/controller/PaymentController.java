@@ -152,17 +152,25 @@ public ResponseEntity<ResultDto<Map<Long,Long>>> findAllmember(@PathVariable Str
     }
 
     @PostMapping("/admin/allpayment")
-    @Operation(summary = "Payment api",description = "그 해당달에 전체 지출액 반환하면서 동시에 PaymentAdmin table에 해당달 지출액 정보 삽입")
+    @Operation(summary = "Payment api",description = "해당달 지출액 정보 삽입")
     @ResponseBody
-    public ResponseEntity<ResultDto<Long>> adminAllPay(
+    public ResponseEntity<ResultDto<Long>> adminAllPayCreate(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "요청파라미터", required = true,
                     content = @Content(schema=@Schema(implementation = PaymentAdminAllpayment.class)))@RequestBody PaymentAdminAllpayment paymentAdminAllpayment){
 //        System.out.println("asdsadasddssadsa:sadasdas"+memberid);
         try {
-            return ResponseEntity.ok(ResultDto.of("200","월중전체 지출액 성공",paymentService.addPaymentForAdmin(paymentAdminAllpayment.getMemberid(),paymentAdminAllpayment.getMonth())));
+            return ResponseEntity.ok(ResultDto.of("200","월중전체 지출액 삽입성공",paymentService.insertPaymentForAdmin(paymentAdminAllpayment.getMemberid(),paymentAdminAllpayment.getMonth())));
         }catch (Exception e){
             throw new RuntimeException("Admin월중 전체 지출액"+e.getMessage());
         }
+
+    }
+    @GetMapping("/admin/allpayment/{memberid}/{month}")
+    @Operation(summary = "Payment api",description = "해당달 지출액 정보 조회")
+    @ResponseBody
+    public ResponseEntity<ResultDto<Long>> adminAllPayfind(@PathVariable("memberid") String memberid,@PathVariable("month") long month){
+        System.out.println("asdsadasdasdasdasdsad:     "+memberid);
+        return ResponseEntity.ok(ResultDto.of("200","월중 전체 지출액 조회 성공",paymentService.getPaymentForAdmin(memberid,month)));
 
     }
     @GetMapping("/admin/each/{memberid}/{month}")
