@@ -159,11 +159,11 @@ public ResponseEntity<ResultDto<Map<Long,Long>>> findAllmember(@PathVariable Str
                     content = @Content(schema=@Schema(implementation = PaymentAdminAllpayment.class)))@RequestBody PaymentAdminAllpayment paymentAdminAllpayment){
 //        System.out.println("asdsadasddssadsa:sadasdas"+memberid);
         try {
+
             return ResponseEntity.ok(ResultDto.of("200","월중전체 지출액 삽입성공",paymentService.insertPaymentForAdmin(paymentAdminAllpayment.getMemberid(),paymentAdminAllpayment.getMonth())));
         }catch (Exception e){
             throw new RuntimeException("Admin월중 전체 지출액"+e.getMessage());
         }
-
     }
     @GetMapping("/admin/allpayment/{memberid}/{month}")
     @Operation(summary = "Payment api",description = "해당달 지출액 정보 조회")
