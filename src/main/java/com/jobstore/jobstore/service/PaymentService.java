@@ -271,7 +271,7 @@ public class PaymentService {
     }
     public PaymentPagenationDto findByMemberidUser(String memberid ,Integer page){
         Integer size=5;
-        PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.DESC, "month");
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.DESC, "register");
         Page<Payment> paymentPage = paymentRepository.findByMemberid(memberid, pageRequest);
 
         List<PaymentDto> paymentDtoList = new ArrayList<>();

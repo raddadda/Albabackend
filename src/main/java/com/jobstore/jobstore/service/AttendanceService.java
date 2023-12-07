@@ -373,7 +373,7 @@ public class AttendanceService {
         //한페이지당 사이즈
         Integer size = 5;
         System.out.println("getAttendancesByMemberId333333");
-        PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.DESC, "attendid");
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.DESC, "start");
         Page<Attendance> attendances;
         if(role.equals("USER")){
             System.out.println("getAttendancesByMemberId1");
