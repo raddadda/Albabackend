@@ -53,31 +53,72 @@ public class PaymentService {
         }
     }
     //어드민 이번달 총 지출액
-    public Long addPaymentForAdmin(String memberid,long month){
-        PaymentAdmin paymentAdmin=new PaymentAdmin();
-        String Role=memberRepository.findByMemberidToRole(memberid);
-        boolean existAdmin= paymentAdminRepository.existsByMemberidAndMonth(memberid,month);
-        long sum = 0;
-        if(Role.equals("ADMIN")){
-            //        System.out.println("페이먼츠 서비스 입니다");
-            long storeid=memberRepository.findeByMemberidForStoreid(memberid);
-//        System.out.println("Stordossdjsj:"+storeid);
-            List<Long> lists=paymentRepository.findByStoreidAllmember(storeid,month);
-
-            for (Long payment : lists) { // 리스트 안의 각 Long 값을 가져와 더합니다.
-                sum += payment;
-            }
-            if(!existAdmin) {
-                paymentAdmin.setMemberid(memberid);
-                paymentAdmin.setStoreid(storeid);
-                paymentAdmin.setMonth(month);
-                paymentAdmin.setSum(sum);
-                paymentAdminRepository.save(paymentAdmin);
-            }
-//        System.out.println("123123123123123123123123123123"+sum);
-            return sum;
+//    public Long addPaymentForAdmin(String memberid,long month){
+//        PaymentAdmin paymentAdmin=new PaymentAdmin();
+//        String Role=memberRepository.findByMemberidToRole(memberid);
+//        boolean existAdmin= paymentAdminRepository.existsByMemberidAndMonth(memberid,month);
+//        long sum = 0;
+//        if(Role.equals("ADMIN")){
+//            //        System.out.println("페이먼츠 서비스 입니다");
+//            long storeid=memberRepository.findeByMemberidForStoreid(memberid);
+////        System.out.println("Stordossdjsj:"+storeid);
+//            List<Long> lists=paymentRepository.findByStoreidAllmember(storeid,month);
+//
+//            for (Long payment : lists) { // 리스트 안의 각 Long 값을 가져와 더합니다.
+//                sum += payment;
+//            }
+//            if(!existAdmin) {
+//                paymentAdmin.setMemberid(memberid);
+//                paymentAdmin.setStoreid(storeid);
+//                paymentAdmin.setMonth(month);
+//                paymentAdmin.setSum(sum);
+//                paymentAdminRepository.save(paymentAdmin);
+//            }
+////        System.out.println("123123123123123123123123123123"+sum);
+//            return sum;
+//        }
+//            return sum;
+//    }
+    public Long getPaymentForAdmin(String memberid, long month) {
+        String role = memberRepository.findByMemberidToRole(memberid);
+        if (role.equals("ADMIN")) {
+            PaymentAdmin paymentAdmin = paymentAdminRepository.findBymemberidAndMonth(memberid,month);
+            long result = calculatePayment(memberid, month);
+            paymentAdmin.setSum(result);
+            paymentAdminRepository.save(paymentAdmin);
+            return result;
         }
-            return sum;
+        return 0L;
+    }
+
+    private Long calculatePayment(String memberid, long month) {
+        long storeid = memberRepository.findeByMemberidForStoreid(memberid);
+        List<Long> lists = paymentRepository.findByStoreidAllmember(storeid, month);
+        return lists.stream().mapToLong(Long::longValue).sum();
+    }
+    public Long insertPaymentForAdmin(String memberid, long month) {
+        String role = memberRepository.findByMemberidToRole(memberid);
+        if (role.equals("ADMIN")) {
+            boolean existAdmin = paymentAdminRepository.existsByMemberidAndMonth(memberid, month);
+            if (!existAdmin) {
+                long storeid = memberRepository.findeByMemberidForStoreid(memberid);
+                boolean existmember=paymentRepository.existsByMemberStoreStoreidAndMonth(storeid,month);
+               if(existmember) {
+                    long sum = calculatePayment(memberid, month);
+                    PaymentAdmin paymentAdmin = new PaymentAdmin();
+                    paymentAdmin.setMemberid(memberid);
+                    paymentAdmin.setStoreid(storeid);
+                    paymentAdmin.setMonth(month);
+                    paymentAdmin.setSum(sum);
+                    System.out.println("asdadsadsadsadsadsadad:");
+                    paymentAdminRepository.save(paymentAdmin);
+                    return sum;
+                }else{
+                    return null;
+                }
+            }
+        }
+        return null;
     }
 //    public List<PaymentDto> findMemberid_ForAllPayment(String memberid){
 //        List<Payment> memberPaymentData=paymentRepository.findByMemberId(memberid);

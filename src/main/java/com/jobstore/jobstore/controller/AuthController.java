@@ -4,6 +4,7 @@ import com.jobstore.jobstore.dto.FindPasswordDto;
 import com.jobstore.jobstore.dto.LoginDto;
 import com.jobstore.jobstore.dto.TokenDto;
 import com.jobstore.jobstore.dto.request.attendance.AttendanceDto;
+import com.jobstore.jobstore.dto.request.auth.TokenValidationDto;
 import com.jobstore.jobstore.dto.request.member.AdminjoinDto;
 import com.jobstore.jobstore.dto.request.member.DoubleCheckDto;
 import com.jobstore.jobstore.dto.request.member.UserjoinDto;
@@ -171,13 +172,13 @@ public class AuthController {
     @Operation(summary = "토큰 재발급", description = "로그인상태에서 토큰을 재발급 합니다")
     public ResponseEntity<ResultDto<Object>> validToken(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "요청파라미터", required = true,
-                    content = @Content(schema=@Schema(implementation = TokenDto.class)))
-            @RequestBody TokenDto tokenDto
+                    content = @Content(schema=@Schema(implementation = TokenValidationDto.class)))
+            @RequestBody TokenValidationDto tokenDto
     ){
         try {
             String token = tokenDto.getToken();
             boolean valid = memberService.validToken(token);
-            return  ResponseEntity.ok(ResultDto.of("resultcode","token재발급 완료",valid));
+            return  ResponseEntity.ok(ResultDto.of("resultcode","token 검증 완료",valid));
         }catch (Exception e){
             throw new RuntimeException(e.getMessage());
         }

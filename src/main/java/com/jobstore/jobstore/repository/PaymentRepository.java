@@ -42,4 +42,7 @@ public interface PaymentRepository extends JpaRepository<Payment,Long> {
 
     @Query("SELECT p.member.memberid, SUM(p.pay) FROM Payment p WHERE p.member.store.storeid = :storeid AND p.month = :month GROUP BY p.member.memberid")
     List<Object[]> findMonthlyPayByStoreAndMonth(@Param("storeid") long storeid, @Param("month") long month);
+
+    boolean existsByMemberStoreStoreidAndMonth(long storeid, long month);
+
 }
