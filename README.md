@@ -6,7 +6,7 @@
 <a href="#function">functions</a> •
 <a href="#stack">Stack</a> •
 <a href="#contributors">Contributors</a> •
-<a href="#front-repo">Backend repo</a> •
+<a href="#front-repo">Frontend repo</a> •
 </div>
 <br>
  <h3>⏱️ 소규모 사업장 관리 서비스 </h3> <br>
@@ -161,10 +161,10 @@
 ✅ 체크박스 클릭시 누가 클릭했는지 표시되는 기능 <br>
 ✅ 댓글쓰기 기능 <br>
 <br>
+<h2>👨🏻‍💻 contributors</h2>
 <div id="contributors">
-
-   <tbody>
 <table>
+  <tbody>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/EndBug"><img src="https://github.com/kangseokjooo/Albabackend/assets/102424773/475b4b2a-268c-4ff3-8acd-45c7d621236c" width="100px;" alt="kang"/><br /><sub><b>강석주</b></sub></a><br /></td>
       <td align="center" valign="top" width="14.28%"><a href="https://olets.dev"><img src="https://github.com/kangseokjooo/Albabackend/assets/102424773/e4afa1c4-7b09-4609-924e-8c820e9487b1" width="100px;" alt="justin"/><br /><sub><b>정인근</b></sub></a><br /></td>
@@ -173,6 +173,8 @@
   </tbody>
 </table>
 </div>
-
+<h2>🔗 Frontend repository link</h2>
+<div id="front-repo">
+ <h3 align="center"><a href="https://github.com/applicants-backend/KDT_FNProject">Front-Repo 바로가기</a></h3>
+</div>
 <br>
-<div id="front-repo"></div>
