@@ -18,7 +18,7 @@
 </div>
 <div align="center">
 <h3>
-<a href="http://ec2-3-35-58-201.ap-northeast-2.compute.amazonaws.com/" target="_blank">ALBAON바로가기</a><br><br>
+<a href="http://albaon.store" target="_blank">ALBAON바로가기</a><br><br>
 <a href="http://ec2-3-39-203-178.ap-northeast-2.compute.amazonaws.com/swagger-ui" target="_blank">SWAGGER UI 바로가기</a>
 </h3>
 모두를 위한 알바온
