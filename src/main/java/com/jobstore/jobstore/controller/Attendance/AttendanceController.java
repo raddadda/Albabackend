@@ -55,7 +55,6 @@ public class AttendanceController {
             @PathVariable(value = "page", required = false) Integer page
     ) {
         try{
-            System.out.println("-----------------getHistoryAdmin-----------------");
             Member member = memberService.findMemberid(memberid);
             if(member == null || !member.getRole().equals("ADMIN")){
                 return ResponseEntity.ok(ResultDto.of("실패", "권한이 맞지 않습니다.", null));
