@@ -39,14 +39,12 @@ public class PaymentService {
         // Member member = memberRepository.findByMemberidAndStoreid(memberid, storeid);
         Member member = memberRepository.findByMemberid2(memberid);
         long storeid=memberRepository.findeByMemberidForStoreid(memberid);
-        System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@"+storeid);
         if (member != null) {
             Payment newPayment = new Payment();
             newPayment.setPay(pay);
             newPayment.setMonth(localDateTimeToMonth(register));
             newPayment.setRegister(register);
             newPayment.setMember(member);
-            System.out.println("newPayment : "+newPayment);
             return paymentRepository.save(newPayment);
         } else {
             return null;
@@ -110,7 +108,6 @@ public class PaymentService {
                     paymentAdmin.setStoreid(storeid);
                     paymentAdmin.setMonth(month);
                     paymentAdmin.setSum(sum);
-                    System.out.println("asdadsadsadsadsadsadad:");
                     paymentAdminRepository.save(paymentAdmin);
                     return sum;
                 }else{
@@ -191,12 +188,7 @@ public class PaymentService {
         //List<Long> payList = new ArrayList<>();
         for(Payment payment : payments){
             if(checkLocaltime(startOfWeek,payment.getRegister())){
-                System.out.println("startOfWeek : "+startOfWeek);
-                System.out.println("payment.getRegister(): "+payment.getRegister());
-
                 if(checkLocaltime(payment.getRegister(),endOfWeek)){
-                    System.out.println("endOfWeek : "+endOfWeek);
-                    System.out.println("payment.getRegister(): "+payment.getRegister());
                     result += payment.getPay();
 
                 }

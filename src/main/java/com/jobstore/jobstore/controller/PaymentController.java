@@ -41,8 +41,6 @@ public class PaymentController {
     public ResponseEntity<ResultDto<Payment>> addPayment(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "요청파라미터", required = true,
             content = @Content(schema=@Schema(implementation = PaymentinsertDto.class)))
                                                              @RequestBody PaymentinsertDto paymentinsertDto, @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        System.out.println("----------:" + paymentinsertDto.getMemberid() + paymentinsertDto.getPay() + paymentinsertDto.getRegister());
-        System.out.println(memberService.findByMemberidToRole(paymentinsertDto.getMemberid()));
         if (memberService.findByMemberidToRole(paymentinsertDto.getMemberid()).equals("USER")) {
             Payment paydata = paymentService.addPaymentForMember(paymentinsertDto.getMemberid(), paymentinsertDto.getRegister(), paymentinsertDto.getPay());
             if (paydata != null) {
@@ -157,7 +155,6 @@ public ResponseEntity<ResultDto<Map<Long,Long>>> findAllmember(@PathVariable Str
     public ResponseEntity<ResultDto<Long>> adminAllPayCreate(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "요청파라미터", required = true,
                     content = @Content(schema=@Schema(implementation = PaymentAdminAllpayment.class)))@RequestBody PaymentAdminAllpayment paymentAdminAllpayment){
-//        System.out.println("asdsadasddssadsa:sadasdas"+memberid);
         try {
 
             return ResponseEntity.ok(ResultDto.of("200","월중전체 지출액 삽입성공",paymentService.insertPaymentForAdmin(paymentAdminAllpayment.getMemberid(),paymentAdminAllpayment.getMonth())));
@@ -169,7 +166,6 @@ public ResponseEntity<ResultDto<Map<Long,Long>>> findAllmember(@PathVariable Str
     @Operation(summary = "Payment api",description = "해당달 지출액 정보 조회")
     @ResponseBody
     public ResponseEntity<ResultDto<Long>> adminAllPayfind(@PathVariable("memberid") String memberid,@PathVariable("month") long month){
-        System.out.println("asdsadasdasdasdasdsad:     "+memberid);
         return ResponseEntity.ok(ResultDto.of("200","월중 전체 지출액 조회 성공",paymentService.getPaymentForAdmin(memberid,month)));
 
     }
