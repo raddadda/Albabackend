@@ -1,8 +1,10 @@
 package com.jobstore.jobstore.entity;
 
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+
 
 import java.util.List;
 
@@ -10,11 +12,15 @@ import java.util.List;
 @Table(name = "member")
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Member {
     @Id
     @Column(length = 255, nullable = false)
     private String memberid;
     @Column(length = 255, nullable = false)
+    @JsonIgnore
     private String password;
     @Column(length = 255, nullable = false)
     private String phonenumber;
@@ -24,19 +30,28 @@ public class Member {
     private String role;
     @Column(length = 255, nullable = true)
     private String memberimg;
+    @Column(length = 255, nullable = true)
+    private String refreshtoken;
+    @Column(length = 255, nullable = false)
+    private String email;
+    @Column(length = 255, nullable = true)
+    private int islogin;
 
+
+    @JsonIgnore
     @ManyToOne
     @JoinColumns({
-            @JoinColumn(name = "storeid",referencedColumnName = "storeid")
+            @JoinColumn(name = "storeid", referencedColumnName = "storeid")
     })
     private Store store;
 
-    @OneToMany(mappedBy = "member")
+    @JsonIgnore
+    @OneToMany(mappedBy = "member",orphanRemoval = true)
     List<Payment> payments;
-
-    @OneToMany(mappedBy = "member")
-    List<Work> works;
-
     @OneToMany(mappedBy = "member")
     List<Attendance> attendances;
+
+    @OneToMany(mappedBy = "member")
+    List<Comment> comments;
+
 }

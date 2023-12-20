@@ -11,5 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class WorkDto {
     private long workid;
-    private String worktodo;
+    private String title;
+    private String date;
 }
