@@ -1,6 +1,8 @@
+# 서버 설정
 server:
-  port: 8080
-# spring doc
+  port: 8000
+
+# springdoc 설정 (Swagger UI)
 springdoc:
   api-docs:
     enabled: true
@@ -13,17 +15,21 @@ springdoc:
     disable-swagger-default-url: true
     display-request-duration: true
 
-# aws-cloud
+# AWS Cloud 설정
 cloud:
   aws:
     credentials:
-      accessKey: AKIA5EK2XZJUKDDHOFPV       # AWS IAM AccessKey 적기
-      secretKey: gXNi+uzOvH0OOlMNQ/XXjsibxsSnxVxMaeU0zhpT  # AWS IAM SecretKey 적기
+      accessKey: ${AWS_ACCESS_KEY_ID}  # 환경변수에서 액세스 키 불러오기
+      secretKey: ${AWS_SECRET_ACCESS_KEY}  # 환경변수에서 시크릿 키 불러오기
     s3:
-      bucket: kdt9hotdog    # ex) marryting-gyunny
-      dir: profileImage # ex) /gyunny
-
+      bucket: kdt9hotdog
+      dir: profileImage
     region:
       static: ap-northeast-2
     stack:
       auto: false
+
+# JWT 설정
+jwt:
+  secret-key: ${JWT_SECRET_KEY}  # 환경변수에서 JWT secret key 불러오기
+  expire-time-ms: ${JWT_EXPIRE_TIME_MS}  # 환경변수에서 JWT token 만료 시간 설정
