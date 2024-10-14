@@ -21,7 +21,6 @@ import java.util.Optional;
 @Repository
 public interface AttendanceRepository extends JpaRepository<Attendance,Long> {
     Attendance findByAttendid(Long attendid);
-  //  Optional<Member> findByMemberid(String memberid);
 
     @Query("SELECT a.worker FROM Attendance a WHERE a.member.memberid =:memberid")
     List<String> findByMemberidToWorker(@Param("memberid") String memberid);
@@ -42,24 +41,18 @@ public interface AttendanceRepository extends JpaRepository<Attendance,Long> {
     Page<Attendance> findByMemberMemberid(String memberid, Pageable pageable);
 
     List<Attendance> findByMemberMemberid(String memberid);
-//    @Query("SELECT a FROM Attendance a WHERE a.member.memberid =:memberid")
-//    findByWorker(String memberid);
 
     Page<Attendance> findByWorker(String memberid, Pageable pageable);
     @Query("SELECT a FROM Attendance a WHERE a.worker = :worker")
     List<Attendance> findByWorker(@Param("worker") String worker);
-
-//    @Query("SELECT a FROM Attendance a WHERE a.memberid = :memberid ")
-//    List<Attendance> findByWorker2(@Param("worker") String worker);
     @Query("SELECT a FROM Attendance a WHERE a.leavework = :leavework")
     List<Attendance> findByMemberMemberid(@Param("leavework") LocalDateTime leavework);
 
-
     @Query("SELECT a FROM Attendance a WHERE a.worker = :worker AND a.attendid = :attendid")
     Attendance findAttendancehistory(@Param("worker") String worker,@Param("attendid") long attendid);
-    //디폴트
 
-//    @Query("SELECT a FROM Attendance a WHERE a.worker = :worker AND a.attendid = :attendid")
-//    Slice<Attendance> findByIdGreaterThanOrderById(Long id, Pageable pageable);
-   Slice<Attendance> findByAttendidGreaterThanOrderByAttendid(Long attendid, Pageable pageable);
+    Slice<Attendance> findByAttendidGreaterThanOrderByAttendid(Long attendid, Pageable pageable);
+
+    List<Attendance> findByWorkerAndStartBetween(String workerId, LocalDateTime start, LocalDateTime end);
 }
+
