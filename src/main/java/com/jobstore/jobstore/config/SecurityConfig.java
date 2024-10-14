@@ -25,7 +25,9 @@ public class SecurityConfig {
 
     private final MemberService memberService;
     private final CorsConfig corsConfig;
-    private static String secretKey = "my-secret-key-123123";
+    // 환경변수에서 시크릿 키를 주입받음
+    @Value("${jwt.secret-key}")
+    private String secretKey;
     @Bean
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
