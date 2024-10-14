@@ -194,7 +194,6 @@ public class AuthController {
                     content = @Content(schema = @Schema(implementation = FindPasswordDto.class)))
             @RequestBody FindPasswordDto findPasswordDto
     ) {
-        System.out.println("-----------------findPasswordDto-----------------");
         boolean result = memberService.findPassword(findPasswordDto);
         if(!result){
             return ResponseEntity.ok(ResultDto.of("실패", "비밀번호 찾기에 실패", result));
@@ -203,3 +202,4 @@ public class AuthController {
 
     }
 }
+
