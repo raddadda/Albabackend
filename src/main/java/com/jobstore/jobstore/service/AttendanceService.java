@@ -6,6 +6,7 @@ import com.jobstore.jobstore.dto.request.attendance.AttendancefindDto;
 import com.jobstore.jobstore.dto.response.attendance.AttendanceHistoryDto;
 import com.jobstore.jobstore.entity.Attendance;
 import com.jobstore.jobstore.entity.Member;
+import com.jobstore.jobstore.entity.Role;
 import com.jobstore.jobstore.repository.AttendanceRepository;
 import com.jobstore.jobstore.repository.MemberRepository;
 import com.jobstore.jobstore.repository.PaymentRepository;
@@ -65,7 +66,6 @@ public class AttendanceService {
         Member member = memberRepository.findByMemberid2(attendanceUpdateDto.getMemberid());
         if (member != null) {
             Attendance attendance = attendanceRepository.findByWorkderAndAttendid(attendanceUpdateDto.getWorker(),attendanceUpdateDto.getAttendid());
-            LocalDateTime Gowork = attendanceUpdateDto.getGowork();
             attendance.setGowork(attendanceUpdateDto.getGowork());
             attendanceRepository.save(attendance);
             return true;
@@ -103,10 +103,8 @@ public class AttendanceService {
     //어드민 삭제
     public boolean deleteAttendance(AttendanceUpdateDto attendanceUpdateDto){
         Attendance attendance = attendanceRepository.findByWorkderAndAttendid(attendanceUpdateDto.getWorker(),attendanceUpdateDto.getAttendid());
-        //Optional<Attendance> optionalAttendance = attendanceRepository.findById(attendanceDto.getAttendid());
         Member member = memberRepository.findByMemberid2(attendanceUpdateDto.getMemberid());
         if(attendance != null){
-            // Attendance existAttendance = attendanceDto.toEntity();
             if (member != null) {
                 attendanceRepository.delete(attendance);
                 return true;
@@ -117,7 +115,6 @@ public class AttendanceService {
     //어드민 승인
     public AttendanceUpdateDto confirmAttendance(AttendanceUpdateDto attendanceUpdateDto,Member member) {
         Attendance attendance = attendanceRepository.findByWorkderAndAttendid(attendanceUpdateDto.getWorker(), attendanceUpdateDto.getAttendid());
-     //   Member member = memberRepository.findByMemberid2(attendanceUpdateDto.getMemberid());
         if (attendance != null) {
             if (member != null) {
                 if(attendanceUpdateDto.getConfirm() == 1){
@@ -135,14 +132,11 @@ public class AttendanceService {
     //어드민 전체worker 조회
     public HashMap workerList(String memberid){
         Member member = memberRepository.findByMemberid2(memberid);
-//        System.out.println("-----------------3-----------------");
         if(member != null){
             List<Attendance> attendances = attendanceRepository.findByMemberMemberid(memberid);
-//            System.out.println("-----------------4-----------------");
             HashMap<String,String> workerList = new HashMap<>();
             List<String> result = new ArrayList<>();
             for(Attendance attendList : attendances){
-//                System.out.println("-----------------5-----------------");
                 String key = attendList.getWorker();
                 Member worker = memberRepository.findByWorker(attendList.getWorker());
                 String value=worker.getName();
@@ -159,15 +153,12 @@ public class AttendanceService {
         return attendanceRepository.findByWorkderAndAttendid(worker,attendid);
     }
     public long payCalculate(AttendanceUpdateDto attendanceUpdateDto,Member member,Attendance attendance){
-       //Member member = memberRepository.findByMemberid2(attendanceUpdateDto.getMemberid());
         long result;
         if(member != null){
-            //Attendance attendance = attendanceRepository.findByWorkderAndAttendid(attendanceUpdateDto.getWorker(),attendanceUpdateDto.getAttendid());
             if(attendance != null){
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
                 LocalDateTime leave = attendance.getLeavework();
-                System.out.println("leave : "+leave);
                 String formatLeave = leave.format(formatter);
                 LocalDateTime go = attendance.getGowork();
                 String formatGo = go.format(formatter);
@@ -175,9 +166,7 @@ public class AttendanceService {
                 Duration duration2 = Duration.between(go, leave); // 두 시간의 차이 계산
                 long hours = duration2.toHours(); // 시간 단위로 시간 차이 구하기
                 long minutes = duration2.toMinutes(); // 분 단위로 시간 차이 구하기
-                System.out.println("--------attendanceUpdateDto 급여------- "+attendanceUpdateDto.getWage());
                 result = hours*attendance.getWage();
-                System.out.println("result : "+result);
                 return result;
             }
         }
@@ -254,7 +243,15 @@ public class AttendanceService {
         }
         return result;
     }
-
+    public boolean confirmCheck(String memberid){
+        List<Attendance> attendances =attendanceRepository.findByMemberMemberid(memberid);
+        for(Attendance list : attendances){
+            if(list.getConfirm()==0){
+                return false;
+            }
+        }
+        return true;
+    }
     //저번달과 이번달 비교 퍼센트
     public double workPercent(String memberid){
         LocalDateTime time = LocalDateTime.now();
@@ -288,16 +285,6 @@ public class AttendanceService {
     public long localDateTimeToMonth(LocalDateTime localDateTime){
         return localDateTime.getMonthValue();
     }
-
-//    public List<LocalDateTime> getLocalDateTimesInFiveMonths(LocalDateTime baseDateTime) {
-//        List<LocalDateTime> dateTimeList = new ArrayList<>();
-//
-//        // 입력된 기준 날짜로부터 5달간의 LocalDateTime 값 추가
-//        for (int i = 0; i < 5; i++) {
-//            LocalDateTime dateTime = baseDateTime.plusMonths(i);
-//            dateTimeList.add(dateTime);
-//        }
-//    }
 
         public Map getUserMonthData(Member member){
         LocalDateTime localDateTime = LocalDateTime.now();
@@ -369,39 +356,54 @@ public class AttendanceService {
     /**
      * Attendance History 조회
      */
-    public AttendanceHistoryDto getAttendancesByMemberId (String role,String memberid,long storeid,Integer page){
-        //한페이지당 사이즈
-        Integer size = 5;
-        System.out.println("getAttendancesByMemberId333333");
-        PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.DESC, "start");
-        Page<Attendance> attendances;
-        if(role.equals("USER")){
-            System.out.println("getAttendancesByMemberId1");
-            attendances =  attendanceRepository.findByWorker(memberid, pageRequest);
-        }else if(role.equals("ADMIN")){
-            System.out.println("getAttendancesByMemberId2");
-            attendances =  attendanceRepository.findByMemberMemberid(memberid, pageRequest);
-        }else{
-            return null;
-        }
-        //work를 DTO로 변환
-        Page<AttendancefindDto> toMap = attendances.map(m -> new AttendancefindDto(
-                m.getMember().getMemberid(),
-                m.getStoreid(),m.getAttendid(),
-                m.getStart(), m.getEnd(),
-                m.getGowork(),m.getLeavework(),
-                m.getWage(),m.getWorker(),
-                m.getConfirm()
-        ));
 
-        AttendanceHistoryDto dto = new AttendanceHistoryDto(
+    public AttendanceHistoryDto getAttendancesByMemberId (String role,String memberid,long storeid,Integer page){
+        // 페이지 번호 검증 (1부터 시작하는 경우)
+        Integer pageNumber = Math.max(0, page - 1);
+        Integer size = 5;  // 한 페이지 당 사이즈
+        PageRequest pageRequest = PageRequest.of(pageNumber, size, Sort.Direction.DESC, "start");
+
+        // Role이 유효한지 확인
+        if (role == null) {
+            throw new IllegalArgumentException("Role must not be null");
+        }
+
+        Page<Attendance> attendances;
+        switch (Role.valueOf(role)) {
+            case USER:
+                attendances = attendanceRepository.findByWorker(memberid, pageRequest);
+                break;
+            case ADMIN:
+                attendances = attendanceRepository.findByMemberMemberid(memberid, pageRequest);
+                break;
+            default:
+                return null;  // 역할이 유효하지 않으면 null 반환 (또는 예외를 던질 수 있음)
+        }
+        // DTO로 변환
+        Page<AttendancefindDto> toMap = attendances.map(this::mapToAttendancefindDto);
+
+        return new AttendanceHistoryDto(
                 toMap.getContent(),
                 toMap.getContent().size(),
                 toMap.getNumber(),
                 toMap.getTotalPages(),
                 toMap.hasNext()
         );
-        return dto;
     }
-
+    // DTO 변환 메서드
+    private AttendancefindDto mapToAttendancefindDto(Attendance m) {
+        return new AttendancefindDto(
+                m.getMember().getMemberid(),
+                m.getStoreid(),
+                m.getAttendid(),
+                m.getStart(),
+                m.getEnd(),
+                m.getGowork(),
+                m.getLeavework(),
+                m.getWage(),
+                m.getWorker(),
+                m.getConfirm()
+        );
+    }
 }
+
