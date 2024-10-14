@@ -112,7 +112,6 @@ public class MemberController {
             @RequestParam("file") @Valid MultipartFile multipartFile
 
     ) throws IOException {
-        System.out.println(multipartFile);
         ImageUploadDto imageUploadDto = new ImageUploadDto();
         imageUploadDto.setMemberid(memberid);
         imageUploadDto.setStoreid(storeid);
@@ -141,7 +140,6 @@ public class MemberController {
             @PathVariable(value = "memberid", required = true) String memberid,
             @PathVariable(value = "storeid", required = true) Long storeid
     ) {
-        System.out.println("-----------------getUserData-----------------");
         Member member = memberService.findMemberid(memberid);
         if(member == null || !member.getRole().equals("ADMIN")){
             return ResponseEntity.ok(ResultDto.of("실패", "권한이 맞지 않습니다.", null));
@@ -153,3 +151,4 @@ public class MemberController {
         return ResponseEntity.ok(ResultDto.of("성공", "조회성공", result));
     }
 }
+
