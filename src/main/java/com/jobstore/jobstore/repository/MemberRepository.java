@@ -25,12 +25,8 @@ public interface MemberRepository extends JpaRepository<Member,String> {
     @Query("SELECT m FROM Member m WHERE m.memberid = :memberid")
     Member findByMemberid2(@Param("memberid") String memberid);
     Optional<Member> findOneWithAuthByMemberid(String memberid);
-    //Optional<User> findByUserid(String userid);
 
     boolean existsByMemberid(String memberid);
-
-//    @Query("SELECT m FROM Member m WHERE m.memberid = :memberid")
-//    Member findByMemberid2(@Param("name") String name);
 
     @Query("SELECT m FROM Member m WHERE m.memberid = :memberid")
     Member findByWorker(@Param("memberid") String memberid);
@@ -47,7 +43,6 @@ public interface MemberRepository extends JpaRepository<Member,String> {
     @Query("SELECT m.role From Member m WHERE m.memberid=:memberid")
     String findByMemberidToRole(@Param("memberid") String memberid);
 
-    //Member findByMemberid(String memberid);
     @Query("SELECT m.store.storeid From Member m WHERE m.memberid=:memberid")
     long findeByMemberidForStoreid(@Param("memberid") String memberid);
 
@@ -56,6 +51,4 @@ public interface MemberRepository extends JpaRepository<Member,String> {
     List findeByMemberidForStoreid2(@Param("storeid") long storeid);
 
 
-//    @Query("SELECT m FROM Member m WHERE m.memberid = :memberid")
-//    Member findByWorkername(@Param("member") String member);
 }
