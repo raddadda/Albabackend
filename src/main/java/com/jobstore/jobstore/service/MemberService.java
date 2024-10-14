@@ -53,7 +53,12 @@ public class MemberService  {
 
     @Value("${spring.mail.username}")
     private String from;
-    //MailBodyUtil mailBodyUtil = new MailBodyUtil();
+
+    @Value("${jwt.secret-key}")
+    private String secretKey;
+
+    @Value("${jwt.expire-time-ms}")
+    private long expireTimeMs;
 
     PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
@@ -289,51 +294,51 @@ public class MemberService  {
     }
 
 
-    public LoginResponseDto loginToken(Member member){
+
+    public LoginResponseDto loginToken(Member member) {
 
         // 로그인 성공 => Jwt Token 발급
-        System.out.println("11122");
-        String secretKey = "my-secret-key-123123";
-        long expireTimeMs = 1000 * 60 * 60;     // Token 유효 시간 = 60분
+        String jwtToken = JwtTokenUtil.createToken(member.getMemberid(), secretKey, expireTimeMs, member.getStore().getStoreid());
+        String refreshToken = JwtTokenUtil.refreshToken(member.getMemberid(), secretKey, expireTimeMs, member.getStore().getStoreid());
 
-        String jwtToken = JwtTokenUtil.createToken(member.getMemberid(), secretKey, expireTimeMs,member.getStore().getStoreid());
-        String refreshToken = JwtTokenUtil.refreshToken(member.getMemberid(), secretKey, expireTimeMs,member.getStore().getStoreid());
-        System.out.println("refreshToken"+refreshToken);
+        // RefreshToken 저장
         member.setRefreshtoken(refreshToken);
         member.setIslogin(1);
         memberRepository.save(member);
 
-        LoginResponseDto reposonse = new LoginResponseDto();
-        reposonse.setToken(jwtToken);
-        reposonse.setMemberid(member.getMemberid());
-        reposonse.setStoreid(member.getStore().getStoreid());
+        // Response 객체 설정
+        LoginResponseDto response = new LoginResponseDto();
+        response.setToken(jwtToken);
+        response.setMemberid(member.getMemberid());
+        response.setStoreid(member.getStore().getStoreid());
 
-        return reposonse;
-
-
+        return response;
     }
-    public LoginResponseDto refreshToken(Member member,String token){
-        // 로그인 성공 => Jwt Token 발급
-        String secretKey = "my-secret-key-123123";
-        long expireTimeMs = 1000 * 60 * 60;     // Token 유효 시간 = 60분
-        String jwtToken = JwtTokenUtil.refreshToken(member.getMemberid(), secretKey, expireTimeMs,member.getStore().getStoreid());
-        if(member.getRefreshtoken().equals(token)){
+
+    public LoginResponseDto refreshToken(Member member, String token) {
+        // Jwt refresh token 발급
+        String jwtToken = JwtTokenUtil.refreshToken(member.getMemberid(), secretKey, expireTimeMs, member.getStore().getStoreid());
+
+        // 기존 refresh token과 비교하여 일치하면 갱신
+        if (member.getRefreshtoken().equals(token)) {
             member.setRefreshtoken(jwtToken);
             memberRepository.save(member);
 
-            LoginResponseDto reposonse = new LoginResponseDto();
-            reposonse.setToken(jwtToken);
-            reposonse.setMemberid(member.getMemberid());
-            reposonse.setStoreid(member.getStore().getStoreid());
+            // LoginResponseDto 반환
+            LoginResponseDto response = new LoginResponseDto();
+            response.setToken(jwtToken);
+            response.setMemberid(member.getMemberid());
+            response.setStoreid(member.getStore().getStoreid());
 
-            return reposonse;
+            return response;
         }
-        return null;
 
+        return null;  // 토큰 불일치 시 null 반환
     }
 
     public boolean validToken(String token){
-        String secretKey = "my-secret-key-123123";
+
+
         //Jwt 디코딩
 
         try {
@@ -353,22 +358,6 @@ public class MemberService  {
             return false;
         }
 
-
-        //if(token)
-        //Token 재발급
-//        public static String refreshToken(String loginId, String key, long expireTimeMs,long storeid){
-//            Claims claims = Jwts.claims();
-//            claims.put("memberid",loginId);
-//            claims.put("storeid",storeid);
-//            claims.put("isRefresh",true);
-//            return Jwts.builder()
-//                    .setClaims(claims)
-//                    .setIssuedAt(new Date(System.currentTimeMillis()))
-//                    .setExpiration(new Date(System.currentTimeMillis() + expireTimeMs))
-//                    .signWith(SignatureAlgorithm.HS256, key)
-//                    .compact();
-//
-//        }
     }
 
     public String setPassword(int length) {
@@ -426,3 +415,4 @@ public class MemberService  {
 
 
 }
+
